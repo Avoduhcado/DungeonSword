@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +10,6 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.util.ResourceLoader;
 
 import core.render.DrawUtils;
@@ -27,6 +27,8 @@ public class Camera {
 	public int displayWidth = WIDTH;
 	/** Current Window height */
 	public int displayHeight = HEIGHT;
+	/** Target FPS for application to run at */
+	public static final int TARGET_FPS = 60;
 		
 	/** View frame fixed to default size */
 	public final Rectangle2D fixedFrame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
@@ -99,7 +101,7 @@ public class Camera {
 	
 	public void update() {
 		Display.update();
-		Display.sync(200);
+		Display.sync(TARGET_FPS);
 		
 		if(resized())
 			resize();
@@ -120,7 +122,7 @@ public class Camera {
 		setup.draw();
 		
 		if(Theater.get().paused) {
-			Text.drawCenteredString("Paused", getDisplayWidth(2f), getDisplayHeight(2f), Color.white);
+			Text.drawCenteredString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), Color.white);
 		}
 		
 		// Process fading
@@ -191,11 +193,11 @@ public class Camera {
 	}
 	
 	public float getDisplayWidth(float mod) {
-		return (displayWidth / mod) / getFrameXScale();
+		return (displayWidth * mod) / getFrameXScale();
 	}
 	
 	public float getDisplayHeight(float mod) {
-		return (displayHeight / mod) / getFrameYScale();
+		return (displayHeight * mod) / getFrameYScale();
 	}
 	
 	public boolean isFocus() {

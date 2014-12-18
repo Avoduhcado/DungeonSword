@@ -29,7 +29,7 @@ public class ButtonGroup extends UIElement {
 	
 	public void centerItems() {
 		for(int i = 0; i<buttons.size(); i++) {
-			buttons.get(i).setPosition(x + (float)(box.getWidth() / 2f) - (float)(buttons.get(i).getBox().getWidth() / 2f),
+			buttons.get(i).setPosition(x + (float)(box.getWidth() * 0.5f) - (float)(buttons.get(i).getBox().getWidth() * 0.5f),
 					y + getCurrentHeight(i));
 		}
 	}
@@ -37,7 +37,7 @@ public class ButtonGroup extends UIElement {
 	@Override
 	public void updateBox() {
 		if(getMaxWidth() > box.getWidth()) {
-			x = x - (getMaxWidth() / 2f);
+			x = x - (getMaxWidth() * 0.5f);
 		}
 		box = new Rectangle2D.Double(buttons.get(getWidestElement()).getX(), y, getMaxWidth(), getTotalHeight());
 	}
@@ -45,7 +45,7 @@ public class ButtonGroup extends UIElement {
 	@Override
 	public void setPosition(float x, float y) {
 		if(Float.isNaN(x))
-			this.x = (float) (Camera.get().getDisplayWidth(2f) - (box.getWidth() / 2f));
+			this.x = (float) (Camera.get().getDisplayWidth(0.5f) - (box.getWidth() * 0.5f));
 		else
 			this.x = x;
 		this.y = y;

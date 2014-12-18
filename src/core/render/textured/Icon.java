@@ -6,7 +6,9 @@ import org.lwjgl.util.vector.Vector4f;
 
 import core.Camera;
 import core.Theater;
+import core.render.TextureLoader;
 
+@Deprecated
 public class Icon extends Sprite {
 
 	private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
@@ -18,26 +20,26 @@ public class Icon extends Sprite {
 	//private float maxSpeed;
 		
 	public Icon(String ref) {
-		super("/icons/" + ref);
+		super(ref);
 	}
 	
 	@Override
 	public void draw(float x, float y) {
 		if(Float.isNaN(x))
-			x = Camera.get().getDisplayWidth(2f) - (getWidth() / 2f);
+			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() / 2f);
 		if(Float.isNaN(y))
-			y = Camera.get().getDisplayHeight(2f) - (getHeight() / 2f);
+			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() / 2f);
 		
 		texture.bind();
 		
 		updateTextureOffsets();
 		
 		GL11.glPushMatrix();
-		
-		GL11.glTranslatef(x, y, 0f);
+
+		GL11.glTranslatef(x + (getWidth() / 2f), y + (getHeight() / 2f), 0f);
 		GL11.glColor4f(color.x, color.y, color.z, color.w);
 		GL11.glRotatef(rotation.w, rotation.x, rotation.y, rotation.z);
-		if(rotateSpeed != 0f)
+		//if(rotateSpeed != 0f)
 			GL11.glTranslatef(-getWidth() / 2f, -getHeight() / 2f, 0f);
 		GL11.glScalef(scale.x, scale.y, scale.z);
 		GL11.glEnable(GL11.GL_BLEND);
@@ -84,6 +86,10 @@ public class Icon extends Sprite {
 					maxSpeed = -maxSpeed;
 			}*/
 		}
+	}
+	
+	public void setTexture(String ref) {
+		this.texture = TextureLoader.get().getSlickTexture(System.getProperty("resources") + "/icons/" + ref + ".png");
 	}
 	
 	public Vector4f getColor() {

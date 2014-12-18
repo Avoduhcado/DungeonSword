@@ -1,5 +1,6 @@
 package core.ui;
 
+import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -8,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.Color;
 
 import core.Theater;
 import core.utilities.keyboard.Keybinds;
@@ -41,7 +41,7 @@ public class InputBox extends UIElement {
 		if(textLimit != 0)
 			this.textLimit = textLimit;
 		
-		this.box = new Rectangle2D.Double(x, y, Text.getFont("SYSTEM").getWidth(this.text), Text.getFont("SYSTEM").getHeight(this.text));
+		this.box = new Rectangle2D.Double(x, y, Text.getWidth(this.text, "SYSTEM"), Text.getHeight(this.text, "SYSTEM"));
 	}
 	
 	@Override
@@ -66,9 +66,11 @@ public class InputBox extends UIElement {
 		super.draw();
 		
 		if(centered)
-			Text.getFont("SYSTEM").drawCenteredString(flash > 0.5f ? text + "|" : text, x, y, enabled ? Color.white : (this.isHovering() ? Color.gray : Color.darkGray));
+			Text.drawCenteredString(flash > 0.5f ? text + "|" : text, x, y,
+					enabled ? Color.white : (this.isHovering() ? Color.gray : Color.darkGray), "SYSTEM");
 		else
-			Text.getFont("SYSTEM").drawString(flash > 0.5f ? text + "|" : text, x, y, enabled ? Color.white : (this.isHovering() ? Color.gray : Color.darkGray));
+			Text.drawString(flash > 0.5f ? text + "|" : text, x, y,
+					enabled ? Color.white : (this.isHovering() ? Color.gray : Color.darkGray), "SYSTEM");
 	}
 	
 	/**
@@ -202,7 +204,7 @@ public class InputBox extends UIElement {
 	@Override
 	public void updateBox() {
 		if(text.length() > 0)
-			box = new Rectangle2D.Double(x, y, Text.getFont("SYSTEM").getWidth(text), Text.getFont("SYSTEM").getHeight(text));
+			box = new Rectangle2D.Double(x, y, Text.getWidth(text, "SYSTEM"), Text.getHeight(text, "SYSTEM"));
 		else
 			box = new Rectangle2D.Double(x, y, 15f, 15f);
 	}

@@ -4,7 +4,7 @@ import core.Camera;
 import core.Theater;
 import core.audio.Ensemble;
 import core.audio.Track;
-import core.render.textured.Image;
+import core.render.textured.Sprite;
 import core.ui.Button;
 import core.ui.ButtonGroup;
 import core.ui.overlays.OptionsMenu;
@@ -12,7 +12,7 @@ import core.ui.overlays.OptionsMenu;
 public class TitleMenu extends GameSetup {
 
 	/** Title logo */
-	private Image logo;
+	private Sprite logo;
 	/** A button group contain New Game, Options, and Exit */
 	private ButtonGroup buttonGroup;
 	/** The options menu */
@@ -27,10 +27,10 @@ public class TitleMenu extends GameSetup {
 		Camera.get().setFadeTimer(-0.1f);
 		
 		// Load title logo
-		logo = new Image("Avogine Title");
+		logo = new Sprite("Avogine Title");
 		
 		// Initialize game buttons
-		buttonGroup = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(1.6f), "Menu2");
+		buttonGroup = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(0.667f), "Menu2");
 		buttonGroup.addButton(new Button("New Game"));
 		buttonGroup.addButton(new Button("Options"));
 		buttonGroup.addButton(new Button("Exit"));
@@ -68,7 +68,7 @@ public class TitleMenu extends GameSetup {
 	@Override
 	public void draw() {
 		// Draw logo
-		logo.draw(Float.NaN, Camera.get().getDisplayHeight(6f));
+		logo.draw(Float.NaN, Camera.get().getDisplayHeight(0.1667f));
 		
 		// Draw buttons
 		buttonGroup.draw();
@@ -81,7 +81,7 @@ public class TitleMenu extends GameSetup {
 	@Override
 	public void resizeRefresh() {
 		// Reposition and center
-		buttonGroup.setPosition(Float.NaN, Camera.get().getDisplayHeight(1.6f));
+		buttonGroup.setPosition(Float.NaN, Camera.get().getDisplayHeight(0.667f));
 	}
 
 }

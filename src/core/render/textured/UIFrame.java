@@ -3,38 +3,41 @@ package core.render.textured;
 import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.opengl.Texture;
 
 import core.Camera;
 import core.render.TextureLoader;
 
-public class UIFrame {
+public class UIFrame extends Sprite {
 
-	private Texture texture;
 	private float opacity = 0.8f;
 	private float width;
 	private float height;
 	
 	public UIFrame(String ref) {
-		texture = TextureLoader.get().getSlickTexture(System.getProperty("resources") + "/ui/" + ref + ".png");
+		super(ref);
+		
+		still = true;
 		width = getWidth() / 3f;
 		height = getHeight() / 3f;
 	}
 
 	public void draw(float x, float y, Rectangle2D box) {
 		if(Float.isNaN(x))
-			x = Camera.get().getDisplayWidth(2f) - (getWidth() / 2f);
+			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() * 0.5f);
 		if(Float.isNaN(y))
-			y = Camera.get().getDisplayHeight(2f) - (getHeight() / 2f);
+			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() * 0.5f);
 		
-		x -= width / 2f;
-		y -= height / 2f;
+		x -= width * 0.5f;
+		y -= height * 0.5f;
 		
 		texture.bind();
 				
 		GL11.glPushMatrix();
 		
-		GL11.glTranslatef(x, y, 0f);
+		if(still)
+			GL11.glTranslatef((int) x, (int) y, 0f);
+		else
+			GL11.glTranslatef((int) (x - Camera.get().frame.getX()), (int) (y - Camera.get().frame.getY()), 0f);
 		GL11.glColor4f(1f, 1f, 1f, opacity);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -150,6 +153,10 @@ public class UIFrame {
 		}
 	}
 	
+	public void setTexture(String ref) {
+		this.texture = TextureLoader.get().getSlickTexture(System.getProperty("resources") + "/ui/" + ref + ".png");
+	}
+	
 	public float getOpacity() {
 		return opacity;
 	}
@@ -157,7 +164,7 @@ public class UIFrame {
 	public void setOpacity(float opacity) {
 		this.opacity = opacity;
 	}
-	
+
 	public float getWidth() {
 		return texture.getImageWidth();
 	}

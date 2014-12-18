@@ -3,6 +3,8 @@ package core.utilities.keyboard;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 
+import core.utilities.Config;
+
 public enum Keybinds {
 	
 	CONFIRM (Keyboard.KEY_RETURN),
@@ -110,7 +112,13 @@ public enum Keybinds {
 		String[] temp = keybind.split("=");
 		
 		// Handled through Config file
-		Keybinds.valueOf(temp[0]).setKey(Keyboard.getKeyIndex(temp[1]));
+		try {
+			Keybinds.valueOf(temp[0]).setKey(Keyboard.getKeyIndex(temp[1]));
+		} catch(IllegalArgumentException e) {
+			// Reload config
+			Config.createConfig();
+			Config.loadConfig();			
+		}
 	}
 	
 	/**

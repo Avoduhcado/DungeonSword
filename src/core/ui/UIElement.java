@@ -22,7 +22,7 @@ public abstract class UIElement {
 		}
 		
 		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(2f);
+			this.x = Camera.get().getDisplayWidth(0.5f);
 		else
 			this.x = x;
 		this.y = y;

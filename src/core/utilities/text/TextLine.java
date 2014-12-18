@@ -5,19 +5,17 @@ import java.util.ArrayList;
 public class TextLine {
 
 	private ArrayList<TextSegment> line = new ArrayList<TextSegment>();
-	private String fullLine = "";
 	
 	public TextLine(String line) {
 		String[] temp = line.split("<");
 		for(int x = 0; x<temp.length; x++) {
 			this.line.add(new TextSegment(temp[x]));
-			fullLine += this.line.get(x).getSegment();
 		}
 	}
 	
-	public void draw(float x, float y) {
+	public void draw(float x, float y, String font) {
 		for(int i = 0; i<line.size(); i++) {
-			line.get(i).getFont().drawString(fullLine, x, y, null, getCurrentIndex(i), getCurrentIndex(i) + line.get(i).getSegment().length());
+			line.get(i).draw(x + (i > 0 ? line.get(i).getSegment().length() : 0), y, font);
 		}
 	}
 	
@@ -31,15 +29,6 @@ public class TextLine {
 		}
 		
 		return temp;
-	}
-	
-	public void setFont(GameFont font) {
-		for(TextSegment t : line)
-			t.setFont(font);
-	}
-	
-	public void setFont(GameFont font, int index) {
-		line.get(index).setFont(font);
 	}
 	
 	public float getHeight() {

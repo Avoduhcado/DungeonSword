@@ -23,7 +23,8 @@ public class OptionsMenu extends MenuOverlay {
 	public OptionsMenu(float x, float y, String image) {
 		super(x, y, image);
 		
-		this.box = new Rectangle2D.Double(x, y, Camera.get().getDisplayWidth() - (this.frame.getWidth() / 1.5f), Camera.get().getDisplayHeight() - (this.frame.getWidth() / 1.5f));
+		this.box = new Rectangle2D.Double(x, y, Camera.get().getDisplayWidth() - (this.frame.getWidth() * 0.667f),
+				Camera.get().getDisplayHeight() - (this.frame.getWidth() * 0.667f));
 		
 		/*try {
 			displayModes = Display.getAvailableDisplayModes();
@@ -33,25 +34,25 @@ public class OptionsMenu extends MenuOverlay {
 			e.printStackTrace();
 		}*/
 		
-		volumeSlider = new Slider(Camera.get().getDisplayWidth(2f), Camera.get().getDisplayHeight(6f), 1f, Ensemble.get().getMasterVolume(), "SliderBG", "SliderValue");
-		volumeSlider.setPosition((float) (volumeSlider.getX() - (volumeSlider.getBox().getWidth() / 2f)), volumeSlider.getY());
+		volumeSlider = new Slider(Camera.get().getDisplayWidth(0.5f), Camera.get().getDisplayHeight(0.1667f), 1f, Ensemble.get().getMasterVolume(), "SliderBG", "SliderValue");
+		volumeSlider.setPosition((float) (volumeSlider.getX() - (volumeSlider.getBox().getWidth() * 0.5f)), volumeSlider.getY());
 		
-		float keyX = Camera.get().getDisplayWidth(4f);
+		float keyX = Camera.get().getDisplayWidth(0.25f);
 		float keyY = 0;
 		for(int i = 0; i<Keybinds.values().length; i++) {
 			if(!keybinds.isEmpty())
 				keyY += keybinds.get(keybinds.size() - 1).getBox().getHeight();
-			if(Camera.get().getDisplayHeight(3.5f) + keyY > this.getBox().getHeight() / 1.2f) {
+			if(Camera.get().getDisplayHeight(0.285f) + keyY > this.getBox().getHeight() * 0.85f) {
 				keyX *= 3f;
 				keyY = 0;
 			}
 				
-			keybinds.add(new InputBox(keyX, Camera.get().getDisplayHeight(3.5f) + keyY, null, -1, Keybinds.values()[i].getKey(), 0));
+			keybinds.add(new InputBox(keyX, Camera.get().getDisplayHeight(0.285f) + keyY, null, -1, Keybinds.values()[i].getKey(), 0));
 			keybinds.get(keybinds.size() - 1).setEnabled(false);
 			((InputBox) keybinds.get(keybinds.size() - 1)).setCentered(false);
 		}
 		
-		close = new Button("Close", Float.NaN, Camera.get().getDisplayHeight(1.2f), 0, null);
+		close = new Button("Close", Float.NaN, Camera.get().getDisplayHeight(0.85f), 0, null);
 	}
 	
 	@Override
@@ -78,13 +79,14 @@ public class OptionsMenu extends MenuOverlay {
 	public void draw() {
 		super.draw();
 		
-		Text.getFont("SYSTEM").drawCenteredString("Options", Camera.get().getDisplayWidth(2f), y, null);
-		Text.getFont("SYSTEM").drawCenteredString("Volume", (float) volumeSlider.getBox().getCenterX(),
-				volumeSlider.getY() - (Text.getFont("SYSTEM").getHeight("Volume") * 1.5f), null);
+		Text.drawCenteredString("Options", Camera.get().getDisplayWidth(0.5f), y, null, "SYSTEM");
+		Text.drawCenteredString("Volume", (float) volumeSlider.getBox().getCenterX(),
+				volumeSlider.getY() - (Text.getHeight("Volume", "SYSTEM") * 1.5f), null, "SYSTEM");
 		volumeSlider.draw();
 		for(int i = 0; i<keybinds.size(); i++) {
-			Text.getFont("SYSTEM").drawString(Keybinds.values()[i].toString() + ":", 
-					keybinds.get(i).getX() - Text.getFont("SYSTEM").getWidth(Keybinds.values()[i].toString() + ": "), keybinds.get(i).getY(), null);
+			Text.drawString(Keybinds.values()[i].toString() + ":", 
+					keybinds.get(i).getX() - Text.getWidth(Keybinds.values()[i].toString() + ": ", "SYSTEM"),
+					keybinds.get(i).getY(), null, "SYSTEM");
 			keybinds.get(i).draw();
 		}
 		

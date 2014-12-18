@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import core.Camera;
 
+@Deprecated
 public class FixedSprite extends Sprite {
 
 	/** Single frame Width */
@@ -13,6 +14,7 @@ public class FixedSprite extends Sprite {
 	
 	public FixedSprite(String ref, float width, float height) {
 		super(ref);
+		
 		this.width = width;
 		this.height = height;
 	}
@@ -20,9 +22,9 @@ public class FixedSprite extends Sprite {
 	@Override
 	public void draw(float x, float y) {
 		if(Float.isNaN(x))
-			x = Camera.get().getDisplayWidth(2f) - (getWidth() / 2f);
+			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() * 0.5f);
 		if(Float.isNaN(y))
-			y = Camera.get().getDisplayHeight(2f) - (getHeight() / 2f);
+			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() * 0.5f);
 		
 		texture.bind();
 		
@@ -30,7 +32,7 @@ public class FixedSprite extends Sprite {
 		
 		GL11.glPushMatrix();
 		
-		GL11.glTranslatef(x, y, 0f);
+		GL11.glTranslatef((int) (x - Camera.get().frame.getX()), (int) (y - Camera.get().frame.getY()), 0f);
 		GL11.glColor3f(1f, 1f, 1f);
 		GL11.glScalef(1f, 1f, 1f);
 		GL11.glEnable(GL11.GL_BLEND);

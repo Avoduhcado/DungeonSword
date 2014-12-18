@@ -13,13 +13,13 @@ import core.Camera;
 import core.Theater;
 import core.audio.Ensemble;
 import core.audio.SoundEffect;
-import core.render.textured.Image;
+import core.render.textured.Sprite;
 import core.utilities.keyboard.Keybinds;
 
 public class SplashScreen extends GameSetup {
 
 	/** Queued list of images to display */
-	private Queue<Image> splashImages = new LinkedList<Image>();
+	private Queue<Sprite> splashImages = new LinkedList<Sprite>();
 	/** Time to display each image */
 	private float timer = 5f;
 	/** True if audio ding has played */
@@ -33,14 +33,30 @@ public class SplashScreen extends GameSetup {
 	 */
 	public SplashScreen() {
 		loadSplashes();
-		point = new Point2D.Double(Camera.get().getDisplayWidth(2f) - (splashImages.peek().getWidth() / 2f), 
-				Camera.get().getDisplayHeight(2f) - (splashImages.peek().getHeight() / 2f));
+		point = new Point2D.Double(Camera.get().getDisplayWidth(0.5f) - (splashImages.peek().getWidth() * 0.5f), 
+				Camera.get().getDisplayHeight(0.5f) - (splashImages.peek().getHeight() * 0.5f));
 	}
 	
 	/**
 	 * Read splash screen text file to load as many splash screens as detected.
 	 */
 	public void loadSplashes() {
+		try (BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/splash/splash text"))) {
+			
+			String line = null;
+			while((line = reader.readLine()) != null) {
+				// Load each screen
+				splashImages.add(new Sprite(line));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Load a random assortment of splash screens
+	 */
+	public void loadRandomSplashes() {
 		try {
 			// Total number of screens to display
 			int totalScreens = 1;
@@ -60,7 +76,7 @@ public class SplashScreen extends GameSetup {
 						line = reader.readLine();
 						tempNumber--;
 					}
-					splashImages.add(new Image(line));
+					splashImages.add(new Sprite(line));
 					reader.close();
 					reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/splash/splash text"));
 				} else {
@@ -142,8 +158,8 @@ public class SplashScreen extends GameSetup {
 
 	@Override
 	public void resizeRefresh() {
-		point = new Point2D.Double(Camera.get().getDisplayWidth(2f) - (splashImages.peek().getWidth() / 2f), 
-				Camera.get().getDisplayHeight(2f) - (splashImages.peek().getHeight() / 2f));
+		point = new Point2D.Double(Camera.get().getDisplayWidth(0.5f) - (splashImages.peek().getWidth() * 0.5f), 
+				Camera.get().getDisplayHeight(0.5f) - (splashImages.peek().getHeight() * 0.5f));
 	}
 	
 }

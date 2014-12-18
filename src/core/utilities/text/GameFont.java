@@ -1,121 +1,142 @@
 package core.utilities.text;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.io.FileInputStream;
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.GlyphPage;
-import org.newdawn.slick.font.effects.ColorEffect;
+import core.render.textured.Glyph;
 
-public class GameFont implements Cloneable {
+public class GameFont {
 
-	private Font font = new Font("Times New Roman", Font.PLAIN, 16);
-	private UnicodeFont unifont;
+	private HashMap<Character, Glyph> glyphs = new HashMap<Character, Glyph>();
 	
 	private String fontName;
 	private float size;
+	public static final float defaultSize = 0.75f;
 	private Color color;
+	private boolean dropShadow = true;
 	
-	public GameFont(String fontName, float size, Color color) {
+	public GameFont(String fontName) {
 		this.fontName = fontName;
-		this.size = size;
-		this.color = color;
+		this.color = Color.white;
+		this.size = defaultSize;
 		
-		try {
-			font = Font.createFont(Font.PLAIN, new FileInputStream(System.getProperty("resources") + "/fonts/" + fontName));
-			font = font.deriveFont(size);
-		} catch (FontFormatException e) {
-			System.err.println("Invalid font format");
+		try (BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/fonts/" + fontName + ".fnt"))) {
+			String line;
+			String image = null;
+			while((line = reader.readLine()) != null) {
+				//System.out.println(line);
+				String[] temp = line.split(" +");
+				
+				switch(temp[0]) {
+				case "info":
+					break;
+				case "common":
+					break;
+				case "page":
+					image = temp[2].split("=")[1].replaceAll("\"", "").substring(0, temp[2].split("=")[1].lastIndexOf('_') - 1);
+					break;
+				case "char":
+					//for(String t : temp)
+						//System.out.println(t);
+					//System.out.println();
+					glyphs.put((char) Integer.parseInt(temp[1].split("=")[1]), 
+							new Glyph(image, Integer.parseInt(temp[2].split("=")[1]), Integer.parseInt(temp[3].split("=")[1]),
+									Integer.parseInt(temp[4].split("=")[1]), Integer.parseInt(temp[5].split("=")[1]),
+									Integer.parseInt(temp[6].split("=")[1]), Integer.parseInt(temp[7].split("=")[1]),
+									Integer.parseInt(temp[8].split("=")[1]), Integer.parseInt(temp[9].split("=")[1])));
+					break;
+				}
+			}
 		} catch (IOException e) {
-			System.err.println("Could not find font: " + fontName);
+			e.printStackTrace();
 		}
-		
-		updateUnifont();
 	}
 	
-	@Override
-	public GameFont clone() {
-		return new GameFont(this.fontName, this.size, this.color);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void updateUnifont() {
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		unifont = new UnicodeFont(font);
-		unifont.getEffects().add(new ColorEffect());
-		unifont.addAsciiGlyphs();
-		try {
-			unifont.loadGlyphs();
-		} catch(SlickException e) {
-			System.err.println("Could not load ASCII Glyphs");
+	private void drawText(String text, float x, float y, Color color) {
+		float advance = 0;
+		for(int i = 0; i<text.length(); i++) {
+			// Apply text adjustments
+			glyphs.get(text.charAt(i)).setColor(color);
+			glyphs.get(text.charAt(i)).setSize(size);
+			
+			glyphs.get(text.charAt(i)).draw(x + advance, y);
+			advance += glyphs.get(text.charAt(i)).getXAdvance();
 		}
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-	}
-	
-	public void changeSize(float size) {
-		font = font.deriveFont(size);
-		this.size = size;
-		updateUnifont();
-	}
-	
-	public void changeColor(Color color) {
-		this.color = color;
-	}
-	
-	public void changeAliasing(boolean antiAlias) {
-		java.awt.Graphics g = GlyphPage.getScratchGraphics();
-		
-		if (g!=null && g instanceof Graphics2D) {
-			Graphics2D g2d = (Graphics2D)g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					antiAlias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-		}
-		
-		updateUnifont();
 	}
 	
 	public void drawString(String text, float x, float y, Color color) {
-		unifont.drawString(x + 2, y + 2, text, Color.black);
-		unifont.drawString(x, y, text, (color == null ? this.color : color));
+		if(dropShadow)
+			drawText(text, x + 2, y + 2, Color.black);
+		drawText(text, x, y, (color == null ? this.color : color));
+		
+		setSize(defaultSize);
 	}
 	
 	public void drawString(String text, float x, float y, Color color, int start, int end) {
-		unifont.drawString(x + 2, y + 2, text, Color.black, start, end);
-		unifont.drawString(x, y, text, (color == null ? this.color : color), start, end);
+		if(dropShadow)
+			drawText(text.substring(start, end), x + 2, y + 2, Color.black);
+		drawText(text.substring(start, end), x, y, (color == null ? this.color : color));
+		
+		setSize(defaultSize);
 	}
 	
 	public void drawCenteredString(String text, float x, float y, Color color) {
-		unifont.drawString((x + 2) - (unifont.getWidth(text) / 2f), y + 2, text, Color.black);
-		unifont.drawString(x - (unifont.getWidth(text) / 2f), y, text, (color == null ? this.color : color));
+		if(dropShadow)
+			drawText(text, (x + 2) - (getWidth(text) / 2f), y + 2, Color.black);
+		drawText(text, x - (getWidth(text) / 2f), y, (color == null ? this.color : color));
+		
+		setSize(defaultSize);
 	}
 	
 	public float getWidth(String text) {
-		return unifont.getWidth(text);
+		float width = 0;
+		for(int i = 0; i<text.length(); i++) {
+			width += glyphs.get(text.charAt(i)).getXAdvance();
+		}
+		
+		return width;
 	}
 	
 	public float getHeight(String text) {
-		return unifont.getHeight(text);
+		float height = 0f;
+		for(int i = 0; i<text.length(); i++) {
+			if(glyphs.get(text.charAt(i)).getLineHeight() > height) {
+				height = glyphs.get(text.charAt(i)).getLineHeight();
+			}
+		}
+		
+		return height;
 	}
 	
-	public UnicodeFont getUnifont() {
-		return unifont;
+	public String getName() {
+		return fontName;
 	}
 	
 	public float getSize() {
 		return size;
 	}
 	
+	public void setSize(float size) {
+		this.size = size;
+	}
+
 	public Color getColor() {
 		return color;
 	}
 	
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
+	public boolean hasDropShadow() {
+		return dropShadow;
+	}
+	
+	public void setDropShadow(boolean dropShadow) {
+		this.dropShadow = dropShadow;
+	}
+
 }

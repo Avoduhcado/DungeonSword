@@ -1,24 +1,22 @@
 package core.render.textured;
 
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.opengl.Texture;
 
 import core.Camera;
 import core.render.TextureLoader;
 
-public class Image {
-
-	private Texture texture;
+@Deprecated
+public class Image extends Sprite {
 	
 	public Image(String ref) {
-		this.texture = TextureLoader.get().getSlickTexture(System.getProperty("resources") + "/images/" + ref + ".png");
+		super(ref);
 	}
 	
 	public void draw(float x, float y) {
 		if(Float.isNaN(x))
-			x = Camera.get().getDisplayWidth(2f) - (getWidth() / 2f);
+			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() / 2f);
 		if(Float.isNaN(y))
-			y = Camera.get().getDisplayHeight(2f) - (getHeight() / 2f);
+			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() / 2f);
 		
 		texture.bind();
 				
@@ -44,6 +42,10 @@ public class Image {
 		}
 		GL11.glEnd();
 		GL11.glPopMatrix();
+	}
+	
+	public void setTexture(String ref) {
+		this.texture = TextureLoader.get().getSlickTexture(System.getProperty("resources") + "/images/" + ref + ".png");
 	}
 	
 	public float getWidth() {

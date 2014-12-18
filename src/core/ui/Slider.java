@@ -4,7 +4,8 @@ import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
-import core.render.textured.Icon;
+
+import core.render.textured.Sprite;
 import core.utilities.mouse.MouseInput;
 
 public class Slider extends UIElement {
@@ -13,8 +14,8 @@ public class Slider extends UIElement {
 	private Rectangle2D valueBox;
 	private boolean held;
 	
-	private Icon background;
-	private Icon valueIcon;
+	private Sprite background;
+	private Sprite valueIcon;
 	
 	public Slider(float x, float y, float scale, float value, String background, String valueIcon) {
 		super(x, y, null);
@@ -23,9 +24,9 @@ public class Slider extends UIElement {
 		this.box = new Rectangle2D.Double(x, y, 100f * scale, 15f * scale);
 		valueBox = new Rectangle2D.Double(x + (float) (this.box.getWidth() * value) - 5f, y, 10f * scale, 15f * scale);
 		
-		this.background = new Icon(background);
+		this.background = new Sprite(background);
 		this.background.setScale(new Vector3f(scale, scale, 1f));
-		this.valueIcon = new Icon(valueIcon);
+		this.valueIcon = new Sprite(valueIcon);
 		this.valueIcon.setScale(new Vector3f(scale, scale, 1f));
 	}
 	
@@ -37,7 +38,8 @@ public class Slider extends UIElement {
 				value = 0f;
 			else if(value > 1)
 				value = 1f;
-			valueBox.setFrame(x + (float) (this.box.getWidth() * value) - (float) (valueBox.getWidth() / 2f), valueBox.getY(), valueBox.getWidth(), valueBox.getHeight());
+			valueBox.setFrame(x + (float) (this.box.getWidth() * value) - (float) (valueBox.getWidth() * 0.5f),
+					valueBox.getY(), valueBox.getWidth(), valueBox.getHeight());
 		}
 		
 		if(!Mouse.isButtonDown(0)) {
@@ -54,6 +56,15 @@ public class Slider extends UIElement {
 	@Override
 	public boolean isClicked() {
 		return box.contains(MouseInput.getMouse()) && Mouse.isButtonDown(0);
+	}
+	
+	@Override
+	public void setPosition(float x, float y) {
+		this.x = x;
+		this.y = y;
+		valueBox.setFrame(x + (float) (this.box.getWidth() * value) - (float) (valueBox.getWidth() * 0.5f),
+				valueBox.getY(), valueBox.getWidth(), valueBox.getHeight());
+		updateBox();
 	}
 	
 	public float getValue() {

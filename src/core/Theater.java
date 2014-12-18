@@ -1,14 +1,9 @@
 package core;
 
-import java.io.IOException;
-
-import org.newdawn.slick.Color;
-
 import core.audio.Ensemble;
 import core.setups.GameSetup;
 import core.setups.SplashScreen;
 import core.utilities.Config;
-import core.utilities.text.GameFont;
 import core.utilities.text.Text;
 
 public class Theater {
@@ -37,6 +32,8 @@ public class Theater {
 	private long lastLoopTime;
 	/** Current FPS */
 	public static int fps = 0;
+	/** Doubly current FPS? */
+	private int currentfps = Camera.TARGET_FPS;
 	/** Game version, appears in Window Title */
 	public static String version = "v0.0";
 	/** Game name, appears in Window Title */
@@ -60,7 +57,7 @@ public class Theater {
 	 */
 	public Theater() {
 		Camera.init();
-		Text.addFont("SYSTEM", new GameFont("avocado_.ttf", 24f, Color.white));
+		Text.loadFont("SYSTEM", "Avocado");
 		Ensemble.init();
 		Config.loadConfig();
 	
@@ -112,11 +109,7 @@ public class Theater {
 	 * Save configuration, close ensemble, close screen, and exit game.
 	 */
 	public void close() {
-		try {
-			Config.saveConfig();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Config.createConfig();
 		Ensemble.get().close();
 		Camera.get().close();
 		System.exit(0);
@@ -165,7 +158,7 @@ public class Theater {
 	 * @return A value scaled to current delta time of running application
 	 */
 	public static float getDeltaSpeed(float speed) {
-		return (Theater.get().delta * speed) / Theater.get().deltaMax;
+		return ((1000f / Theater.get().currentfps) * speed) / Theater.get().deltaMax;
 	}
 	
 	/**

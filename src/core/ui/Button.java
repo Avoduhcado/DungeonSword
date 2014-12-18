@@ -1,8 +1,7 @@
 package core.ui;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-
-import org.newdawn.slick.Color;
 
 import core.Camera;
 import core.utilities.text.Text;
@@ -18,7 +17,7 @@ public class Button extends UIElement {
 		super(0, 0, null);
 		
 		this.text = text;
-		this.box = new Rectangle2D.Double(this.x, y, Text.getFont("SYSTEM").getWidth(text), Text.getFont("SYSTEM").getHeight(text));
+		this.box = new Rectangle2D.Double(this.x, y, Text.getWidth(text, "SYSTEM"), Text.getHeight(text, "SYSTEM"));
 	}
 	
 	public Button(String text, float x, float y, float width, String image) {
@@ -26,13 +25,14 @@ public class Button extends UIElement {
 		
 		this.text = text;
 		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(2f) - (Text.getFont("SYSTEM").getWidth(text) / 2f);
+			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") * 0.5f);
 		else
 			this.x = x;
 		
-		if(text != null)
-			this.box = new Rectangle2D.Double(this.x, y, width == 0 ? Text.getFont("SYSTEM").getWidth(text) : width, Text.getFont("SYSTEM").getHeight(text));
-		else
+		if(text != null) {
+			this.box = new Rectangle2D.Double(this.x, y, width == 0 ? Text.getWidth(text, "SYSTEM") : width,
+					Text.getHeight(text, "SYSTEM"));
+		} else
 			this.box = new Rectangle2D.Double(this.x, y, width == 0 ? frame.getWidth() : width, frame.getHeight());
 	}
 
@@ -62,7 +62,7 @@ public class Button extends UIElement {
 		super.draw();
 
 		if(text != null)
-			Text.getFont("SYSTEM").drawString(text, x, y, hover ? Color.white : Color.gray);
+			Text.drawString(text, x, y, hover ? Color.white : Color.gray, "SYSTEM");
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class Button extends UIElement {
 		super.draw(x, y);
 
 		if(text != null)
-			Text.getFont("SYSTEM").drawString(text, x, y, hover ? Color.white : Color.gray);
+			Text.drawString(text, x, y, hover ? Color.white : Color.gray, "SYSTEM");
 	}
 	
 	public String getText() {
@@ -84,7 +84,7 @@ public class Button extends UIElement {
 	@Override
 	public void setPosition(float x, float y) {
 		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(2f) - (Text.getFont("SYSTEM").getWidth(text) / 2f) - 15f;
+			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") * 0.5f) - 15f;
 		else
 			this.x = x;
 		this.y = y;

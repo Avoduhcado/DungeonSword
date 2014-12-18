@@ -3,23 +3,20 @@ package core.ui;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import core.utilities.text.Text;
 import core.utilities.text.TextLine;
 
 public class TextBox extends UIElement {
 
 	private ArrayList<TextLine> text = new ArrayList<TextLine>();
+	private String fontFace;
 	
-	public TextBox(String text, String fontName, float x, float y, String image) {
+	public TextBox(String text, String fontFace, float x, float y, String image) {
 		super(x, y, image);
 		
+		this.fontFace = fontFace;
 		String[] temp = text.split(";");
 		for(String t : temp)
 			this.text.add(new TextLine(t));
-		if(fontName != null) {
-			for(TextLine t : this.text)
-				t.setFont(Text.getFont(fontName).clone());
-		}
 		this.box = new Rectangle2D.Double(x, y, getWidth(), getHeight());
 	}
 	
@@ -28,7 +25,7 @@ public class TextBox extends UIElement {
 		if(frame != null)
 			frame.draw(x, y, box);
 		for(int i = 0; i<text.size(); i++)
-			text.get(i).draw(x, y + getCurrentHeight(i));
+			text.get(i).draw(x, y + getCurrentHeight(i), fontFace);
 	}
 	
 	@Override
@@ -36,7 +33,7 @@ public class TextBox extends UIElement {
 		if(frame != null)
 			frame.draw(x, y, box);
 		for(int i = 0; i<text.size(); i++)
-			text.get(i).draw(x, y + getCurrentHeight(i));
+			text.get(i).draw(x, y + getCurrentHeight(i), fontFace);
 	}
 	
 	public float getWidth() {
