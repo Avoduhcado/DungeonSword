@@ -25,7 +25,7 @@ public class Button extends UIElement {
 		
 		this.text = text;
 		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") * 0.5f);
+			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") / 2f);
 		else
 			this.x = x;
 		
@@ -62,7 +62,8 @@ public class Button extends UIElement {
 		super.draw();
 
 		if(text != null)
-			Text.drawString(text, x, y, hover ? Color.white : Color.gray, "SYSTEM");
+			Text.drawString(text, x, y,
+					hover ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray), "SYSTEM");
 	}
 	
 	@Override
@@ -70,7 +71,8 @@ public class Button extends UIElement {
 		super.draw(x, y);
 
 		if(text != null)
-			Text.drawString(text, x, y, hover ? Color.white : Color.gray, "SYSTEM");
+			Text.drawString(text, x, y,
+					hover ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray), "SYSTEM");
 	}
 	
 	public String getText() {
@@ -84,7 +86,7 @@ public class Button extends UIElement {
 	@Override
 	public void setPosition(float x, float y) {
 		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") * 0.5f) - 15f;
+			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") / 2f) - 15f;
 		else
 			this.x = x;
 		this.y = y;

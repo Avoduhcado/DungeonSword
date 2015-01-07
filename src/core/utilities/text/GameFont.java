@@ -14,7 +14,7 @@ public class GameFont {
 	
 	private String fontName;
 	private float size;
-	public static final float defaultSize = 0.75f;
+	public static final float defaultSize = 0.8f;
 	private Color color;
 	private boolean dropShadow = true;
 	

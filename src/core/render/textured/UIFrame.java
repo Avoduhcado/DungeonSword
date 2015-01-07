@@ -16,19 +16,18 @@ public class UIFrame extends Sprite {
 	public UIFrame(String ref) {
 		super(ref);
 		
-		still = true;
 		width = getWidth() / 3f;
 		height = getHeight() / 3f;
 	}
 
 	public void draw(float x, float y, Rectangle2D box) {
 		if(Float.isNaN(x))
-			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() * 0.5f);
+			x = Camera.get().getDisplayWidth(0.5f) - (getWidth() / 2f);
 		if(Float.isNaN(y))
-			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() * 0.5f);
+			y = Camera.get().getDisplayHeight(0.5f) - (getHeight() / 2f);
 		
-		x -= width * 0.5f;
-		y -= height * 0.5f;
+		x -= width / 2f;
+		y -= height / 2f;
 		
 		texture.bind();
 				

@@ -30,14 +30,16 @@ public class Theater {
 	private long currentTime;
 	/** Used in calculating FPS */
 	private long lastLoopTime;
-	/** Current FPS */
+	/** Displayed FPS */
 	public static int fps = 0;
-	/** Doubly current FPS? */
+	/** Second-by-second FPS */
 	private int currentfps = Camera.TARGET_FPS;
 	/** Game version, appears in Window Title */
 	public static String version = "v0.0";
 	/** Game name, appears in Window Title */
 	public static String title = "Avogine";
+	/** Current engine framework version */
+	public static final String AVOGINE_VERSION = "0.7.1";
 	
 	/** Theater singleton */
 	private static Theater theater;
@@ -58,6 +60,7 @@ public class Theater {
 	public Theater() {
 		Camera.init();
 		Text.loadFont("SYSTEM", "Avocado");
+		Text.loadFont("DEBUG", "Proggy");
 		Ensemble.init();
 		Config.loadConfig();
 	

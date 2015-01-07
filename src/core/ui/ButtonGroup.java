@@ -10,8 +10,10 @@ public class ButtonGroup extends UIElement {
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 	private boolean centered;
 	
-	public ButtonGroup(float x, float y, String image) {
-		super(x, y, image);		
+	public ButtonGroup(float x, float y, String image, boolean centered) {
+		super(x, y, image);
+		
+		this.centered = centered;
 	}
 	
 	public void update() {
@@ -29,23 +31,30 @@ public class ButtonGroup extends UIElement {
 	
 	public void centerItems() {
 		for(int i = 0; i<buttons.size(); i++) {
-			buttons.get(i).setPosition(x + (float)(box.getWidth() * 0.5f) - (float)(buttons.get(i).getBox().getWidth() * 0.5f),
+			buttons.get(i).setPosition(x + (float)(box.getWidth() / 2f) - (float)(buttons.get(i).getBox().getWidth() / 2f),
 					y + getCurrentHeight(i));
 		}
 	}
 	
 	@Override
 	public void updateBox() {
-		if(getMaxWidth() > box.getWidth()) {
-			x = x - (getMaxWidth() * 0.5f);
+		if(centered) {
+			if(getMaxWidth() > box.getWidth()) {
+				box = new Rectangle2D.Double((float) (box.getCenterX() - (buttons.get(getWidestElement()).getBox().getWidth() / 2f)),
+						y, getMaxWidth(), getTotalHeight());
+			} else {
+				box = new Rectangle2D.Double(buttons.get(getWidestElement()).getX(), y, getMaxWidth(), getTotalHeight());
+			}
+			this.x = (float) box.getX();
+		} else {
+			box = new Rectangle2D.Double(x, y, getMaxWidth(), getTotalHeight());
 		}
-		box = new Rectangle2D.Double(buttons.get(getWidestElement()).getX(), y, getMaxWidth(), getTotalHeight());
 	}
 	
 	@Override
 	public void setPosition(float x, float y) {
 		if(Float.isNaN(x))
-			this.x = (float) (Camera.get().getDisplayWidth(0.5f) - (box.getWidth() * 0.5f));
+			this.x = (float) (Camera.get().getDisplayWidth(0.5f) - (box.getWidth() / 2f));
 		else
 			this.x = x;
 		this.y = y;
@@ -106,7 +115,11 @@ public class ButtonGroup extends UIElement {
 	public void addButton(Button button) {
 		buttons.add(button);
 		updateBox();
-		button.setPosition(x, y + getCurrentHeight(buttons.size() - 1));
+		if(centered) {
+			button.setPosition((float) (box.getCenterX() - (button.getBox().getWidth() / 2f)), y + getCurrentHeight(buttons.size() - 1));
+		} else {
+			button.setPosition(x, y + getCurrentHeight(buttons.size() - 1));
+		}
 	}
 
 	public boolean isCentered() {

@@ -30,7 +30,7 @@ public class TitleMenu extends GameSetup {
 		logo = new Sprite("Avogine Title");
 		
 		// Initialize game buttons
-		buttonGroup = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(0.667f), "Menu2");
+		buttonGroup = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(0.575f), "Menu2", true);
 		buttonGroup.addButton(new Button("New Game"));
 		buttonGroup.addButton(new Button("Options"));
 		buttonGroup.addButton(new Button("Exit"));
