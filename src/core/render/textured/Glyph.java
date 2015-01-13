@@ -13,6 +13,8 @@ import core.utilities.text.GameFont;
 
 public class Glyph extends Sprite {
 
+	// TODO Offset values are wonky at small scaling factors
+	
 	private int xOffset, yOffset;
 	private int xAdvance;
 	private int width, height;
@@ -44,9 +46,10 @@ public class Glyph extends Sprite {
 		
 		GL11.glPushMatrix();
 		
-		GL11.glTranslatef((int) ((x + getXOffset()) - Camera.get().frame.getX()), (int) ((y + getYOffset()) - Camera.get().frame.getY()), 0f);
+		GL11.glTranslatef((int) ((x + getXOffset()) - Camera.get().frame.getX()),
+				(int) ((y + getYOffset()) - Camera.get().frame.getY()), 0f);
 		GL11.glColor4f(color.x, color.y, color.z, color.w);
-		GL11.glScalef(scale.x, scale.y, 1f);
+		//GL11.glScalef(scale.x, scale.y, 1f);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);

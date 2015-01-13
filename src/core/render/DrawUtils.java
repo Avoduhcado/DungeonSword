@@ -81,6 +81,34 @@ public class DrawUtils {
 	}
 	
 	/**
+	 * Draws a single color over a specific rectangle.
+	 * 
+	 * @param r Red value of color
+	 * @param g Green value of color
+	 * @param b Blue value of color
+	 * @param a Transparency
+	 * @param rect The rectangle to be drawn
+	 */
+	public static void fillRect(float r, float g, float b, float a, Rectangle2D rect) {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		
+		GL11.glPushMatrix();
+		GL11.glColor4f(r, g, b, a);
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		{
+			GL11.glVertex2d(rect.getX(), rect.getY());
+			GL11.glVertex2d(rect.getMaxX(), rect.getY());
+			GL11.glVertex2d(rect.getMaxX(), rect.getMaxY());
+			GL11.glVertex2d(rect.getX(), rect.getMaxY());
+		}
+		GL11.glEnd();
+		GL11.glPopMatrix();
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+	
+	/**
 	 * Draws a single color over the entire screen.
 	 * 
 	 * @param r Red value of color
@@ -97,9 +125,9 @@ public class DrawUtils {
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			GL11.glVertex2d(0, 0);
-			GL11.glVertex2d(Camera.get().frame.getWidth(), 0);
-			GL11.glVertex2d(Camera.get().frame.getWidth(), Camera.get().frame.getHeight());
-			GL11.glVertex2d(0, Camera.get().frame.getHeight());
+			GL11.glVertex2d(Camera.get().getDisplayWidth(1f), 0);
+			GL11.glVertex2d(Camera.get().getDisplayWidth(1f), Camera.get().getDisplayHeight(1f));
+			GL11.glVertex2d(0, Camera.get().getDisplayHeight(1f));
 		}
 		GL11.glEnd();
 		GL11.glPopMatrix();

@@ -130,9 +130,9 @@ public class Camera {
 		
 		// Draw debug info
 		if(Theater.get().debug) {
-			Text.getFont("DEBUG").setSize(0.5f);
+			//Text.getFont("DEBUG").setSize(0.5f);
 			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, Color.white);
-			Text.getFont("DEBUG").setSize(0.5f);
+			//Text.getFont("DEBUG").setSize(0.5f);
 			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 45, Color.white);
 		}
 	}

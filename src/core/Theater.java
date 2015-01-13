@@ -39,7 +39,7 @@ public class Theater {
 	/** Game name, appears in Window Title */
 	public static String title = "Avogine";
 	/** Current engine framework version */
-	public static final String AVOGINE_VERSION = "0.7.1";
+	public static final String AVOGINE_VERSION = "0.7.21";
 	
 	/** Theater singleton */
 	private static Theater theater;
@@ -60,7 +60,6 @@ public class Theater {
 	public Theater() {
 		Camera.init();
 		Text.loadFont("SYSTEM", "Avocado");
-		Text.loadFont("DEBUG", "Proggy");
 		Ensemble.init();
 		Config.loadConfig();
 	
