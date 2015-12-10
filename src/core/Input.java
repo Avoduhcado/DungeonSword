@@ -6,6 +6,8 @@ import org.lwjgl.input.Mouse;
 
 import core.setups.GameSetup;
 import core.setups.Stage;
+import core.ui.UIElement;
+import core.ui.utils.MouseEvent;
 import core.utilities.keyboard.Keybinds;
 
 public class Input {
@@ -24,19 +26,14 @@ public class Input {
 	 * @param setup The current setup of the game
 	 */
 	public static void checkInput(GameSetup setup) {
+		processMouse(setup);
+		
 		// Refresh key bind presses
 		Keybinds.update();
 		
 		// Enter debug mode
 		if(Keybinds.DEBUG.clicked()) {
 			Theater.get().debug = !Theater.get().debug;
-		}
-		
-		// Refresh mouse clicks
-		if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
-			mousePress();
-		} else {
-			mouseRelease();
 		}
 		
 		// Setup specific processing
@@ -47,41 +44,37 @@ public class Input {
 		}
 	}
 	
-	/**
-	 * Detect whether or not the mouse was pressed.
-	 */
-	public static void mousePress() {
-		if(!mousePressed) {
-			mousePressed = true;
-			mouseHeld = true;
-			mouseClick = new Point2D.Double(Mouse.getX(), -(Mouse.getY() - Camera.get().displayHeight));
+	private static void processMouse(GameSetup setup) {
+		while(Mouse.next()) {
+			if(Mouse.getEventButton() != -1) {
+				if(Mouse.getEventButtonState()) {
+					System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+				} else {
+					processMouseUI(setup,
+							new MouseEvent(null,
+									MouseEvent.CLICKED,
+									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
+
+					System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
+					System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+				}
+			} else if(Mouse.getDX() != 0 || Mouse.getDY() != 0) {
+				System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
+			}
+		}
+		
+		if(Mouse.hasWheel() && Mouse.getDWheel() != 0) {
+			System.out.println(Mouse.getEventDWheel());
 		}
 	}
 	
-	/**
-	 * Detect whether or not the mouse was released.
-	 */
-	public static void mouseRelease() {
-		if(mousePressed) {
-			mousePressed = false;
-			mouseHeld = false;
-			mouseRelease = new Point2D.Double(Mouse.getX(), -(Mouse.getY() - Camera.get().displayHeight));
+	private static void processMouseUI(GameSetup setup, MouseEvent e) {
+		for(UIElement ui : setup.getUI()) {
+			if(ui.getBounds().contains(e.getX(), e.getY())) {
+				System.out.println("SDfsdfsdf");
+				ui.fireEvent(e);
+			}
 		}
-	}
-	
-	/**
-	 * Clear the current mouse positions
-	 */
-	public static void clearMouse() {
-		mouseClick = null;
-		mouseRelease = null;
-	}
-	
-	/**
-	 * @return Location of mouse
-	 */
-	public static Point2D getCurrentMouse() {
-		return new Point2D.Double(Mouse.getX(), -(Mouse.getY() - Camera.get().displayHeight));
 	}
 	
 }

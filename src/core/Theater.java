@@ -7,18 +7,22 @@ import core.utilities.Config;
 import core.utilities.text.Text;
 
 public class Theater {
-	
+
 	/** TODO
 	 * Comment
+	 * 
+	 * Options for resource loading and interface to manage it
+	 * 
+	 * Save classes to manage save files
 	 */
-	
+
 	/** Current Game Setup */
 	private GameSetup setup;
 
 	/** Main game loop */
 	private boolean playing;
 	/** Game pause */
-	public boolean paused;
+	private boolean paused;
 	/** Game Debug */
 	public boolean debug;
 
@@ -39,8 +43,8 @@ public class Theater {
 	/** Game name, appears in Window Title */
 	public static String title = "Avogine";
 	/** Current engine framework version */
-	public static final String AVOGINE_VERSION = "0.7.21";
-	
+	public static final String AVOGINE_VERSION = "0.7.60";
+
 	/** Theater singleton */
 	private static Theater theater;
 
@@ -58,11 +62,23 @@ public class Theater {
 	 * load any preset Configurations, and create Splash Screen.
 	 */
 	public Theater() {
+		// Determine OS and set natives path accordingly
+		if(System.getProperty("os.name").startsWith("Windows")) {
+			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/windows");
+		} else if(System.getProperty("os.name").startsWith("Mac")) {
+			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/macosx");
+		} else if(System.getProperty("os.name").startsWith("Linux")) {
+			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/linux");
+		} else {
+			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/solaris");
+		}
+		System.setProperty("resources", System.getProperty("user.dir") + "/resources");
+
 		Camera.init();
-		Text.loadFont("SYSTEM", "Avocado");
+		Text.loadFont("DEBUG", "Avocado");
 		Ensemble.init();
 		Config.loadConfig();
-	
+
 		setup = new SplashScreen();
 	}
 
@@ -77,7 +93,7 @@ public class Theater {
 
 		Ensemble.get().update();
 
-		if(!paused)
+		if(!isPaused())
 			getSetup().update();
 
 		Input.checkInput(getSetup());
@@ -104,7 +120,7 @@ public class Theater {
 	 * Pause or unpause the game.
 	 */
 	public void pause() {
-		paused = !paused;
+		paused = !isPaused();
 	}
 
 	/**
@@ -138,13 +154,20 @@ public class Theater {
 	public GameSetup getSetup() {		
 		return setup;
 	}
-	
+
 	/**
 	 * Swap to a new Game Setup.
 	 * @param setup New GameSetup to swap to
 	 */
 	public void swapSetup(GameSetup setup) {
 		this.setup = setup;
+	}
+
+	/**
+	 * @return Whether or not the game should be paused
+	 */
+	public boolean isPaused() {
+		return paused;
 	}
 
 	/**
@@ -162,24 +185,12 @@ public class Theater {
 	public static float getDeltaSpeed(float speed) {
 		return ((1000f / Theater.get().currentfps) * speed) / Theater.get().deltaMax;
 	}
-	
+
 	/**
 	 * Main
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// Determine OS and set natives path accordingly
-		if(System.getProperty("os.name").startsWith("Windows")) {
-			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/windows");
-		} else if(System.getProperty("os.name").startsWith("Mac")) {
-			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/macosx");
-		} else if(System.getProperty("os.name").startsWith("Linux")) {
-			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/linux");
-		} else {
-			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/solaris");
-		}
-		System.setProperty("resources", System.getProperty("user.dir") + "/resources");
-		
 		Theater.init();
 		theater.play();
 	}

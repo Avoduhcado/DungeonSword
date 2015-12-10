@@ -2,23 +2,70 @@ package core.ui.overlays;
 
 import core.Camera;
 import core.Theater;
+import core.render.DrawUtils;
 import core.setups.TitleMenu;
 import core.ui.Button;
-import core.ui.ButtonGroup;
+import core.ui.utils.Align;
+import core.ui.utils.ClickEvent;
 
 public class GameMenu extends MenuOverlay {
 
-	private ButtonGroup buttons;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private OptionsMenu options;
 	
-	public GameMenu(float x, float y, String image) {
-		super(x, y, image);
+	public GameMenu(String image) {
+		Button toGame = new Button("Return to Game", Float.NaN, Camera.get().getDisplayHeight(0.2f), 0, null);
+		toGame.setAlign(Align.CENTER);
+		toGame.setStill(true);
+		toGame.addEvent(new ClickEvent(toGame) {
+			public void click() {
+				toClose = true;
+			}
+		});
 		
-		buttons = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(0.2f), "Menu2", true);
-		buttons.addButton(new Button("Return to Game"));
-		buttons.addButton(new Button("Options"));
-		buttons.addButton(new Button("Quit to Title"));
-		buttons.addButton(new Button("Quit to Desktop"));
+		Button openOptions = new Button("Options", Float.NaN, (float) toGame.getBounds().getMaxY(), 0, null);
+		openOptions.setAlign(Align.CENTER);
+		openOptions.setStill(true);
+		openOptions.addEvent(new ClickEvent(openOptions) {
+			public void click() {
+				options = new OptionsMenu("Menu2");
+			}
+		});
+		
+		Button toTitle = new Button("Quit to Title", Float.NaN, (float) openOptions.getBounds().getMaxY(), 0, null);
+		toTitle.setAlign(Align.CENTER);
+		toTitle.setStill(true);
+		toTitle.addEvent(new ClickEvent(toTitle) {
+			public void click() {
+				Theater.get().swapSetup(new TitleMenu());
+			}
+		});
+		
+		Button toDesktop = new Button("Quit to Desktop", Float.NaN, (float) toTitle.getBounds().getMaxY(), 0, null);
+		toDesktop.setAlign(Align.CENTER);
+		toDesktop.setStill(true);
+		toDesktop.addEvent(new ClickEvent(toDesktop) {
+			public void click() {
+				Theater.get().close();
+			}
+		});
+		
+		toGame.setSurrounding(0, toDesktop);
+		this.add(toGame);
+		openOptions.setSurrounding(0, toGame);
+		this.add(openOptions);
+		toTitle.setSurrounding(0, openOptions);
+		this.add(toTitle);
+		toDesktop.setSurrounding(0, toTitle);
+		this.add(toDesktop);
+		
+		setKeyboardNavigable(true, toGame);
+		
+		addFrame(image);
 	}
 	
 	@Override
@@ -28,29 +75,24 @@ public class GameMenu extends MenuOverlay {
 			if(options.isCloseRequest())
 				options = null;
 		} else {
-			buttons.update();
-			if(buttons.getButton(1).isClicked()) {
-				options = new OptionsMenu(20, 20, "Menu2");
-			} else if(buttons.getButton(2).isClicked()) {
-				Theater.get().swapSetup(new TitleMenu());
-			} else if(buttons.getButton(3).isClicked()) {
-				Theater.get().close();
-			}
+			super.update();
 		}
 	}
 	
 	@Override
 	public void draw() {
+		DrawUtils.fillColor(0f, 0f, 0f, 0.65f);
+		
 		if(options != null) {
 			options.draw();
 		} else {
-			buttons.draw();
+			super.draw();
 		}
 	}
 
 	@Override
 	public boolean isCloseRequest() {
-		return buttons.getButton(0).isClicked();
+		return super.isCloseRequest() && options == null;
 	}
 
 }

@@ -4,17 +4,21 @@ import core.Camera;
 import core.Theater;
 import core.audio.Ensemble;
 import core.audio.Track;
-import core.render.textured.Sprite;
 import core.ui.Button;
-import core.ui.ButtonGroup;
+import core.ui.ElementGroup;
+import core.ui.Icon;
 import core.ui.overlays.OptionsMenu;
+import core.ui.utils.Align;
+import core.ui.utils.ClickEvent;
+import core.ui.utils.MouseAdapter;
+import core.ui.utils.MouseEvent;
 
-public class TitleMenu extends GameSetup {
+public class TitleMenu implements GameSetup {
 
 	/** Title logo */
-	private Sprite logo;
-	/** A button group contain New Game, Options, and Exit */
-	private ButtonGroup buttonGroup;
+	private Icon logo;
+	/** A button group containing New Game, Options, and Exit */
+	private ElementGroup<Button> buttons;
 	/** The options menu */
 	private OptionsMenu optionsMenu;
 	
@@ -27,15 +31,58 @@ public class TitleMenu extends GameSetup {
 		Camera.get().setFadeTimer(-0.1f);
 		
 		// Load title logo
-		logo = new Sprite("Avogine Title");
+		logo = new Icon("Avogine Title");
+		logo.setPosition(Float.NaN, Camera.get().getDisplayHeight(0.1667f));
 		
 		// Initialize game buttons
-		buttonGroup = new ButtonGroup(Float.NaN, Camera.get().getDisplayHeight(0.575f), "Menu2", true);
-		buttonGroup.addButton(new Button("New Game"));
-		buttonGroup.addButton(new Button("Options"));
-		buttonGroup.addButton(new Button("Exit"));
-		buttonGroup.setCentered(true);
+		Button newGame = new Button("New Game", Float.NaN, Camera.get().getDisplayHeight(0.55f), 0, null);
+		newGame.setStill(true);
+		newGame.setAlign(Align.CENTER);
+		newGame.addEvent(new ClickEvent(newGame) {
+			public void click() {
+				Theater.get().swapSetup(new Stage());
+			}
+		});
 		
+		Button options = new Button("Options", Float.NaN, (float) newGame.getBounds().getMaxY(), 0, null);
+		options.setStill(true);
+		options.setAlign(Align.CENTER);
+		options.addEvent(new ClickEvent(options) {
+			public void click() {
+				optionsMenu = new OptionsMenu("Menu2");
+			}
+		});
+		
+		Button exit = new Button("Exit", Float.NaN, (float) options.getBounds().getMaxY(), 0, null);
+		exit.setStill(true);
+		exit.setAlign(Align.CENTER);
+		exit.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("SDFSDFSDF");
+				Theater.get().close();	
+			}
+		});
+		/*exit.addEvent(new ClickEvent(exit) {
+			public void click() {
+				Theater.get().close();
+			}
+		});*/
+		
+		// Initialize game buttons
+		newGame.setSurrounding(3, options);
+		options.setSurrounding(3, exit);
+		exit.setSurrounding(3, newGame);
+		
+		buttons = new ElementGroup<Button>();
+		buttons.add(newGame);
+		buttons.add(options);
+		buttons.add(exit);
+		buttons.setKeyboardNavigable(true, newGame);
+		//buttons.setSelectionPointer("screen ui/Pointer");
+		buttons.addFrame("Menu2");
+		
+		addUI(exit);
+				
 		// Play title track
 		Ensemble.get().setBackground(new Track("Menu"));
 		Ensemble.get().getBackground().play();
@@ -51,16 +98,8 @@ public class TitleMenu extends GameSetup {
 				optionsMenu = null;
 		} else {
 			// Update buttons
-			buttonGroup.update();
-			if(buttonGroup.getButton(0).isClicked()) {
-				// Start game, proceed with state swap
-				Theater.get().swapSetup(new Stage());
-			} else if(buttonGroup.getButton(1).isClicked()) {
-				// Open options menu
-				optionsMenu = new OptionsMenu(20, 20, "Menu2");
-			} else if(buttonGroup.getButton(2).isClicked()) {
-				// Exit game
-				Theater.get().close();
+			for(Button b : buttons) {
+				b.update();
 			}
 		}
 	}
@@ -68,10 +107,10 @@ public class TitleMenu extends GameSetup {
 	@Override
 	public void draw() {
 		// Draw logo
-		logo.draw(Float.NaN, Camera.get().getDisplayHeight(0.1667f));
+		logo.draw();
 		
 		// Draw buttons
-		buttonGroup.draw();
+		buttons.draw();
 		
 		// If options menu is open, draw it
 		if(optionsMenu != null)
@@ -79,9 +118,9 @@ public class TitleMenu extends GameSetup {
 	}
 
 	@Override
-	public void resizeRefresh() {
-		// Reposition and center
-		buttonGroup.setPosition(Float.NaN, Camera.get().getDisplayHeight(0.667f));
+	public void drawUI() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

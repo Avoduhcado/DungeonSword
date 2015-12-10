@@ -1,78 +1,61 @@
 package core.ui;
 
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-
-import core.Camera;
+import core.ui.utils.Align;
 import core.utilities.text.Text;
 
 public class Button extends UIElement {
 	
 	private String text;
-	private boolean hover;
-	private boolean clicked;
-	private boolean held;
-	
-	public Button(String text) {
-		super(0, 0, null);
-		
+	private String icon;
+			
+	public Button(String text) {		
 		this.text = text;
-		this.box = new Rectangle2D.Double(this.x, y, Text.getWidth(text, "SYSTEM"), Text.getHeight(text, "SYSTEM"));
+		setBounds(0, 0, text != null ? Text.getDefault().getWidth(text) : 1, text != null ? Text.getDefault().getHeight(text) : 1);
 	}
 	
-	public Button(String text, float x, float y, float width, String image) {
-		super(x, y, image);
-		
+	public Button(String text, float x, float y, float width, String image) {		
 		this.text = text;
-		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") / 2f);
-		else
-			this.x = x;
-		
-		if(text != null) {
-			this.box = new Rectangle2D.Double(this.x, y, width == 0 ? Text.getWidth(text, "SYSTEM") : width,
-					Text.getHeight(text, "SYSTEM"));
-		} else
-			this.box = new Rectangle2D.Double(this.x, y, width == 0 ? frame.getWidth() : width, frame.getHeight());
-	}
-
-	@Override
-	public void update() {
-		if(isHovering())
-			hover = true;
-		else
-			hover = false;
-		
-		if(clicked)
-			clicked = false;
-		if(isClicked()) {
-			if(!held) {
-				held = true;
-			}
-		} else {
-			if(held) {
-				held = false;
-				clicked = true;
-			}
-		}
+		setBounds(x, y, width == 0 ? Text.getDefault().getWidth(text) : width, Text.getDefault().getHeight(text));
+		setFrame(image);
 	}
 	
 	@Override
 	public void draw() {
 		super.draw();
 
-		if(text != null)
-			Text.drawString(text, x, y,
-					hover ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray), "SYSTEM");
+		/*if(icon != null) {
+			SpriteIndex.getSprite(icon).setStill(still);
+			SpriteIndex.getSprite(icon).setFixedSize((float) bounds.getWidth(), (float) bounds.getHeight());
+			SpriteIndex.getSprite(icon).draw((float) bounds.getX(), (float) bounds.getY());
+		} else if(text != null) {
+			Text.getDefault().setStill(still);
+			Text.getDefault().setColor(isHovering() ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray));
+			Text.getDefault().drawString(text, (float) bounds.getX(), (float) bounds.getY());
+		} else if(background == null) {
+			DrawUtils.setStill(still);
+			DrawUtils.drawRect((float) bounds.getX(), (float) bounds.getY(), bounds);
+		}*/
+		if(text != null) {
+			Text.drawString(text, (float) bounds.getX(), (float) bounds.getY());
+		}
 	}
-	
-	@Override
-	public void draw(float x, float y) {
-		super.draw(x, y);
 
-		if(text != null)
-			Text.drawString(text, x, y,
-					hover ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray), "SYSTEM");
+	@Override
+	public void setAlign(Align border) {
+		switch(border) {
+		case RIGHT:
+			setBounds((float) bounds.getMaxX(), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
+			break;
+		case LEFT:
+			setBounds((float) (bounds.getX() - bounds.getWidth()), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
+			break;
+		case CENTER:
+			bounds.setFrameFromCenter(bounds.getX(), bounds.getCenterY(), 
+					bounds.getX() - (bounds.getWidth() / 2f), bounds.getY());
+			break;
+		default:
+			break;
+		}
 	}
 	
 	public String getText() {
@@ -83,14 +66,12 @@ public class Button extends UIElement {
 		this.text = text;
 	}
 	
-	@Override
-	public void setPosition(float x, float y) {
-		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(0.5f) - (Text.getWidth(text, "SYSTEM") / 2f) - 15f;
-		else
-			this.x = x;
-		this.y = y;
-		updateBox();
+	public String getIcon() {
+		return icon;
 	}
-
+	
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+	
 }

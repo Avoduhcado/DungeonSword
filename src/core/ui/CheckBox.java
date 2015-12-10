@@ -1,11 +1,9 @@
 package core.ui;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import core.Camera;
 import core.render.DrawUtils;
 import core.utilities.text.Text;
 
@@ -14,11 +12,9 @@ public class CheckBox extends UIElement {
 	private boolean checked;
 	private String text;
 	
-	public CheckBox(float x, float y, String image, String text) {
-		super(x, y, image);
-		
+	public CheckBox(String text, float x, float y, String image) {		
 		this.text = text;
-		box = new Rectangle2D.Double(x, y, Text.getWidth(text, "SYSTEM"), Text.getHeight(text, "SYSTEM"));
+		setBounds(x, y, Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
 	}
 	
 	@Override
@@ -26,6 +22,8 @@ public class CheckBox extends UIElement {
 		if(isClicked()) {
 			checked = !checked;
 		}
+		
+		super.update();
 	}
 
 	@Override
@@ -34,9 +32,12 @@ public class CheckBox extends UIElement {
 
 		if(isHovering()) {
 			DrawUtils.setColor(new Vector3f(1f, 1f, 1f));
-			DrawUtils.drawRect(x - 2.5f, y - 2.5f, new Rectangle2D.Double(x, y, box.getWidth() + 5f, box.getHeight() + 5f));
+			DrawUtils.setStill(true);
+			DrawUtils.drawRect((float) bounds.getX(), (float) bounds.getY(), bounds);
 		}
-		Text.drawString(text, x, y, checked ? Color.white : Color.gray, "SYSTEM");
+		Text.getDefault().setStill(still);
+		Text.getDefault().setColor(checked ? Color.white : Color.gray);
+		Text.getDefault().drawString(text, (float) bounds.getX(), (float) bounds.getY());
 	}
 	
 	public boolean isChecked() {
@@ -46,15 +47,9 @@ public class CheckBox extends UIElement {
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
-	
-	@Override
-	public void setPosition(float x, float y) {
-		if(Float.isNaN(x))
-			this.x = Camera.get().getDisplayWidth(2f) - (Text.getWidth(text, "SYSTEM") / 2f);
-		else
-			this.x = x;
-		this.y = y;
-		updateBox();
+
+	public String getText() {
+		return text;
 	}
 
 }

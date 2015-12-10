@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,12 +9,12 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.opengl.PNGDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
 import core.render.DrawUtils;
 import core.setups.GameSetup;
 import core.utilities.text.Text;
-import de.matthiasmann.twl.utils.PNGDecoder;
 
 public class Camera {
 	
@@ -29,11 +28,15 @@ public class Camera {
 	public int displayHeight = HEIGHT;
 	/** Target FPS for application to run at */
 	public static final int TARGET_FPS = 60;
-		
+
+	/** VSync status */
+	private boolean vsync;
+	
 	/** View frame fixed to default size */
 	public final Rectangle2D fixedFrame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
 	/** Current view frame */
 	public Rectangle2D frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
+	
 	
 	/** Total time to fade over */
 	private float fadeTotal;
@@ -89,7 +92,7 @@ public class Camera {
         try {
             PNGDecoder decoder = new PNGDecoder(fis);
             ByteBuffer bb = ByteBuffer.allocateDirect(decoder.getWidth()*decoder.getHeight()*4);
-            decoder.decode(bb, decoder.getWidth()*4, PNGDecoder.Format.RGBA);
+            decoder.decode(bb, decoder.getWidth()*4, PNGDecoder.RGBA);
             bb.flip();
             ByteBuffer[] buffer = new ByteBuffer[1];
             buffer[0] = bb;
@@ -121,8 +124,8 @@ public class Camera {
 		// Draw current game setup
 		setup.draw();
 		
-		if(Theater.get().paused) {
-			Text.drawCenteredString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), Color.white);
+		if(Theater.get().isPaused()) {
+			//Text.drawCenteredString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t,cwhite");
 		}
 		
 		// Process fading
@@ -130,10 +133,8 @@ public class Camera {
 		
 		// Draw debug info
 		if(Theater.get().debug) {
-			//Text.getFont("DEBUG").setSize(0.5f);
-			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, Color.white);
-			//Text.getFont("DEBUG").setSize(0.5f);
-			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 45, Color.white);
+			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, "t+,cwhite,d-");
+			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 45, "t+,cwhite,d-");
 		}
 	}
 	
@@ -167,8 +168,44 @@ public class Camera {
 		} else {
 			// Increase view window
 			GL11.glOrtho(0, displayWidth, displayHeight, 0, -1, 1);
-			Theater.get().getSetup().resizeRefresh();
 		}
+	}
+
+	/**
+	 * @return If Display is in fullscreen mode
+	 */
+	public boolean isFullscreen() {
+		return Display.isFullscreen();
+	}
+	
+	/**
+	 * Attempt to toggle display's fullscreen mode
+	 * @param fullscreen
+	 * @return True if toggle succeeded
+	 */
+	public boolean setFullscreen(boolean fullscreen) {
+		try {
+			Display.setFullscreen(fullscreen);
+			if(fullscreen) {
+				Display.setDisplayMode(Display.getDesktopDisplayMode());
+			} else if(!fullscreen && Display.isFullscreen()){
+				Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			}
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isVSyncEnabled() {
+		return vsync;
+	}
+	
+	public void setVSync(boolean vsync) {
+		this.vsync = vsync;
+		Display.setVSyncEnabled(vsync);
 	}
 
 	public float getFrameXScale() {

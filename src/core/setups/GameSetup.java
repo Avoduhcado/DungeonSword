@@ -4,26 +4,26 @@ import java.util.ArrayList;
 
 import core.ui.UIElement;
 
-public abstract class GameSetup {
+public interface GameSetup {
 
-	protected ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
+	ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 	
 	/** Update the current game state */
-	public abstract void update();
+	public void update();
 	/** Draw the current game state */
-	public abstract void draw();
-	/** Readjust screen objects to match screen resize */
-	public abstract void resizeRefresh();
+	public void draw();
+	/** Draw the current state UI */
+	public void drawUI();
 	
-	public ArrayList<UIElement> getUI() {
+	public default ArrayList<UIElement> getUI() {
 		return uiElements;
 	}
 	
-	public UIElement getElement(int index) {
+	public default UIElement getElement(int index) {
 		return uiElements.get(index);
 	}
 	
-	public void addUI(UIElement element) {
+	public default void addUI(UIElement element) {
 		uiElements.add(element);
 	}
 	

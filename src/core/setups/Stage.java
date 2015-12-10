@@ -1,9 +1,9 @@
 package core.setups;
 
-import core.ui.overlays.GameMenu;
+import core.ui_old.overlays.GameMenu;
 import core.utilities.keyboard.Keybinds;
 
-public class Stage extends GameSetup {
+public class Stage implements GameSetup {
 	
 	private GameMenu gameMenu;
 	
@@ -29,9 +29,10 @@ public class Stage extends GameSetup {
 		if(gameMenu != null)
 			gameMenu.draw();
 	}
-
+	
 	@Override
-	public void resizeRefresh() {
+	public void drawUI() {
+		// TODO Auto-generated method stub
 		
 	}
 
