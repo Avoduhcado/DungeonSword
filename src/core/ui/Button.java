@@ -1,11 +1,13 @@
 package core.ui;
 
 import core.ui.utils.Align;
+import core.ui.utils.MouseEvent;
 import core.utilities.text.Text;
 
 public class Button extends UIElement {
 	
 	private String text;
+	private String textColor = "gray";
 	private String icon;
 			
 	public Button(String text) {		
@@ -23,20 +25,12 @@ public class Button extends UIElement {
 	public void draw() {
 		super.draw();
 
-		/*if(icon != null) {
-			SpriteIndex.getSprite(icon).setStill(still);
-			SpriteIndex.getSprite(icon).setFixedSize((float) bounds.getWidth(), (float) bounds.getHeight());
-			SpriteIndex.getSprite(icon).draw((float) bounds.getX(), (float) bounds.getY());
-		} else if(text != null) {
-			Text.getDefault().setStill(still);
-			Text.getDefault().setColor(isHovering() ? (enabled ? Color.white : Color.gray) : (enabled ? Color.gray : Color.darkGray));
-			Text.getDefault().drawString(text, (float) bounds.getX(), (float) bounds.getY());
-		} else if(background == null) {
-			DrawUtils.setStill(still);
-			DrawUtils.drawRect((float) bounds.getX(), (float) bounds.getY(), bounds);
-		}*/
 		if(text != null) {
-			Text.drawString(text, (float) bounds.getX(), (float) bounds.getY());
+			if(textColor == null) {
+				Text.drawString(text, (float) bounds.getX(), (float) bounds.getY());
+			} else {
+				Text.drawString(text, (float) bounds.getX(), (float) bounds.getY(), "c" + textColor);
+			}
 		}
 	}
 
@@ -66,12 +60,49 @@ public class Button extends UIElement {
 		this.text = text;
 	}
 	
+	public String getTextColor() {
+		return textColor;
+	}
+
+	public void setTextColor(String textColor) {
+		this.textColor = textColor;
+	}
+
 	public String getIcon() {
 		return icon;
 	}
 	
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+	
+	@Override
+	protected void processMouseEvent(MouseEvent e) {
+		if(mouseListener != null) {
+			if(e.getEvent() == MouseEvent.MOVED) {
+				if(getBounds().contains(e.getPosition()) && !getBounds().contains(e.getPrevPosition())) {
+					mouseListener.mouseEntered(e);
+					textColor = "white";
+					return;
+				} else if(!getBounds().contains(e.getPosition()) && getBounds().contains(e.getPrevPosition())) {
+					mouseListener.mouseExited(e);
+					textColor = "gray";
+					return;
+				}
+			}
+			
+			switch(e.getEvent()) {
+			case MouseEvent.CLICKED:
+				mouseListener.mouseClicked(e);
+				break;
+			case MouseEvent.PRESSED:
+				mouseListener.mousePressed(e);
+				break;
+			case MouseEvent.RELEASED:
+				mouseListener.mouseReleased(e);
+				break;
+			}
+		}
 	}
 	
 }

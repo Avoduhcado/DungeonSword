@@ -4,19 +4,19 @@ import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-
 import org.lwjgl.util.vector.Vector2f;
 
-import core.Camera;
 import core.Theater;
 import core.ui.utils.Accessible;
+import core.ui.utils.MouseEvent;
+import core.ui.utils.UIEvent;
 import core.utilities.MathUtils;
 import core.utilities.keyboard.Keybinds;
 import core.utilities.mouse.MouseInput;
 
-public class ElementGroup<T extends UIElement> extends ArrayList<T> {
+public class ElementGroup<T extends UIElement> extends UIElement {
 	
-	private static final long serialVersionUID = 1L;
+	private ArrayList<T> elements = new ArrayList<T>();
 	
 	private boolean singleSelection = true;
 	private EmptyFrame frame;
@@ -25,10 +25,6 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 	private CancelListener listener;
 
 	public void update() {
-		for(UIElement e : this) {
-			e.update();
-		}
-		
 		if(pointer != null) {
 			pointer.update();
 		}
@@ -59,7 +55,7 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 			frame.draw();
 		}
 		
-		for(UIElement e : this) {
+		for(UIElement e : elements) {
 			e.draw();
 		}
 		
@@ -69,13 +65,13 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 	}
 	
 	public void setEnabledAll(boolean enabled) {
-		for(UIElement e : this) {
+		for(UIElement e : elements) {
 			e.setEnabled(enabled);
 		}
 	}
 	
 	public void setEnabledAllExcept(boolean enabled, UIElement except) {
-		for(UIElement e : this) {
+		for(UIElement e : elements) {
 			if(e != except)
 				e.setEnabled(enabled);
 		}
@@ -90,7 +86,7 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 	}
 	
 	public void setFocus(Accessible focus) {
-		for(UIElement e : this) {
+		for(UIElement e : elements) {
 			if(e instanceof Accessible && e != focus) {
 				e.setEnabled(false);
 			}
@@ -133,7 +129,7 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 	
 	private void changeSelection(int direction) {
 		get(selection).setSelected(false);
-		selection = this.indexOf(get(selection).getSurroundings()[direction]);
+		selection = indexOf(get(selection).getSurroundings()[direction]);
 		get(selection).setSelected(true);
 		
 		if(pointer != null) {
@@ -141,16 +137,16 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 		}
 	}
 	
-	private Rectangle2D getBounds() {
-		if(this.isEmpty()) {
-			return null;
+	public void setBounds() {
+		if(isEmpty()) {
+			this.bounds = new Rectangle2D.Double(0, 0, 1, 1);
 		} else {
 			Rectangle2D tempBounds = (Rectangle2D) get(0).getBounds().clone();
-			for(UIElement e : this) {
+			for(UIElement e : elements) {
 				Rectangle2D.union(tempBounds, e.getBounds(), tempBounds);
 			}
 			
-			return tempBounds;
+			this.bounds = tempBounds;
 		}
 	}
 	
@@ -170,11 +166,49 @@ public class ElementGroup<T extends UIElement> extends ArrayList<T> {
 		frame.setYBorder(yBorder);
 	}
 	
+	@Override
+	public void fireEvent(UIEvent e) {
+		if(e instanceof MouseEvent) {
+			if(mouseListener != null) {
+				processMouseEvent((MouseEvent) e);
+			} else if(!isEmpty()) {
+				for(UIElement ui : elements) {
+					if(ui.getBounds().contains(((MouseEvent) e).getPosition()) 
+							|| ui.getBounds().contains(((MouseEvent) e).getPrevPosition())) {
+						ui.fireEvent(e);
+					}
+				}
+			}
+		}
+	}
+	
 	public interface CancelListener {
 		
 		public void cancel();
 		
 	}
+	
+	public T get(int index) {
+		return elements.get(index);
+	}
+	
+	public int size() {
+		return elements.size();
+	}
+	
+	public boolean isEmpty() {
+		return elements.isEmpty();
+	}
+	
+	public int indexOf(UIElement element) {
+		return elements.indexOf(element);
+	}
+
+	public void add(T element) {
+		elements.add(element);
+		setBounds();
+	}
+
 }
 
 class SelectionPointer {

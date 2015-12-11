@@ -6,14 +6,10 @@ import core.render.DrawUtils;
 import core.setups.TitleMenu;
 import core.ui.Button;
 import core.ui.utils.Align;
-import core.ui.utils.ClickEvent;
+import core.ui.utils.MouseAdapter;
+import core.ui.utils.MouseEvent;
 
 public class GameMenu extends MenuOverlay {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private OptionsMenu options;
 	
@@ -21,47 +17,67 @@ public class GameMenu extends MenuOverlay {
 		Button toGame = new Button("Return to Game", Float.NaN, Camera.get().getDisplayHeight(0.2f), 0, null);
 		toGame.setAlign(Align.CENTER);
 		toGame.setStill(true);
-		toGame.addEvent(new ClickEvent(toGame) {
-			public void click() {
+		toGame.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
 				toClose = true;
 			}
 		});
+		/*toGame.addEvent(new ClickEvent(toGame) {
+			public void click() {
+				toClose = true;
+			}
+		});*/
 		
 		Button openOptions = new Button("Options", Float.NaN, (float) toGame.getBounds().getMaxY(), 0, null);
 		openOptions.setAlign(Align.CENTER);
 		openOptions.setStill(true);
-		openOptions.addEvent(new ClickEvent(openOptions) {
-			public void click() {
+		openOptions.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
 				options = new OptionsMenu("Menu2");
 			}
 		});
+		/*openOptions.addEvent(new ClickEvent(openOptions) {
+			public void click() {
+				options = new OptionsMenu("Menu2");
+			}
+		});*/
 		
 		Button toTitle = new Button("Quit to Title", Float.NaN, (float) openOptions.getBounds().getMaxY(), 0, null);
 		toTitle.setAlign(Align.CENTER);
 		toTitle.setStill(true);
-		toTitle.addEvent(new ClickEvent(toTitle) {
-			public void click() {
+		toTitle.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
 				Theater.get().swapSetup(new TitleMenu());
 			}
 		});
+		/*toTitle.addEvent(new ClickEvent(toTitle) {
+			public void click() {
+				Theater.get().swapSetup(new TitleMenu());
+			}
+		});*/
 		
 		Button toDesktop = new Button("Quit to Desktop", Float.NaN, (float) toTitle.getBounds().getMaxY(), 0, null);
 		toDesktop.setAlign(Align.CENTER);
 		toDesktop.setStill(true);
-		toDesktop.addEvent(new ClickEvent(toDesktop) {
-			public void click() {
+		toDesktop.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
 				Theater.get().close();
 			}
 		});
+		/*toDesktop.addEvent(new ClickEvent(toDesktop) {
+			public void click() {
+				Theater.get().close();
+			}
+		});*/
 		
 		toGame.setSurrounding(0, toDesktop);
-		this.add(toGame);
+		add(toGame);
 		openOptions.setSurrounding(0, toGame);
-		this.add(openOptions);
+		add(openOptions);
 		toTitle.setSurrounding(0, openOptions);
-		this.add(toTitle);
+		add(toTitle);
 		toDesktop.setSurrounding(0, toTitle);
-		this.add(toDesktop);
+		add(toDesktop);
 		
 		setKeyboardNavigable(true, toGame);
 		

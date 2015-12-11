@@ -1,7 +1,5 @@
 package core;
 
-import java.awt.geom.Point2D;
-
 import org.lwjgl.input.Mouse;
 
 import core.setups.GameSetup;
@@ -11,15 +9,6 @@ import core.ui.utils.MouseEvent;
 import core.utilities.keyboard.Keybinds;
 
 public class Input {
-	
-	/** Global state of mouse press */
-	public static boolean mousePressed;
-	/** Global state of mouse hold */
-	public static boolean mouseHeld;
-	/** Location of mouse press */
-	public static Point2D mouseClick;
-	/** Location of mouse release */
-	public static Point2D mouseRelease;
 	
 	/**
 	 * Main processing of any and all input depending on current setup.
@@ -48,31 +37,52 @@ public class Input {
 		while(Mouse.next()) {
 			if(Mouse.getEventButton() != -1) {
 				if(Mouse.getEventButtonState()) {
-					System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+					processMouseUI(setup,
+							new MouseEvent(null,
+									MouseEvent.PRESSED,
+									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
+					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				} else {
 					processMouseUI(setup,
 							new MouseEvent(null,
 									MouseEvent.CLICKED,
 									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
 
-					System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
-					System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+					//System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
+					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				}
 			} else if(Mouse.getDX() != 0 || Mouse.getDY() != 0) {
-				System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
+				MouseEvent me = new MouseEvent(null,
+						MouseEvent.MOVED,
+						Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY());
+				me.setDx(Mouse.getEventDX());
+				me.setDy(-Mouse.getEventDY());
+				processMouseUI(setup, me);
+				//System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
 			}
 		}
 		
 		if(Mouse.hasWheel() && Mouse.getDWheel() != 0) {
+			// TODO Implement mouseWheelListener
 			System.out.println(Mouse.getEventDWheel());
 		}
 	}
 	
 	private static void processMouseUI(GameSetup setup, MouseEvent e) {
 		for(UIElement ui : setup.getUI()) {
-			if(ui.getBounds().contains(e.getX(), e.getY())) {
-				System.out.println("SDfsdfsdf");
-				ui.fireEvent(e);
+			switch(e.getEvent()) {
+			case MouseEvent.CLICKED:
+			case MouseEvent.RELEASED:
+			case MouseEvent.PRESSED:
+				if(ui.getBounds().contains(e.getPosition())) {
+					ui.fireEvent(e);
+				}
+				break;
+			case MouseEvent.MOVED:
+				if(ui.getBounds().contains(e.getPosition()) || ui.getBounds().contains(e.getPrevPosition())) {
+					ui.fireEvent(e);
+				}
+				break;
 			}
 		}
 	}

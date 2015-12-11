@@ -12,8 +12,13 @@ public interface GameSetup {
 	public void update();
 	/** Draw the current game state */
 	public void draw();
+	
 	/** Draw the current state UI */
-	public void drawUI();
+	public default void drawUI() {
+		for(UIElement ui : uiElements) {
+			ui.draw();
+		}
+	}
 	
 	public default ArrayList<UIElement> getUI() {
 		return uiElements;
@@ -21,6 +26,10 @@ public interface GameSetup {
 	
 	public default UIElement getElement(int index) {
 		return uiElements.get(index);
+	}
+	
+	public default boolean removeElement(UIElement element) {
+		return uiElements.remove(element);
 	}
 	
 	public default void addUI(UIElement element) {

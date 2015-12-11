@@ -1,14 +1,21 @@
 package core.ui.utils;
 
+import java.awt.geom.Point2D;
+
 import core.ui.UIElement;
 
 public class MouseEvent extends UIEvent {
 
 	public static final int CLICKED = 1;
-	public static final int MOVED = 2;
+	public static final int PRESSED = 2;
+	public static final int RELEASED = 3;
+	public static final int ENTERED = 4;
+	public static final int EXITED = 5;
+	public static final int MOVED = 6;
 
 	private int event;
 	private float x, y;
+	private float dx, dy;
 
 	public MouseEvent(UIElement parent, int event, float x, float y) {
 		super(parent);
@@ -19,6 +26,18 @@ public class MouseEvent extends UIEvent {
 	
 	public int getEvent() {
 		return event;
+	}
+
+	public void setEvent(int event) {
+		this.event = event;
+	}
+	
+	public Point2D getPosition() {
+		return new Point2D.Float(x, y);
+	}
+	
+	public Point2D getPrevPosition() {
+		return new Point2D.Float(x - dx, y - dy);
 	}
 	
 	public float getX() {
@@ -35,6 +54,22 @@ public class MouseEvent extends UIEvent {
 
 	public void setY(float y) {
 		this.y = y;
+	}
+
+	public float getDx() {
+		return dx;
+	}
+
+	public void setDx(float dx) {
+		this.dx = dx;
+	}
+
+	public float getDy() {
+		return dy;
+	}
+
+	public void setDy(float dy) {
+		this.dy = dy;
 	}
 	
 }

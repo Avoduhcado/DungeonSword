@@ -1,23 +1,18 @@
 package core.ui;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-
 import core.Camera;
 import core.render.textured.UIFrame;
-import core.ui.utils.ActionListener;
 import core.ui.utils.Align;
 import core.ui.utils.MouseEvent;
 import core.ui.utils.MouseListener;
-import core.ui.utils.UIAction;
 import core.ui.utils.UIEvent;
-import core.utilities.mouse.MouseInput;
 
 public abstract class UIElement {
 
-	protected Rectangle2D bounds;
+	protected Rectangle2D bounds = new Rectangle2D.Double(0, 0, 1, 1);
+	
 	protected UIFrame frame;
-	protected String background;
 	protected float xBorder;
 	protected float yBorder;
 	protected Align alignment = Align.RIGHT;
@@ -29,35 +24,13 @@ public abstract class UIElement {
 	
 	/** For managing keyboard mapped menus. 0 = up, 1 = down, 2 = right, 3 = left */
 	protected UIElement[] surroundings = new UIElement[4];
-	
-	protected ArrayList<UIAction> events = new ArrayList<UIAction>();
-	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
-	
-	private MouseListener mouseListener;
 		
-	// TODO Get rid of this function and sort into multiple separate action listener functions
-	public void update() {
-		if(enabled) {
-			for(UIAction e : events) {
-				e.actionPerformed();
-			}
-		}
-	}
+	protected MouseListener mouseListener;
 	
 	public void draw() {
 		if(frame != null) {
 			frame.draw(bounds);
 		}
-		
-		/*if(background != null) {
-			SpriteList.get(background).setStill(still);
-			SpriteList.get(background).setFixedSize((float) bounds.getWidth(), (float) bounds.getHeight());
-			SpriteList.get(background).draw((float) bounds.getX(), (float) bounds.getY());
-		}*/
-	}
-
-	public void addEvent(UIAction event) {
-		this.events.add(event);
 	}
 
 	public boolean isEnabled() {
@@ -146,10 +119,6 @@ public abstract class UIElement {
 		}
 	}
 	
-	public void setBackground(String background) {
-		this.background = background;
-	}
-	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
@@ -169,16 +138,7 @@ public abstract class UIElement {
 			surround.setSurrounding(Math.abs(index - 3), this);
 		}
 	}
-	
-	public boolean isClicked() {
-		//return (bounds.contains(MouseInput.getMouse()) && Input.mouseClicked()) || (selected && Keybinds.CONFIRM.clicked());
-		return false;
-	}
-	
-	public boolean isHovering() {
-		return bounds.contains(MouseInput.getMouse()) || selected;
-	}
-	
+
 	public boolean isValueChanged() {
 		return false;
 	}
@@ -202,12 +162,26 @@ public abstract class UIElement {
 	
 	protected void processMouseEvent(MouseEvent e) {
 		if(mouseListener != null) {
-			System.out.println("fsdfsdfsdfsdfsdf");
+			// TODO Probably
+			if(e.getEvent() == MouseEvent.MOVED) {
+				if(getBounds().contains(e.getPosition()) && !getBounds().contains(e.getPrevPosition())) {
+					mouseListener.mouseEntered(e);
+					return;
+				} else if(!getBounds().contains(e.getPosition()) && getBounds().contains(e.getPrevPosition())) {
+					mouseListener.mouseExited(e);
+					return;
+				}
+			}
+			
 			switch(e.getEvent()) {
 			case MouseEvent.CLICKED:
 				mouseListener.mouseClicked(e);
 				break;
-			case MouseEvent.MOVED:
+			case MouseEvent.PRESSED:
+				mouseListener.mousePressed(e);
+				break;
+			case MouseEvent.RELEASED:
+				mouseListener.mouseReleased(e);
 				break;
 			}
 		}

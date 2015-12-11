@@ -124,6 +124,11 @@ public class Camera {
 		// Draw current game setup
 		setup.draw();
 		
+		// Reload identity to draw UI
+		GL11.glLoadIdentity();
+
+		setup.drawUI();
+		
 		if(Theater.get().isPaused()) {
 			//Text.drawCenteredString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t,cwhite");
 		}

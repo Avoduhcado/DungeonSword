@@ -38,7 +38,6 @@ public class TextBox extends UIElement implements KeybindListener {
 		setFrame(image);
 	}
 	
-	@Override
 	public void update() {
 		if(textFill < getLength()) {
 			fill();
@@ -59,8 +58,7 @@ public class TextBox extends UIElement implements KeybindListener {
 			if(textFill < getLength()) {
 				bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
 			}
-			//frame.setStill(still);
-			frame.draw((float) bounds.getX(), (float) bounds.getY(), bounds);
+			frame.draw(bounds);
 		}
 
 		if(!lines.isEmpty()) {
@@ -85,40 +83,6 @@ public class TextBox extends UIElement implements KeybindListener {
 			}
 		}
 	}
-	
-/*	@Override
-	public void draw(float x, float y) {
-		if(frame != null) {
-			if(textFill < getLength()) {
-				bounds.setFrame(x, y, getWidth((int) textFill + 1), getHeight((int) textFill + 1));
-			}
-			frame.setStill(still);
-			frame.draw(x, y, bounds);
-		}
-
-		if(!lines.isEmpty()) {
-			// Draw first line
-			lines.get(0).draw(x, y, (int) textFill);
-			// Text limit for subsequent lines
-			int limit = (int) textFill - lines.get(0).getLength();
-			if(limit > 0) {
-				// Text y offset for subsequent lines
-				float yOffset = lines.get(0).getHeight();
-				for(int i = 1; i < lines.size(); i++) {
-					// Draw line
-					lines.get(i).draw(x, y + yOffset, limit);
-					// Increment y offset
-					yOffset += lines.get(i).getHeight();
-					// Decrement limit
-					limit -= lines.get(i).getLength();
-					// End draw if you've run out of available text
-					if(limit <= 0)
-						break;
-				}
-			}
-		}
-	}*/
-	
 
 	@Override
 	public void KeybindTouched(Keybinds k) {
@@ -131,7 +95,6 @@ public class TextBox extends UIElement implements KeybindListener {
 			}
 		}
 	}
-	
 	
 	private void parseText(String text) {
 		if(text.contains(";")) {
