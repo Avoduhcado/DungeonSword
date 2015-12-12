@@ -7,7 +7,6 @@ import core.render.transform.Transform;
 public class Icon extends UIElement {
 
 	private String image;
-	private float x, y;
 	
 	private Transform transform = new Transform();
 	
@@ -17,8 +16,8 @@ public class Icon extends UIElement {
 
 	@Override
 	public void draw() {
-		transform.x = this.x;
-		transform.y = this.y;
+		transform.x = getX();
+		transform.y = getY();
 		transform.still = true;
 		
 		SpriteList.get(image).draw(transform);
@@ -37,28 +36,20 @@ public class Icon extends UIElement {
 		setY(y);
 	}
 	
-	public float getX() {
-		return x;
-	}
-
 	public void setX(float x) {
 		if(Float.isNaN(x)) {
-			this.x = Camera.get().getDisplayWidth(0.5f) - (SpriteList.get(image).getWidth() / 2f);
-		} else {
-			this.x = x;
+			x = Camera.get().getDisplayWidth(0.5f) - (SpriteList.get(image).getWidth() / 2f);
 		}
-	}
-
-	public float getY() {
-		return y;
+		
+		setBounds(x, bounds.getY(), bounds.getWidth(), bounds.getHeight());
 	}
 
 	public void setY(float y) {
 		if(Float.isNaN(y)) {
-			this.y = Camera.get().getDisplayHeight(0.5f) - (SpriteList.get(image).getHeight() / 2f);
-		} else {
-			this.y = y;
+			y = Camera.get().getDisplayHeight(0.5f) - (SpriteList.get(image).getHeight() / 2f);
 		}
+		
+		setBounds(bounds.getX(), y, bounds.getWidth(), bounds.getHeight());
 	}
 	
 }

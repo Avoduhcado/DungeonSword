@@ -1,6 +1,6 @@
-package core.ui.utils;
+package core.ui.event;
 
-public interface MouseListener extends ActionListener {
+public interface MouseListener {
 
 	public void mouseClicked(MouseEvent e);
 	public void mousePressed(MouseEvent e);

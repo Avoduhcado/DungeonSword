@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector2f;
 
 import core.Theater;
+import core.ui.event.MouseEvent;
+import core.ui.event.UIEvent;
 import core.ui.utils.Accessible;
-import core.ui.utils.MouseEvent;
-import core.ui.utils.UIEvent;
 import core.utilities.MathUtils;
 import core.utilities.keyboard.Keybinds;
 import core.utilities.mouse.MouseInput;
@@ -29,6 +29,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			pointer.update();
 		}
 		
+		// TODO Change to mouselistener event
 		if(selection != -1 && (frame != null ? !frame.getBounds().contains(MouseInput.getMouse()) : true)) {
 			get(selection).setSelected(true);
 			if(Keybinds.UP.clicked() && get(selection).getSurroundings()[0] != null) {
@@ -66,21 +67,22 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	
 	public void setEnabledAll(boolean enabled) {
 		for(UIElement e : elements) {
-			e.setEnabled(enabled);
+			e.setState(enabled ? ENABLED : DISABLED);
 		}
 	}
 	
 	public void setEnabledAllExcept(boolean enabled, UIElement except) {
 		for(UIElement e : elements) {
-			if(e != except)
-				e.setEnabled(enabled);
+			if(e != except) {
+				e.setState(enabled ? ENABLED : DISABLED);
+			}
 		}
 	}
 	
 	public void setEnabledAllExcept(boolean enabled, int index) {
 		for(int i = 0; i<size(); i++) {
 			if(i != index) {
-				get(i).setEnabled(enabled);
+				get(i).setState(enabled ? ENABLED : DISABLED);
 			}
 		}
 	}
@@ -88,7 +90,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	public void setFocus(Accessible focus) {
 		for(UIElement e : elements) {
 			if(e instanceof Accessible && e != focus) {
-				e.setEnabled(false);
+				e.setState(DISABLED);
 			}
 		}
 	}

@@ -2,7 +2,8 @@ package core.ui;
 
 import java.util.ArrayList;
 
-import core.Theater;
+import core.ui.event.TimeEvent;
+import core.ui.event.TimeListener;
 import core.ui.utils.Align;
 import core.utilities.keyboard.Keybinds;
 import core.utilities.keyboard.KeybindListener;
@@ -13,43 +14,35 @@ public class TextBox extends UIElement implements KeybindListener {
 
 	protected ArrayList<TextLine> lines = new ArrayList<TextLine>();
 
-	protected float textFill;
-	private float fillSpeed = 0.5f;
-	private float killTimer;
-	//protected ScriptEvent scriptEvent;
-	
+	protected float textFill = 0f;
+	protected float fillSpeed = 12.5f;
+		
 	/**
 	 * A simple box to display a block of text.
 	 * @param text The text to be written, including any text modifiers
 	 * @param x X position
 	 * @param y Y position
-	 * @param image The textbox background, or null for no background
+	 * @param image The text box background, or null for no background
 	 */
 	public TextBox(String text, float x, float y, String image, boolean fill) {		
 		parseText(text);
 		
 		if(fill) {
-			textFill = 0f;
+			addTimeListener(new TimeListener() {
+				public void timeStep(TimeEvent e) {
+					textFill += e.getDelta() * fillSpeed;
+					
+					if(textFill >= TextBox.this.getLength()) {
+						TextBox.this.removeTimeListener(this);
+					}
+				}
+			});
 		} else {
 			textFill = getLength();
 		}
 		
 		setBounds(x, y, getWidth(), getHeight());
 		setFrame(image);
-	}
-	
-	public void update() {
-		if(textFill < getLength()) {
-			fill();
-		}
-		
-		if(killTimer > 0) {
-			killTimer -= Theater.getDeltaSpeed(0.025f);
-			if(killTimer <= 0) {
-				// TODO Extend to all UI classes, maybe add a fancy fade effect
-				setDead(true);
-			}
-		}
 	}
 	
 	@Override
@@ -90,8 +83,8 @@ public class TextBox extends UIElement implements KeybindListener {
 			if(textFill < getLength()) {
 				textFill = getLength();
 				bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
-			} else {
-				//scriptEvent.processed();
+				
+				removeTimeListener(timeListener);
 			}
 		}
 	}
@@ -118,14 +111,6 @@ public class TextBox extends UIElement implements KeybindListener {
 		}
 	}
 	
-	/*public void setScriptEvent(ScriptEvent script) {
-		this.scriptEvent = script;
-	}*/
-	
-	public void fill() {
-		textFill += Theater.getDeltaSpeed(fillSpeed);
-	}
-	
 	public float getTextFill() {
 		return textFill;
 	}
@@ -141,8 +126,19 @@ public class TextBox extends UIElement implements KeybindListener {
 		this.fillSpeed = fillSpeed;
 	}
 	
-	public void setKillTimer(float killTimer) {
-		this.killTimer = killTimer;
+	public void setKillTimer(float countdown) {
+		addTimeListener(new TimeListener() {
+			private float killTimer = countdown;
+			
+			@Override
+			public void timeStep(TimeEvent e) {
+				killTimer -= e.getDelta();
+				
+				if(killTimer <= 0) {
+					setState(UIElement.KILL_FLAG);
+				}
+			}
+		});
 	}
 
 	public void setText(String text) {

@@ -14,8 +14,6 @@ import core.ui.Label;
 import core.ui.Slider;
 import core.ui.UIElement;
 import core.ui.utils.Align;
-import core.ui.utils.ClickEvent;
-import core.ui.utils.ValueChangeEvent;
 import core.utilities.keyboard.Keybinds;
 
 public class OptionsMenu extends MenuOverlay {

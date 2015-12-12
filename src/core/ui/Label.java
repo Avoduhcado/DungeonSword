@@ -16,8 +16,7 @@ public class Label extends UIElement {
 	public void draw() {
 		super.draw();
 		
-		Text.getDefault().setStill(still);
-		Text.getDefault().drawString(text, (float) bounds.getX(),  (float) bounds.getY());
+		Text.drawString(text, getX(), getY());
 	}
 	
 	public String getText() {

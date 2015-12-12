@@ -1,6 +1,6 @@
 package core.setups;
 
-public class Stage implements GameSetup {
+public class Stage extends GameSetup {
 		
 	public Stage() {
 

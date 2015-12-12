@@ -15,13 +15,11 @@ public class UIFrame {
 	private float opacity = 0.8f;
 	private boolean still;
 	
-	private Rectangle2D scaledBox;
 	private Transform transform;
 	
 	public UIFrame(String ref) {
 		this.frame = ref;
 		
-		this.scaledBox = new Rectangle2D.Double();
 		this.transform = new Transform();
 	}
 
@@ -80,12 +78,9 @@ public class UIFrame {
 	 * @param box
 	 */
 	public void draw(Rectangle2D box) {
-		scaledBox.setFrameFromCenter(box.getCenterX(), box.getCenterY(),
-				box.getX() + (box.getWidth() * 0.05f), box.getY() + (box.getHeight() * 0.1f));
-		
 		for(int row = 0; row < 3; row++) {
 			for(int col = 0; col < 3; col++) {
-				setTransform(row, col, scaledBox);
+				setTransform(row, col, box);
 								
 				SpriteList.get(frame).draw(transform);
 			}

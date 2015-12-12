@@ -3,13 +3,22 @@ package core.ui;
 import java.awt.geom.Rectangle2D;
 import core.Camera;
 import core.render.textured.UIFrame;
+import core.ui.event.MouseEvent;
+import core.ui.event.MouseListener;
+import core.ui.event.MouseMotionListener;
+import core.ui.event.StateChangeEvent;
+import core.ui.event.TimeEvent;
+import core.ui.event.TimeListener;
+import core.ui.event.UIEvent;
 import core.ui.utils.Align;
-import core.ui.utils.MouseEvent;
-import core.ui.utils.MouseListener;
-import core.ui.utils.UIEvent;
+import core.ui.utils.UIContainer;
 
 public abstract class UIElement {
 
+	public static final int KILL_FLAG = -1;
+	public static final int DISABLED = 0;
+	public static final int ENABLED = 1;
+	
 	protected Rectangle2D bounds = new Rectangle2D.Double(0, 0, 1, 1);
 	
 	protected UIFrame frame;
@@ -17,15 +26,18 @@ public abstract class UIElement {
 	protected float yBorder;
 	protected Align alignment = Align.RIGHT;
 	
-	protected boolean enabled = true;
 	protected boolean selected;
 	protected boolean still;
-	protected boolean dead;
+	
+	private UIContainer container;
+	private int state = ENABLED;
 	
 	/** For managing keyboard mapped menus. 0 = up, 1 = down, 2 = right, 3 = left */
 	protected UIElement[] surroundings = new UIElement[4];
 		
 	protected MouseListener mouseListener;
+	protected MouseMotionListener mouseMotionListener;
+	protected TimeListener timeListener;
 	
 	public void draw() {
 		if(frame != null) {
@@ -33,24 +45,22 @@ public abstract class UIElement {
 		}
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-	
 	public void setStill(boolean still) {
 		this.still = still;
 	}
 
-	public boolean isDead() {
-		return dead;
+	public float getX() {
+		if(bounds == null)
+			return 0;
+		
+		return (float) bounds.getX();
 	}
 	
-	public void setDead(boolean dead) {
-		this.dead = dead;
+	public float getY() {
+		if(bounds == null)
+			return 0;
+		
+		return (float) bounds.getY();
 	}
 	
 	public Rectangle2D getBounds() {
@@ -131,7 +141,10 @@ public abstract class UIElement {
 		return surroundings;
 	}
 	
-	/** 0 = up, 1 = right, 2 = left, 3 = down */
+	/**
+	 * @param index 0 = up, 1 = right, 2 = left, 3 = down
+	 * @param surround Element at <code>index</code>
+	 */
 	public void setSurrounding(int index, UIElement surround) {
 		this.surroundings[index] = surround;
 		if(surround.getSurroundings()[Math.abs(index - 3)] == null) {
@@ -139,30 +152,69 @@ public abstract class UIElement {
 		}
 	}
 
-	public boolean isValueChanged() {
-		return false;
+	public UIContainer getContainer() {
+		return container;
+	}
+	
+	public void setContainer(UIContainer container) {
+		this.container = container;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+		
+		if(container != null) {
+			container.fireEvent(new StateChangeEvent(this, this.state));
+		}
 	}
 
 	public void removeMouseListener(MouseListener l) {
 		if(l == null) {
 			return;
 		}
-		this.mouseListener = l;
+		this.mouseListener = null;
 	}
 	
 	public void addMouseListener(MouseListener l) {
 		this.mouseListener = l;
 	}
 	
+	public void removeMouseMotionListener(MouseMotionListener l) {
+		if(l == null) {
+			return;
+		}
+		this.mouseMotionListener = null;
+	}
+	
+	public void addMouseMotionListener(MouseMotionListener l) {
+		this.mouseMotionListener = l;
+	}
+	
+	public void removeTimeListener(TimeListener l) {
+		if(l == null) {
+			return;
+		}
+		this.timeListener = null;
+	}
+	
+	public void addTimeListener(TimeListener l) {
+		this.timeListener = l;
+	}
+	
 	public void fireEvent(UIEvent e) {
 		if(e instanceof MouseEvent) {
 			processMouseEvent((MouseEvent) e);
+		} else if(e instanceof TimeEvent) {
+			processTimeEvent((TimeEvent) e);
 		}
 	}
 	
 	protected void processMouseEvent(MouseEvent e) {
 		if(mouseListener != null) {
-			// TODO Probably
 			if(e.getEvent() == MouseEvent.MOVED) {
 				if(getBounds().contains(e.getPosition()) && !getBounds().contains(e.getPrevPosition())) {
 					mouseListener.mouseEntered(e);
@@ -184,6 +236,23 @@ public abstract class UIElement {
 				mouseListener.mouseReleased(e);
 				break;
 			}
+		}
+		
+		if(mouseMotionListener != null) {
+			switch(e.getEvent()) {
+			case MouseEvent.MOVED:
+				mouseMotionListener.mouseMoved(e);
+				break;
+			case MouseEvent.DRAGGED:
+				mouseMotionListener.mouseDragged(e);
+				break;
+			}
+		}
+	}
+	
+	protected void processTimeEvent(TimeEvent e) {
+		if(timeListener != null) {
+			timeListener.timeStep(e);
 		}
 	}
 

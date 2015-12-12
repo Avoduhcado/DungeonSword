@@ -1,8 +1,6 @@
-package core.ui.utils;
+package core.ui.event;
 
 import java.awt.geom.Point2D;
-
-import core.ui.UIElement;
 
 public class MouseEvent extends UIEvent {
 
@@ -11,14 +9,15 @@ public class MouseEvent extends UIEvent {
 	public static final int RELEASED = 3;
 	public static final int ENTERED = 4;
 	public static final int EXITED = 5;
+	
 	public static final int MOVED = 6;
+	public static final int DRAGGED = 7;
 
 	private int event;
 	private float x, y;
 	private float dx, dy;
 
-	public MouseEvent(UIElement parent, int event, float x, float y) {
-		super(parent);
+	public MouseEvent(int event, float x, float y) {
 		this.event = event;
 		this.x = x;
 		this.y = y;

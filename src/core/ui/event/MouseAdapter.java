@@ -1,4 +1,4 @@
-package core.ui.utils;
+package core.ui.event;
 
 public abstract class MouseAdapter implements MouseListener {
 

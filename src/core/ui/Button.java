@@ -1,7 +1,11 @@
 package core.ui;
 
+import core.ui.event.ActionEvent;
+import core.ui.event.ActionListener;
+import core.ui.event.MouseEvent;
+import core.ui.event.MouseListener;
+import core.ui.event.UIEvent;
 import core.ui.utils.Align;
-import core.ui.utils.MouseEvent;
 import core.utilities.text.Text;
 
 public class Button extends UIElement {
@@ -9,16 +13,26 @@ public class Button extends UIElement {
 	private String text;
 	private String textColor = "gray";
 	private String icon;
+	
+	private ActionListener actionListener;
 			
 	public Button(String text) {		
 		this.text = text;
-		setBounds(0, 0, text != null ? Text.getDefault().getWidth(text) : 1, text != null ? Text.getDefault().getHeight(text) : 1);
+		setBounds(0, 0,
+				text != null ? Text.getDefault().getWidth(text) : 1,
+				text != null ? Text.getDefault().getHeight(text) : 1);
+		
+		addMouseListener(new DefaultButtonAdapter());
 	}
 	
 	public Button(String text, float x, float y, float width, String image) {		
 		this.text = text;
-		setBounds(x, y, width == 0 ? Text.getDefault().getWidth(text) : width, Text.getDefault().getHeight(text));
+		setBounds(x, y,
+				width == 0 ? Text.getDefault().getWidth(text) : width, 
+				Text.getDefault().getHeight(text));
 		setFrame(image);
+		
+		addMouseListener(new DefaultButtonAdapter());
 	}
 	
 	@Override
@@ -27,9 +41,9 @@ public class Button extends UIElement {
 
 		if(text != null) {
 			if(textColor == null) {
-				Text.drawString(text, (float) bounds.getX(), (float) bounds.getY());
+				Text.drawString(text, getX(), getY());
 			} else {
-				Text.drawString(text, (float) bounds.getX(), (float) bounds.getY(), "c" + textColor);
+				Text.drawString(text, getX(), getY(), "c" + textColor);
 			}
 		}
 	}
@@ -76,33 +90,65 @@ public class Button extends UIElement {
 		this.icon = icon;
 	}
 	
+	/**
+	 * Not recommended to override default <code>Button</code> behavior.
+	 */
 	@Override
-	protected void processMouseEvent(MouseEvent e) {
-		if(mouseListener != null) {
-			if(e.getEvent() == MouseEvent.MOVED) {
-				if(getBounds().contains(e.getPosition()) && !getBounds().contains(e.getPrevPosition())) {
-					mouseListener.mouseEntered(e);
-					textColor = "white";
-					return;
-				} else if(!getBounds().contains(e.getPosition()) && getBounds().contains(e.getPrevPosition())) {
-					mouseListener.mouseExited(e);
-					textColor = "gray";
-					return;
-				}
-			}
-			
-			switch(e.getEvent()) {
-			case MouseEvent.CLICKED:
-				mouseListener.mouseClicked(e);
-				break;
-			case MouseEvent.PRESSED:
-				mouseListener.mousePressed(e);
-				break;
-			case MouseEvent.RELEASED:
-				mouseListener.mouseReleased(e);
-				break;
-			}
+	public void addMouseListener(MouseListener l) {
+		this.mouseListener = l;
+	}
+	
+	public void removeActionListener(ActionListener l) {
+		if(l == null) {
+			return;
+		}
+		
+		actionListener = null;
+	}
+	
+	public void addActionListener(ActionListener l) {
+		this.actionListener = l;
+	}
+	
+	@Override
+	public void fireEvent(UIEvent e) {
+		if(e instanceof MouseEvent) {
+			processMouseEvent((MouseEvent) e);
+		} else if(e instanceof ActionEvent) {
+			processActionEvent((ActionEvent) e);
 		}
 	}
 	
+	protected void processActionEvent(ActionEvent e) {
+		if(actionListener != null) {
+			actionListener.actionPerformed(e);
+		}
+	}
+
+	/**
+	 * Handle the default actions for mouse events on a button
+	 */
+	class DefaultButtonAdapter implements MouseListener {
+
+		public void mouseClicked(MouseEvent e) {
+			Button.this.fireEvent(new ActionEvent());
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+		
+		public void mouseEntered(MouseEvent e) {
+			textColor = "white";
+		}
+		
+		public void mouseExited(MouseEvent e) {
+			textColor = "gray";
+		}
+	}
 }
+

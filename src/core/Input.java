@@ -5,7 +5,7 @@ import org.lwjgl.input.Mouse;
 import core.setups.GameSetup;
 import core.setups.Stage;
 import core.ui.UIElement;
-import core.ui.utils.MouseEvent;
+import core.ui.event.MouseEvent;
 import core.utilities.keyboard.Keybinds;
 
 public class Input {
@@ -38,27 +38,32 @@ public class Input {
 			if(Mouse.getEventButton() != -1) {
 				if(Mouse.getEventButtonState()) {
 					processMouseUI(setup,
-							new MouseEvent(null,
-									MouseEvent.PRESSED,
+							new MouseEvent(MouseEvent.PRESSED,
 									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
 					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				} else {
 					processMouseUI(setup,
-							new MouseEvent(null,
-									MouseEvent.CLICKED,
+							new MouseEvent(MouseEvent.CLICKED,
 									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
 
 					//System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
 					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				}
 			} else if(Mouse.getDX() != 0 || Mouse.getDY() != 0) {
-				MouseEvent me = new MouseEvent(null,
-						MouseEvent.MOVED,
+				MouseEvent me = new MouseEvent(MouseEvent.MOVED,
 						Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY());
 				me.setDx(Mouse.getEventDX());
 				me.setDy(-Mouse.getEventDY());
 				processMouseUI(setup, me);
 				//System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
+				
+				if(Mouse.isButtonDown(0)) {
+					MouseEvent med = new MouseEvent(MouseEvent.DRAGGED,
+							Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY());
+					med.setDx(Mouse.getEventDX());
+					med.setDy(-Mouse.getEventDY());
+					processMouseUI(setup, med);
+				}
 			}
 		}
 		
@@ -79,6 +84,7 @@ public class Input {
 				}
 				break;
 			case MouseEvent.MOVED:
+			case MouseEvent.DRAGGED:
 				if(ui.getBounds().contains(e.getPosition()) || ui.getBounds().contains(e.getPrevPosition())) {
 					ui.fireEvent(e);
 				}

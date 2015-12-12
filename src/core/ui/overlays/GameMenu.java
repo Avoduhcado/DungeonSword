@@ -5,9 +5,9 @@ import core.Theater;
 import core.render.DrawUtils;
 import core.setups.TitleMenu;
 import core.ui.Button;
+import core.ui.event.MouseAdapter;
+import core.ui.event.MouseEvent;
 import core.ui.utils.Align;
-import core.ui.utils.MouseAdapter;
-import core.ui.utils.MouseEvent;
 
 public class GameMenu extends MenuOverlay {
 

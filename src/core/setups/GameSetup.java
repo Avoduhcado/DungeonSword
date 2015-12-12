@@ -3,37 +3,67 @@ package core.setups;
 import java.util.ArrayList;
 
 import core.ui.UIElement;
+import core.ui.event.StateChangeEvent;
+import core.ui.event.StateChangeListener;
+import core.ui.event.UIEvent;
+import core.ui.utils.UIContainer;
 
-public interface GameSetup {
+public abstract class GameSetup implements UIContainer {
 
-	ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
+	private ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
+	
+	/** Handler for all contained UI state changes */
+	private final StateChangeListener stateChangeListener = new StateChangeListener() {
+		public void changeState(StateChangeEvent e) {
+			switch(e.getState()) {
+			case UIElement.ENABLED:
+				break;
+			case UIElement.DISABLED:
+				break;
+			case UIElement.KILL_FLAG:
+				removeElement(e.getElement());
+				break;
+			}
+		}
+	};
 	
 	/** Update the current game state */
-	public void update();
+	public abstract void update();
 	/** Draw the current game state */
-	public void draw();
+	public abstract void draw();
 	
-	/** Draw the current state UI */
-	public default void drawUI() {
+	/** Draw the setup's UI */
+	public void drawUI() {
 		for(UIElement ui : uiElements) {
 			ui.draw();
 		}
 	}
 	
-	public default ArrayList<UIElement> getUI() {
+	public ArrayList<UIElement> getUI() {
 		return uiElements;
 	}
 	
-	public default UIElement getElement(int index) {
+	public UIElement getElement(int index) {
 		return uiElements.get(index);
 	}
 	
-	public default boolean removeElement(UIElement element) {
+	public boolean removeElement(UIElement element) {
 		return uiElements.remove(element);
 	}
 	
-	public default void addUI(UIElement element) {
+	public void addUI(UIElement element) {
+		element.setContainer(this);
 		uiElements.add(element);
+	}
+	
+	public void fireEvent(UIEvent e) {
+		if(e instanceof StateChangeEvent) {
+			processStateChangeEvent(e);
+		}
+	}
+	
+	protected void processStateChangeEvent(UIEvent e) {
+		stateChangeListener.changeState((StateChangeEvent) e);
 	}
 	
 }

@@ -11,11 +11,10 @@ import java.util.Queue;
 import core.Camera;
 import core.Theater;
 import core.audio.Ensemble;
-import core.audio.SoundEffect;
 import core.ui.Icon;
 import core.utilities.keyboard.Keybinds;
 
-public class SplashScreen implements GameSetup {
+public class SplashScreen extends GameSetup {
 
 	/** Queued list of images to display */
 	private Queue<Icon> splashImages = new LinkedList<Icon>();

@@ -3,6 +3,8 @@ package core;
 import core.audio.Ensemble;
 import core.setups.GameSetup;
 import core.setups.SplashScreen;
+import core.ui.UIElement;
+import core.ui.event.TimeEvent;
 import core.utilities.Config;
 import core.utilities.text.Text;
 
@@ -14,6 +16,8 @@ public class Theater {
 	 * Options for resource loading and interface to manage it
 	 * 
 	 * Save classes to manage save files
+	 * 
+	 * Default UI assets
 	 */
 
 	/** Current Game Setup */
@@ -145,6 +149,11 @@ public class Theater {
 			Camera.get().updateHeader();
 			fps = 0;
 			lastLoopTime = 0;
+		}
+		
+		for(int i = 0; i<setup.getUI().size(); i++) {
+			UIElement e = setup.getUI().get(i);
+			e.fireEvent(new TimeEvent(delta / 1000));
 		}
 	}
 

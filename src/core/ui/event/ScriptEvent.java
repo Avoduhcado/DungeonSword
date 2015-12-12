@@ -1,4 +1,4 @@
-package core.ui.utils;
+package core.ui.event;
 
 import core.ui.UIElement;
 
@@ -6,13 +6,12 @@ enum InteractType {
 	KEYPRESS, PLAYER_TOUCH, ENTITY_TOUCH, AUTO, PARALLEL;
 }
 
-public abstract class ScriptEvent extends UIEvent implements UIAction {
+public abstract class ScriptEvent extends UIEvent {
 
 	//private Scriptable scriptHost;
 	private InteractType type;
 	
 	public ScriptEvent(UIElement parent) {
-		super(parent);
 		// TODO Auto-generated constructor stub
 	}
 	
