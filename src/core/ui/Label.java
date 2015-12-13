@@ -6,10 +6,10 @@ public class Label extends UIElement {
 
 	private String text;
 	
-	public Label(String text, float x, float y, String image) {
+	public Label(float x, float y, String frame, String text) {
 		this.text = text;
 		setBounds(x, y, Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
-		setFrame(image);
+		setFrame(frame);
 	}
 	
 	@Override

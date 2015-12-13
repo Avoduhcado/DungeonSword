@@ -20,7 +20,7 @@ public class Slider extends UIElement {
 	
 	private ValueChangeListener valueChangeListener;
 	
-	public Slider(float x, float y, float value) {		
+	public Slider(float x, float y, float value) {
 		this.value = value;
 		
 		this.slideBar = "SliderBG";
@@ -120,7 +120,6 @@ public class Slider extends UIElement {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			System.out.println(MathUtils.clamp((float) ((e.getX() - getX()) / bounds.getWidth()), 0f, 1f));
 			setValue(MathUtils.clamp((float) ((e.getX() - getX()) / bounds.getWidth()), 0f, 1f));
 		}
 	}

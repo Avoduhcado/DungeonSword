@@ -24,7 +24,7 @@ public class TextBox extends UIElement implements KeybindListener {
 	 * @param y Y position
 	 * @param image The text box background, or null for no background
 	 */
-	public TextBox(String text, float x, float y, String image, boolean fill) {		
+	public TextBox(float x, float y, String frame, String text, boolean fill) {
 		parseText(text);
 		
 		if(fill) {
@@ -42,7 +42,7 @@ public class TextBox extends UIElement implements KeybindListener {
 		}
 		
 		setBounds(x, y, getWidth(), getHeight());
-		setFrame(image);
+		setFrame(frame);
 	}
 	
 	@Override

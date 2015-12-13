@@ -11,12 +11,11 @@ import core.utilities.text.Text;
 public class Button extends UIElement {
 	
 	private String text;
-	private String textColor = "gray";
-	private String icon;
+	protected String textColor = "gray";
 	
 	private ActionListener actionListener;
 			
-	public Button(String text) {		
+	public Button(String text) {
 		this.text = text;
 		setBounds(0, 0,
 				text != null ? Text.getDefault().getWidth(text) : 1,
@@ -25,12 +24,12 @@ public class Button extends UIElement {
 		addMouseListener(new DefaultButtonAdapter());
 	}
 	
-	public Button(String text, float x, float y, float width, String image) {		
+	public Button(float x, float y, String frame, String text) {		
 		this.text = text;
 		setBounds(x, y,
-				width == 0 ? Text.getDefault().getWidth(text) : width, 
+				Text.getDefault().getWidth(text), 
 				Text.getDefault().getHeight(text));
-		setFrame(image);
+		setFrame(frame);
 		
 		addMouseListener(new DefaultButtonAdapter());
 	}
@@ -81,14 +80,6 @@ public class Button extends UIElement {
 	public void setTextColor(String textColor) {
 		this.textColor = textColor;
 	}
-
-	public String getIcon() {
-		return icon;
-	}
-	
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
 	
 	/**
 	 * Not recommended to override default <code>Button</code> behavior.
@@ -112,9 +103,9 @@ public class Button extends UIElement {
 	
 	@Override
 	public void fireEvent(UIEvent e) {
-		if(e instanceof MouseEvent) {
-			processMouseEvent((MouseEvent) e);
-		} else if(e instanceof ActionEvent) {
+		super.fireEvent(e);
+		
+		if(e instanceof ActionEvent) {
 			processActionEvent((ActionEvent) e);
 		}
 	}

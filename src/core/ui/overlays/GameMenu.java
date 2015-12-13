@@ -5,70 +5,32 @@ import core.Theater;
 import core.render.DrawUtils;
 import core.setups.TitleMenu;
 import core.ui.Button;
-import core.ui.event.MouseAdapter;
-import core.ui.event.MouseEvent;
 import core.ui.utils.Align;
 
 public class GameMenu extends MenuOverlay {
 
 	private OptionsMenu options;
 	
-	public GameMenu(String image) {
-		Button toGame = new Button("Return to Game", Float.NaN, Camera.get().getDisplayHeight(0.2f), 0, null);
+	public GameMenu() {
+		Button toGame = new Button(Float.NaN, Camera.get().getDisplayHeight(0.2f), null, "Return to Game");
 		toGame.setAlign(Align.CENTER);
 		toGame.setStill(true);
-		toGame.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				toClose = true;
-			}
-		});
-		/*toGame.addEvent(new ClickEvent(toGame) {
-			public void click() {
-				toClose = true;
-			}
-		});*/
+		toGame.addActionListener(e -> toClose = true);
 		
-		Button openOptions = new Button("Options", Float.NaN, (float) toGame.getBounds().getMaxY(), 0, null);
+		Button openOptions = new Button(Float.NaN, (float) toGame.getBounds().getMaxY(), null, "Options");
 		openOptions.setAlign(Align.CENTER);
 		openOptions.setStill(true);
-		openOptions.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				options = new OptionsMenu("Menu2");
-			}
-		});
-		/*openOptions.addEvent(new ClickEvent(openOptions) {
-			public void click() {
-				options = new OptionsMenu("Menu2");
-			}
-		});*/
+		openOptions.addActionListener(e -> options = new OptionsMenu());
 		
-		Button toTitle = new Button("Quit to Title", Float.NaN, (float) openOptions.getBounds().getMaxY(), 0, null);
+		Button toTitle = new Button(Float.NaN, (float) openOptions.getBounds().getMaxY(), null, "Quit to Title");
 		toTitle.setAlign(Align.CENTER);
 		toTitle.setStill(true);
-		toTitle.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				Theater.get().swapSetup(new TitleMenu());
-			}
-		});
-		/*toTitle.addEvent(new ClickEvent(toTitle) {
-			public void click() {
-				Theater.get().swapSetup(new TitleMenu());
-			}
-		});*/
+		toTitle.addActionListener(e -> Theater.get().swapSetup(new TitleMenu()));
 		
-		Button toDesktop = new Button("Quit to Desktop", Float.NaN, (float) toTitle.getBounds().getMaxY(), 0, null);
+		Button toDesktop = new Button(Float.NaN, (float) toTitle.getBounds().getMaxY(), null, "Quit to Desktop");
 		toDesktop.setAlign(Align.CENTER);
 		toDesktop.setStill(true);
-		toDesktop.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				Theater.get().close();
-			}
-		});
-		/*toDesktop.addEvent(new ClickEvent(toDesktop) {
-			public void click() {
-				Theater.get().close();
-			}
-		});*/
+		toDesktop.addActionListener(e -> Theater.get().close());
 		
 		toGame.setSurrounding(0, toDesktop);
 		add(toGame);
@@ -81,7 +43,7 @@ public class GameMenu extends MenuOverlay {
 		
 		setKeyboardNavigable(true, toGame);
 		
-		addFrame(image);
+		setFrame("Menu2");
 	}
 	
 	@Override

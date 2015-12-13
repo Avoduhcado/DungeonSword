@@ -10,8 +10,9 @@ public class Icon extends UIElement {
 	
 	private Transform transform = new Transform();
 	
-	public Icon(String icon) {
+	public Icon(float x, float y, String icon) {
 		this.setIcon(icon);
+		setPosition(x, y);
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class Icon extends UIElement {
 		this.image = icon;
 	}
 
+	@Override
 	public void setPosition(float x, float y) {
 		setX(x);
 		setY(y);

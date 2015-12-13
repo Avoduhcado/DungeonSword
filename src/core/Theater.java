@@ -18,6 +18,8 @@ public class Theater {
 	 * Save classes to manage save files
 	 * 
 	 * Default UI assets
+	 * 
+	 * Camera functions and stuff
 	 */
 
 	/** Current Game Setup */
@@ -47,7 +49,7 @@ public class Theater {
 	/** Game name, appears in Window Title */
 	public static String title = "Avogine";
 	/** Current engine framework version */
-	public static final String AVOGINE_VERSION = "0.7.60";
+	public static final String AVOGINE_VERSION = "0.8";
 
 	/** Theater singleton */
 	private static Theater theater;
@@ -79,7 +81,7 @@ public class Theater {
 		System.setProperty("resources", System.getProperty("user.dir") + "/resources");
 
 		Camera.init();
-		Text.loadFont("DEBUG", "Avocado");
+		Text.loadFont("DEBUG", "Benegraphic");
 		Ensemble.init();
 		Config.loadConfig();
 

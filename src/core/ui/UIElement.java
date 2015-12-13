@@ -78,6 +78,11 @@ public abstract class UIElement {
 				(Double.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, width + (xBorder * 2), height + (yBorder * 2));
 	}
 	
+	public void setPosition(float x, float y) {
+		bounds = new Rectangle2D.Double((Float.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
+				(Float.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, bounds.getWidth(), bounds.getHeight());
+	}
+	
 	public void setPosition(double x, double y) {
 		bounds = new Rectangle2D.Double((Double.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
 				(Double.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, bounds.getWidth(), bounds.getHeight());

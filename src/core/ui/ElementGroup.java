@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
+
 import org.lwjgl.util.vector.Vector2f;
 
 import core.Theater;
@@ -19,9 +21,10 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	private ArrayList<T> elements = new ArrayList<T>();
 	
 	private boolean singleSelection = true;
-	private EmptyFrame frame;
+	
 	protected int selection = -1;
 	private SelectionPointer pointer;
+	
 	private CancelListener listener;
 
 	public void update() {
@@ -30,7 +33,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 		
 		// TODO Change to mouselistener event
-		if(selection != -1 && (frame != null ? !frame.getBounds().contains(MouseInput.getMouse()) : true)) {
+		if(selection != -1 && (frame != null ? !getBounds().contains(MouseInput.getMouse()) : true)) {
 			get(selection).setSelected(true);
 			if(Keybinds.UP.clicked() && get(selection).getSurroundings()[0] != null) {
 				changeSelection(0);
@@ -41,7 +44,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			} else if(Keybinds.DOWN.clicked() && get(selection).getSurroundings()[3] != null) {
 				changeSelection(3);
 			}
-		} else if(selection != -1 && frame.getBounds().contains(MouseInput.getMouse())) {
+		} else if(selection != -1 && getBounds().contains(MouseInput.getMouse())) {
 			get(selection).setSelected(false);
 			// TODO Get mouse coordinates and update pointer position
 		}
@@ -52,16 +55,14 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	}
 	
 	public void draw() {
-		if(frame != null) {
-			frame.draw();
-		}
+		super.draw();
 		
 		for(UIElement e : elements) {
 			e.draw();
 		}
 		
 		if(pointer != null) {
-			pointer.draw();
+			//pointer.draw();
 		}
 	}
 	
@@ -152,7 +153,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 	}
 	
-	public EmptyFrame getFrame() {
+	/*public EmptyFrame getFrame() {
 		return frame;
 	}
 	
@@ -161,12 +162,12 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		frame.setStill(true);
 	}
 	
-	public void addFrame(String image, float xBorder, float yBorder) {
+	public void setFrame(String image, float xBorder, float yBorder) {
 		frame = new EmptyFrame(getBounds(), image);
 		frame.setStill(true);
 		frame.setXBorder(xBorder);
 		frame.setYBorder(yBorder);
-	}
+	}*/
 	
 	@Override
 	public void fireEvent(UIEvent e) {
@@ -208,6 +209,11 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 
 	public void add(T element) {
 		elements.add(element);
+		setBounds();
+	}
+	
+	public void addAll(Collection<T> elements) {
+		this.elements.addAll(elements);
 		setBounds();
 	}
 

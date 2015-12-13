@@ -46,9 +46,7 @@ public class SplashScreen extends GameSetup {
 			String line = null;
 			while((line = reader.readLine()) != null) {
 				// Load each screen
-				Icon splash = new Icon(line);
-				splash.setPosition(Float.NaN, Float.NaN);
-				splashImages.add(splash);
+				splashImages.add(new Icon(Float.NaN, Float.NaN, line));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -74,14 +72,14 @@ public class SplashScreen extends GameSetup {
 				int tempNumber = 1;
 				if(!usedInts.contains(tempNumber)) {
 					usedInts.add(tempNumber);
+					
 					while(tempNumber > 0) {
 						line = reader.readLine();
 						tempNumber--;
 					}
 					
-					Icon splash = new Icon(line);
-					splash.setPosition(Float.NaN, Float.NaN);
-					splashImages.add(splash);
+					splashImages.add(new Icon(Float.NaN, Float.NaN, line));
+					
 					reader.close();
 					reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/splash/splash text"));
 				} else {
