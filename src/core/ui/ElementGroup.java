@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.lwjgl.util.vector.Vector2f;
 
 import core.Theater;
+import core.ui.event.KeyEvent;
 import core.ui.event.MouseEvent;
 import core.ui.event.UIEvent;
 import core.ui.utils.Accessible;
@@ -62,7 +63,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 		
 		if(pointer != null) {
-			//pointer.draw();
+			pointer.draw();
 		}
 	}
 	
@@ -178,6 +179,14 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 				for(UIElement ui : elements) {
 					if(ui.getBounds().contains(((MouseEvent) e).getPosition()) 
 							|| ui.getBounds().contains(((MouseEvent) e).getPrevPosition())) {
+						ui.fireEvent(e);
+					}
+				}
+			}
+		} else if(e instanceof KeyEvent) {
+			if(!isEmpty()) {
+				for(UIElement ui : elements) {
+					if(ui.getState() == ENABLED) {
 						ui.fireEvent(e);
 					}
 				}
