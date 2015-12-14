@@ -5,7 +5,7 @@ import org.lwjgl.input.Keyboard;
 
 import core.utilities.Config;
 
-public enum Keybinds {
+public enum Keybind {
 	
 	CONFIRM (Keyboard.KEY_RETURN),
 	CANCEL (Keyboard.KEY_F),
@@ -38,7 +38,7 @@ public enum Keybinds {
 	 * Create new key mapping.
 	 * @param k integer to map key to
 	 */
-	Keybinds(int k) {
+	Keybind(int k) {
 		this.key = new Press(k);
 	}
 	
@@ -46,7 +46,7 @@ public enum Keybinds {
 	 * Check for key interactions.
 	 */
 	public static void update() {
-		for(Keybinds keybinds : Keybinds.values()) {
+		for(Keybind keybinds : Keybind.values()) {
 			keybinds.key.setHeld(keybinds.key.isPressed());
 			keybinds.key.update();
 		}
@@ -77,30 +77,30 @@ public enum Keybinds {
 	
 	/** Disable specific keys for menu navigation */
 	public static void inMenu() {
-		Keybinds.MENU.key.setDisabled(true);
-		Keybinds.PAUSE.key.setDisabled(true);
-		Keybinds.SLOT1.key.setDisabled(true);
-		Keybinds.SLOT2.key.setDisabled(true);
-		Keybinds.SLOT3.key.setDisabled(true);
-		Keybinds.SLOT4.key.setDisabled(true);
-		Keybinds.SLOT5.key.setDisabled(true);
-		Keybinds.SLOT6.key.setDisabled(true);
-		Keybinds.SLOT7.key.setDisabled(true);
-		Keybinds.SLOT8.key.setDisabled(true);
+		Keybind.MENU.key.setDisabled(true);
+		Keybind.PAUSE.key.setDisabled(true);
+		Keybind.SLOT1.key.setDisabled(true);
+		Keybind.SLOT2.key.setDisabled(true);
+		Keybind.SLOT3.key.setDisabled(true);
+		Keybind.SLOT4.key.setDisabled(true);
+		Keybind.SLOT5.key.setDisabled(true);
+		Keybind.SLOT6.key.setDisabled(true);
+		Keybind.SLOT7.key.setDisabled(true);
+		Keybind.SLOT8.key.setDisabled(true);
 	}
 	
 	/** Enable specific keys after closing menu */
 	public static void closeMenu() {
-		Keybinds.MENU.key.setDisabled(false);
-		Keybinds.PAUSE.key.setDisabled(false);
-		Keybinds.SLOT1.key.setDisabled(false);
-		Keybinds.SLOT2.key.setDisabled(false);
-		Keybinds.SLOT3.key.setDisabled(false);
-		Keybinds.SLOT4.key.setDisabled(false);
-		Keybinds.SLOT5.key.setDisabled(false);
-		Keybinds.SLOT6.key.setDisabled(false);
-		Keybinds.SLOT7.key.setDisabled(false);
-		Keybinds.SLOT8.key.setDisabled(false);
+		Keybind.MENU.key.setDisabled(false);
+		Keybind.PAUSE.key.setDisabled(false);
+		Keybind.SLOT1.key.setDisabled(false);
+		Keybind.SLOT2.key.setDisabled(false);
+		Keybind.SLOT3.key.setDisabled(false);
+		Keybind.SLOT4.key.setDisabled(false);
+		Keybind.SLOT5.key.setDisabled(false);
+		Keybind.SLOT6.key.setDisabled(false);
+		Keybind.SLOT7.key.setDisabled(false);
+		Keybind.SLOT8.key.setDisabled(false);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public enum Keybinds {
 		
 		// Handled through Config file
 		try {
-			Keybinds.valueOf(temp[0]).setKey(Keyboard.getKeyIndex(temp[1]));
+			Keybind.valueOf(temp[0]).setKey(Keyboard.getKeyIndex(temp[1]));
 		} catch(IllegalArgumentException e) {
 			// Reload config
 			Config.createConfig();
@@ -149,7 +149,7 @@ public enum Keybinds {
 		} catch (LWJGLException e1) {
 			e1.printStackTrace();
 		}
-		for(Keybinds e : Keybinds.values()) {
+		for(Keybind e : Keybind.values()) {
 			e.key.setPressed(false);
 		}
 	}

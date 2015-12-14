@@ -13,6 +13,7 @@ public interface UIContainer {
 	public UIElement getElement(int index);
 	public boolean removeElement(UIElement element);
 	public void addUI(UIElement element);
+	public void addUI(UIElement element, int index);
 	
 	public void fireEvent(UIEvent e);
 	

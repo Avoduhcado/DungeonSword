@@ -65,6 +65,15 @@ public class Button extends UIElement {
 		}
 	}
 	
+	@Override
+	public void setSelected(boolean selected) {
+		if(selected) {
+			textColor = "white";
+		} else {
+			textColor = "gray";
+		}
+	}
+	
 	public String getText() {
 		return text;
 	}

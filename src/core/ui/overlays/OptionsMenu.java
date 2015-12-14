@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.openal.SoundStore;
 
 import core.Camera;
+import core.render.DrawUtils;
 import core.ui.Button;
 import core.ui.CheckBox;
 import core.ui.ElementGroup;
@@ -14,7 +15,7 @@ import core.ui.Label;
 import core.ui.Slider;
 import core.ui.UIElement;
 import core.ui.utils.Align;
-import core.utilities.keyboard.Keybinds;
+import core.utilities.keyboard.Keybind;
 
 public class OptionsMenu extends MenuOverlay {
 
@@ -91,19 +92,19 @@ public class OptionsMenu extends MenuOverlay {
 		LinkedList<ElementGroup<UIElement>> keybinds = new LinkedList<ElementGroup<UIElement>>();
 		float keyX = Camera.get().getDisplayWidth(0.25f);
 		float keyY = 0;
-		for(int i = 0; i<Keybinds.values().length; i++) {
+		for(int i = 0; i<Keybind.values().length; i++) {
 			ElementGroup<UIElement> key = new ElementGroup<UIElement>();
 			
 			Label keyLabel = new Label(keyX, 
 					Camera.get().getDisplayHeight(0.285f) + keyY,
-					null, Keybinds.values()[i].toString() + ": ");
+					null, Keybind.values()[i].toString() + ": ");
 			keyLabel.setStill(true);
 			keyLabel.setAlign(Align.LEFT);
 			key.add(keyLabel);
 			
 			InputBox keyBox = new InputBox(keyX, 
 					Camera.get().getDisplayHeight(0.285f) + keyY,
-					 null, Keybinds.values()[i].getKey(), -1, 0);
+					 null, Keybind.values()[i].getKey(), -1, 0);
 			keyBox.setState(DISABLED);
 			keyBox.setStill(true);
 			keyBox.setCentered(false);
@@ -111,7 +112,7 @@ public class OptionsMenu extends MenuOverlay {
 				OptionsMenu.this.setFocus(keyBox);
 			});
 			keyBox.addValueChangeListener(e -> {
-				Keybinds.valueOf(keyLabel.getText().split(":")[0]).setKey(Keyboard.getKeyIndex(keyBox.getText()));
+				Keybind.valueOf(keyLabel.getText().split(":")[0]).setKey(Keyboard.getKeyIndex(keyBox.getText()));
 				keyBox.setState(DISABLED);
 			});
 			key.add(keyBox);
@@ -129,13 +130,19 @@ public class OptionsMenu extends MenuOverlay {
 		Button close = new Button(Float.NaN, Camera.get().getDisplayHeight(0.85f), null, "Close");
 		close.setAlign(Align.CENTER);
 		close.setStill(true);
-		close.addActionListener(e -> {
-			toClose = true;
-		});
+		//close.addActionListener(e -> toClose = true);
+		close.addActionListener(e -> setState(KILL_FLAG));
 		add(close);
 		
 		setFrame("Menu2");
 		//addFrame(image, 50, 30);
+	}
+
+	@Override
+	public void draw() {
+		DrawUtils.fillColor(0f, 0f, 0f, 0.35f);
+		
+		super.draw();
 	}
 
 }

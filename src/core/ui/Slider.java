@@ -29,7 +29,7 @@ public class Slider extends UIElement {
 		setBounds(x, y, SpriteList.get(slideBar).getWidth(), SpriteList.get(slideBar).getHeight());
 		
 		addMouseListener(new DefaultSliderAdapter());
-		addMouseMotionListener(new DefaultSliderAdapter());
+		addMouseMotionListener(new DefaultSliderMotionAdapter());
 	}
 	
 	@Override
@@ -90,7 +90,7 @@ public class Slider extends UIElement {
 		}
 	}
 	
-	class DefaultSliderAdapter implements MouseListener, MouseMotionListener {
+	class DefaultSliderAdapter implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -113,6 +113,10 @@ public class Slider extends UIElement {
 		@Override
 		public void mouseExited(MouseEvent e) {
 		}
+
+	}
+	
+	class DefaultSliderMotionAdapter implements MouseMotionListener {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {

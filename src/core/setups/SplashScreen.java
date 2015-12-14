@@ -12,7 +12,7 @@ import core.Camera;
 import core.Theater;
 import core.audio.Ensemble;
 import core.ui.Icon;
-import core.utilities.keyboard.Keybinds;
+import core.utilities.keyboard.Keybind;
 
 public class SplashScreen extends GameSetup {
 
@@ -105,7 +105,7 @@ public class SplashScreen extends GameSetup {
 	 */
 	public void update() {
 		// If player wishes to skip screen
-		if(Keybinds.CONFIRM.clicked()) {
+		if(Keybind.CONFIRM.clicked()) {
 			// Remove current screen
 			splashImages.poll();
 			// Stop any sound effects playing

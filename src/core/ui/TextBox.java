@@ -2,20 +2,24 @@ package core.ui;
 
 import java.util.ArrayList;
 
+import core.ui.event.KeybindEvent;
+import core.ui.event.KeybindListener;
 import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
+import core.ui.event.UIEvent;
 import core.ui.utils.Align;
-import core.utilities.keyboard.Keybinds;
-import core.utilities.keyboard.KeybindListener;
+import core.utilities.keyboard.Keybind;
 import core.utilities.text.Text;
 import core.utilities.text.TextModifier;
 
-public class TextBox extends UIElement implements KeybindListener {
+public class TextBox extends UIElement {
 
 	protected ArrayList<TextLine> lines = new ArrayList<TextLine>();
 
 	protected float textFill = 0f;
 	protected float fillSpeed = 12.5f;
+	
+	private KeybindListener keybindListener;
 		
 	/**
 	 * A simple box to display a block of text.
@@ -43,6 +47,8 @@ public class TextBox extends UIElement implements KeybindListener {
 		
 		setBounds(x, y, getWidth(), getHeight());
 		setFrame(frame);
+		
+		addKeybindListener(new DefaultKeybindAdapter());
 	}
 	
 	@Override
@@ -77,18 +83,6 @@ public class TextBox extends UIElement implements KeybindListener {
 		}
 	}
 
-	@Override
-	public void KeybindTouched(Keybinds k) {
-		if(k.equals(Keybinds.CONFIRM) && k.clicked()) {
-			if(textFill < getLength()) {
-				textFill = getLength();
-				bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
-				
-				removeTimeListener(timeListener);
-			}
-		}
-	}
-	
 	private void parseText(String text) {
 		if(text.contains(";")) {
 			String[] lineArray = text.split(";");
@@ -141,6 +135,46 @@ public class TextBox extends UIElement implements KeybindListener {
 		});
 	}
 
+	public void removeKeybindListener(KeybindListener l) {
+		if(l == null) {
+			return;
+		}
+		keybindListener = null;
+	}
+	
+	public void addKeybindListener(KeybindListener l) {
+		keybindListener = l;
+	}
+	
+	@Override
+	public void fireEvent(UIEvent e) {
+		super.fireEvent(e);
+		
+		if(e instanceof KeybindEvent) {
+			processKeybindEvent((KeybindEvent) e);
+		}
+	}
+
+	protected void processKeybindEvent(KeybindEvent e) {
+		if(keybindListener != null) {
+			keybindListener.KeybindTouched(e);
+		}
+	}
+	
+	class DefaultKeybindAdapter implements KeybindListener {
+		@Override
+		public void KeybindTouched(KeybindEvent e) {
+			if(e.getKeybind().equals(Keybind.CONFIRM) && e.getKeybind().clicked()) {
+				if(textFill < getLength()) {
+					textFill = getLength();
+					bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
+					
+					removeTimeListener(timeListener);
+				}
+			}
+		}
+	}
+	
 	public void setText(String text) {
 		parseText(text);		
 	}

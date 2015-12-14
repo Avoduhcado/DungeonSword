@@ -3,7 +3,7 @@ package core.utilities.text;
 import java.awt.Color;
 import java.lang.reflect.Field;
 
-import core.utilities.keyboard.Keybinds;
+import core.utilities.keyboard.Keybind;
 
 public class TextModifier {
 
@@ -63,7 +63,7 @@ public class TextModifier {
 					String type = temp[x].substring(1).split(":")[0];
 					switch(type) {
 					case "key":
-						addIn = Keybinds.valueOf(temp[x].substring(1).split(":")[1]).getKey();
+						addIn = Keybind.valueOf(temp[x].substring(1).split(":")[1]).getKey();
 						break;
 					}
 					break;
@@ -116,7 +116,7 @@ public class TextModifier {
 				String type = temp[x].substring(1).split(":")[0];
 				switch(type) {
 				case "key":
-					addIn = Keybinds.valueOf(temp[x].substring(1).split(":")[1]).getKey();
+					addIn = Keybind.valueOf(temp[x].substring(1).split(":")[1]).getKey();
 					break;
 				}
 				break;

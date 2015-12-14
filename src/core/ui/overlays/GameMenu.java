@@ -58,7 +58,7 @@ public class GameMenu extends MenuOverlay {
 	}
 	
 	@Override
-	public void draw() {
+	public void drawUI() {
 		DrawUtils.fillColor(0f, 0f, 0f, 0.65f);
 		
 		if(options != null) {
