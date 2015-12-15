@@ -1,6 +1,9 @@
 package core;
 
-import core.audio.Ensemble;
+import javax.sound.sampled.AudioSystem;
+import org.lwjgl.openal.AL;
+import org.newdawn.slick.openal.SoundStore;
+
 import core.setups.GameSetup;
 import core.setups.SplashScreen;
 import core.ui.UIElement;
@@ -20,6 +23,8 @@ public class Theater {
 	 * Default UI assets
 	 * 
 	 * Camera functions and stuff
+	 * 
+	 * Redo audio implementation to use openAL
 	 */
 
 	/** Current Game Setup */
@@ -49,7 +54,9 @@ public class Theater {
 	/** Game name, appears in Window Title */
 	public static String title = "Avogine";
 	/** Current engine framework version */
-	public static final String AVOGINE_VERSION = "0.8";
+	public static final String AVOGINE_VERSION = "0.8.12";
+	
+	private int audioDeviceCount;
 
 	/** Theater singleton */
 	private static Theater theater;
@@ -82,10 +89,12 @@ public class Theater {
 
 		Camera.init();
 		Text.loadFont("DEBUG", "Benegraphic");
-		Ensemble.init();
+		SoundStore.get().init();
 		Config.loadConfig();
+		
+		audioDeviceCount = AudioSystem.getMixerInfo().length;
 
-		setup = new SplashScreen();
+		setSetup(new SplashScreen());
 	}
 
 	/**
@@ -97,10 +106,18 @@ public class Theater {
 		Camera.get().draw(getSetup());
 		Camera.get().update();
 
-		Ensemble.get().update();
-
-		if(!isPaused())
+		if(AudioSystem.getMixerInfo().length != audioDeviceCount) {
+			System.err.println("Audio device likely removed or changed.\nConsider reloading audio settings.");
+			audioDeviceCount = AudioSystem.getMixerInfo().length;
+			/*AL.destroy();
+			SoundStore.get().clear();
+			SoundStore.get().init();*/
+		}
+		SoundStore.get().poll(0);
+		
+		if(!isPaused()) {
 			getSetup().update();
+		}
 
 		Input.checkInput(getSetup());
 
@@ -130,11 +147,11 @@ public class Theater {
 	}
 
 	/**
-	 * Save configuration, close ensemble, close screen, and exit game.
+	 * Save configuration, destroy audio, destroy display, and exit game.
 	 */
 	public void close() {
 		Config.createConfig();
-		Ensemble.get().close();
+		AL.destroy();
 		Camera.get().close();
 		System.exit(0);
 	}
@@ -170,7 +187,7 @@ public class Theater {
 	 * Swap to a new Game Setup.
 	 * @param setup New GameSetup to swap to
 	 */
-	public void swapSetup(GameSetup setup) {
+	public void setSetup(GameSetup setup) {
 		this.setup = setup;
 	}
 

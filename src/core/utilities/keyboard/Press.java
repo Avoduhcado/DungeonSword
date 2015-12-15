@@ -1,5 +1,6 @@
 package core.utilities.keyboard;
 
+import org.lwjgl.input.Keyboard;
 
 public class Press {
 
@@ -20,15 +21,15 @@ public class Press {
 	 */
 	public Press(int k) {
 		setKey(k);
-		setPressed(Keyboard.isPressed(k));
-		setHeld(Keyboard.isPressed(k));
+		setPressed(Keyboard.isKeyDown(k));
+		setHeld(Keyboard.isKeyDown(k));
 	}
 	
 	/**
 	 * Check for key interactions
 	 */
 	public void update() {
-		if(Keyboard.isPressed(getKey())) {
+		if(Keyboard.isKeyDown(getKey())) {
 			setPressed(true);
 			setReleased(false);
 		} else {

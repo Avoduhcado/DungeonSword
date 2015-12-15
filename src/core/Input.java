@@ -8,6 +8,7 @@ import core.ui.UIElement;
 import core.ui.event.KeyEvent;
 import core.ui.event.KeybindEvent;
 import core.ui.event.MouseEvent;
+import core.ui.overlays.GameMenu;
 import core.ui.utils.UIContainer;
 import core.utilities.keyboard.Keybind;
 
@@ -23,6 +24,7 @@ public class Input {
 	 * @param setup The current setup of the game
 	 */
 	public static void checkInput(UIContainer setup) {
+		// TODO Menu Overlays isn't processed as ElementGroup
 		if(!setup.getUI().isEmpty()) {
 			while(setup.getElement(setup.getUI().size() - 1) != null && setup.getElement(setup.getUI().size() - 1) instanceof UIContainer) {
 				setup = (UIContainer) setup.getElement(setup.getUI().size() - 1);
@@ -48,6 +50,8 @@ public class Input {
 		if(setup instanceof Stage) {
 			if(Keybind.PAUSE.clicked()) {
 				Theater.get().pause();
+			} else if(Keybind.EXIT.clicked()) {
+				setup.addUI(new GameMenu());
 			}
 		}
 	}

@@ -22,12 +22,15 @@ public class Camera {
 	private final int WIDTH = 800;
 	/** Default Window height */
 	private final int HEIGHT = 600;
+	/** Target FPS for application to run at */
+	public static final int TARGET_FPS = 60;
+	/** Window Icon */
+	private final String icon = "AGDG Logo";
+	
 	/** Current Window width */
 	public int displayWidth = WIDTH;
 	/** Current Window height */
 	public int displayHeight = HEIGHT;
-	/** Target FPS for application to run at */
-	public static final int TARGET_FPS = 60;
 
 	/** VSync status */
 	private boolean vsync;
@@ -66,7 +69,7 @@ public class Camera {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			updateHeader();
 			try {
-				Display.setIcon(loadIcon(System.getProperty("resources") + "/ui/AGDG Logo.png"));
+				Display.setIcon(loadIcon(System.getProperty("resources") + "/sprites/" + icon + ".png"));
 			} catch (IOException e) {
 				System.out.println("Failed to load icon");
 			}
@@ -250,8 +253,9 @@ public class Camera {
 	}
 	
 	public boolean toBeClosed() {
-		if(Display.isCloseRequested()) 
+		if(Display.isCloseRequested()) {
 			return true;
+		}
 		
 		return false;
 	}

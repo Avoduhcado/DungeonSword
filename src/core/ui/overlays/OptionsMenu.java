@@ -6,7 +6,6 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.openal.SoundStore;
 
 import core.Camera;
-import core.render.DrawUtils;
 import core.ui.Button;
 import core.ui.CheckBox;
 import core.ui.ElementGroup;
@@ -20,6 +19,7 @@ import core.utilities.keyboard.Keybind;
 public class OptionsMenu extends MenuOverlay {
 
 	public OptionsMenu() {
+		super();
 		/*try {
 			displayModes = Display.getAvailableDisplayModes();
 			for(DisplayMode d : displayModes)
@@ -35,7 +35,7 @@ public class OptionsMenu extends MenuOverlay {
 
 		Slider musicSlider = new Slider(Camera.get().getDisplayWidth(0.35f), 
 				Camera.get().getDisplayHeight(0.1667f), 
-				1f);
+				SoundStore.get().getMusicVolume());
 		musicSlider.setStill(true);
 		musicSlider.addValueChangeListener(e -> {
 			if(SoundStore.get().getMusicVolume() != musicSlider.getValue()) {
@@ -54,7 +54,7 @@ public class OptionsMenu extends MenuOverlay {
 
 		Slider sfxSlider = new Slider(Camera.get().getDisplayWidth(0.35f),
 				(float) (musicSlider.getBounds().getMaxY() + musicSlider.getBounds().getHeight()), 
-				1f);
+				SoundStore.get().getSoundVolume());
 		sfxSlider.setStill(true);
 		sfxSlider.addValueChangeListener(e -> {
 			if(SoundStore.get().getSoundVolume() != sfxSlider.getValue()) {
@@ -130,19 +130,10 @@ public class OptionsMenu extends MenuOverlay {
 		Button close = new Button(Float.NaN, Camera.get().getDisplayHeight(0.85f), null, "Close");
 		close.setAlign(Align.CENTER);
 		close.setStill(true);
-		//close.addActionListener(e -> toClose = true);
 		close.addActionListener(e -> setState(KILL_FLAG));
 		add(close);
 		
 		setFrame("Menu2");
-		//addFrame(image, 50, 30);
-	}
-
-	@Override
-	public void draw() {
-		DrawUtils.fillColor(0f, 0f, 0f, 0.35f);
-		
-		super.draw();
 	}
 
 }

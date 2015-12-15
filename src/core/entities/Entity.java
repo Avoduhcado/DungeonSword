@@ -26,7 +26,9 @@ public class Entity implements Serializable {
 			controller.control();
 		}
 		
-		body.update();
+		if(body != null) {
+			body.update();
+		}
 	}
 	
 	public void draw() {
@@ -35,5 +37,16 @@ public class Entity implements Serializable {
 		}
 	}
 	
+	public void setBody(Body body) {
+		this.body = body;
+	}
+	
+	public void setRender(Render render) {
+		this.render = render;
+	}
+	
+	public void setController(Controller controller) {
+		this.controller = controller;
+	}
 	
 }

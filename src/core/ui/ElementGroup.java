@@ -18,7 +18,6 @@ import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.Accessible;
 import core.utilities.MathUtils;
-import core.utilities.keyboard.Keybind;
 
 public class ElementGroup<T extends UIElement> extends UIElement {
 	
@@ -30,7 +29,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	private SelectionPointer pointer;
 	
 	private KeybindListener keybindListener;
-	private CancelListener listener;
 	
 	public ElementGroup() {
 		addMouseListener(new DefaultMouseAdapter());
@@ -38,12 +36,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		addKeybindListener(new DefaultKeybindAdapter());
 	}
 
-	public void update() {
-		if(listener != null && Keybind.CANCEL.clicked()) {
-			listener.cancel();
-		}
-	}
-	
 	public void draw() {
 		super.draw();
 		
@@ -116,10 +108,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 				pointer = null;
 			}
 		}
-	}
-	
-	public void setCancelListener(CancelListener listener) {
-		this.listener = listener;
 	}
 	
 	public void setSelection(int index) {
@@ -300,12 +288,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 				}
 			}
 		}
-		
-	}
-	
-	public interface CancelListener {
-		
-		public void cancel();
 		
 	}
 	

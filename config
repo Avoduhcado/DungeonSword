@@ -1,5 +1,6 @@
 <AUDIO>
-volume=1.0
+bgmvolume=1.0
+sfxvolume=1.0
 <END>
 
 <KEYS>

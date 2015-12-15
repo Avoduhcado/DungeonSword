@@ -1,11 +1,11 @@
 package core.entities.physics;
 
-import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 public interface Body {
 	
 	public void update();
 	
-	public Vector2f getPosition();
+	public Vector3f getPosition();
 
 }

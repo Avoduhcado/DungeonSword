@@ -10,7 +10,6 @@ import java.util.Queue;
 
 import core.Camera;
 import core.Theater;
-import core.audio.Ensemble;
 import core.ui.Icon;
 import core.utilities.keyboard.Keybind;
 
@@ -109,15 +108,14 @@ public class SplashScreen extends GameSetup {
 			// Remove current screen
 			splashImages.poll();
 			// Stop any sound effects playing
-			if(Ensemble.get().getSoundEffect("Just Like Make Game") != null)
-				Ensemble.get().getSoundEffect("Just Like Make Game").getClip().stop();
+			
 			// Restart screen if a new one exists
 			if(!splashImages.isEmpty()) {
 				timer = 5f;
 				Camera.get().setFadeTimer(-1f);
 			// Proceed with setup swap
 			} else {
-				Theater.get().swapSetup(new TitleMenu());
+				Theater.get().setSetup(new TitleMenu());
 			}
 		}
 		
@@ -144,7 +142,7 @@ public class SplashScreen extends GameSetup {
 				Camera.get().setFadeTimer(-1f);
 			// Proceed with setup swap
 			} else {
-				Theater.get().swapSetup(new TitleMenu());
+				Theater.get().setSetup(new TitleMenu());
 			}
 		}
 	}

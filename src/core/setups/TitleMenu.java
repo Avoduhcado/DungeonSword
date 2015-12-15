@@ -1,9 +1,13 @@
 package core.setups;
 
+import java.io.IOException;
+
+import org.newdawn.slick.openal.Audio;
+import org.newdawn.slick.openal.AudioLoader;
+import org.newdawn.slick.util.ResourceLoader;
+
 import core.Camera;
 import core.Theater;
-import core.audio.Ensemble;
-import core.audio.Track;
 import core.ui.Button;
 import core.ui.ElementGroup;
 import core.ui.Icon;
@@ -11,6 +15,8 @@ import core.ui.overlays.OptionsMenu;
 import core.ui.utils.Align;
 
 public class TitleMenu extends GameSetup {
+	
+	private Audio menuTheme;
 	
 	/**
 	 * Title Menu
@@ -28,7 +34,7 @@ public class TitleMenu extends GameSetup {
 		Button newGame = new Button(Float.NaN, Camera.get().getDisplayHeight(0.55f), null, "New Game");
 		newGame.setStill(true);
 		newGame.setAlign(Align.CENTER);
-		newGame.addActionListener(e -> Theater.get().swapSetup(new Stage()));
+		newGame.addActionListener(e -> Theater.get().setSetup(new Stage()));
 		
 		Button options = new Button(Float.NaN, (float) newGame.getBounds().getMaxY(), null, "Options");
 		options.setStill(true);
@@ -55,18 +61,22 @@ public class TitleMenu extends GameSetup {
 		addUI(buttons);
 				
 		// Play title track
-		Ensemble.get().setBackground(new Track("Menu"));
-		Ensemble.get().getBackground().play();
+		try {
+			menuTheme = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(
+					System.getProperty("resources") + "/music/" + "Menu" + ".ogg"));
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		
+		//menuTheme.playAsMusic(1f, 1f, true);
 	}
 	
 	@Override
 	public void update() {
-		
 	}
 	
 	@Override
 	public void draw() {
-		
 	}
 
 }
