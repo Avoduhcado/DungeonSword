@@ -3,7 +3,7 @@ package core.entities;
 import java.io.Serializable;
 
 import core.entities.controllers.Controller;
-import core.entities.physics.Body;
+import core.entities.physics.Geometric;
 import core.entities.render.Render;
 
 public class Entity implements Serializable {
@@ -13,7 +13,7 @@ public class Entity implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Body body;
+	private Geometric body;
 	private Render render;
 	private Controller controller;
 		
@@ -37,7 +37,7 @@ public class Entity implements Serializable {
 		}
 	}
 	
-	public void setBody(Body body) {
+	public void setBody(Geometric body) {
 		this.body = body;
 	}
 	

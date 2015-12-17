@@ -12,7 +12,7 @@ import org.newdawn.slick.openal.OggData;
 import org.newdawn.slick.openal.OggDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class AudioBody implements Body {
+public class AudioBody implements Geometric {
 
 	private Vector3f position;
 	private Audio audio;

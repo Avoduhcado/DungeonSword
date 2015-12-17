@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.Entity;
-import core.entities.physics.Body;
+import core.entities.physics.Geometric;
 import core.entities.physics.AudioBody;
 
 public class Stage extends GameSetup {
@@ -14,7 +14,7 @@ public class Stage extends GameSetup {
 	
 	public Stage() {
 		Entity audioSource = new Entity();
-		Body audioBody = new AudioBody(new Vector3f(0, 0, 0), "JLMG");
+		Geometric audioBody = new AudioBody(new Vector3f(0, 0, 0), "JLMG");
 		audioSource.setBody(audioBody);
 		entities.add(audioSource);
 	}
