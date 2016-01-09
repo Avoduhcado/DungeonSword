@@ -25,6 +25,8 @@ public class Theater {
 	 * Camera functions and stuff
 	 * 
 	 * Redo audio implementation to use openAL
+	 * 
+	 * UI Consumable events
 	 */
 
 	/** Current Game Setup */
