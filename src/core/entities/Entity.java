@@ -32,7 +32,7 @@ public class Entity implements Serializable {
 	}
 	
 	public void draw() {
-		if(render != null) {
+		if(render != null && body != null) {
 			render.draw(body.getPosition().x, body.getPosition().y);
 		}
 	}
