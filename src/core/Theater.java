@@ -1,6 +1,5 @@
 package core;
 
-import javax.sound.sampled.AudioSystem;
 import org.lwjgl.openal.AL;
 import org.newdawn.slick.openal.SoundStore;
 
@@ -58,8 +57,6 @@ public class Theater {
 	/** Current engine framework version */
 	public static final String AVOGINE_VERSION = "0.8.12";
 	
-	private int audioDeviceCount;
-
 	/** Theater singleton */
 	private static Theater theater;
 
@@ -93,8 +90,6 @@ public class Theater {
 		Text.loadFont("DEBUG", "Benegraphic");
 		SoundStore.get().init();
 		Config.loadConfig();
-		
-		audioDeviceCount = AudioSystem.getMixerInfo().length;
 
 		setSetup(new SplashScreen());
 	}
@@ -108,13 +103,6 @@ public class Theater {
 		Camera.get().draw(getSetup());
 		Camera.get().update();
 
-		if(AudioSystem.getMixerInfo().length != audioDeviceCount) {
-			System.err.println("Audio device likely removed or changed.\nConsider reloading audio settings.");
-			audioDeviceCount = AudioSystem.getMixerInfo().length;
-			/*AL.destroy();
-			SoundStore.get().clear();
-			SoundStore.get().init();*/
-		}
 		SoundStore.get().poll(0);
 		
 		if(!isPaused()) {

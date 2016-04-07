@@ -25,6 +25,10 @@ public class Sprite {
 	}
 	
 	protected Texture load(String ref) throws IOException {
+		if(ref.endsWith(".tga")) {
+			return TextureLoader.getTexture("TGA",
+					ResourceLoader.getResourceAsStream(System.getProperty("resources") + "/sprites/" + "Body1" + ".tga"));
+		}
 		return TextureLoader.getTexture("PNG",
 				ResourceLoader.getResourceAsStream(System.getProperty("resources") + "/sprites/" + ref + ".png"));
 		// TODO Resource loading

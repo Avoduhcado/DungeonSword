@@ -122,7 +122,7 @@ public class Camera {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
-		DrawUtils.fillColor(0f, 0.2f, 0.5f, 1f);
+		DrawUtils.fillColor(0f, 0f, 0f, 1f);
 		
 		// Draw current game setup
 		setup.draw();
