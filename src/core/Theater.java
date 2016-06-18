@@ -1,6 +1,7 @@
 package core;
 
 import org.lwjgl.openal.AL;
+import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.openal.SoundStore;
 
 import core.setups.GameSetup;
@@ -85,12 +86,12 @@ public class Theater {
 			System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/native/solaris");
 		}
 		System.setProperty("resources", System.getProperty("user.dir") + "/resources");
-
+		
 		Camera.init();
-		Text.loadFont("DEBUG", "Benegraphic");
 		SoundStore.get().init();
+		Text.loadFont("DEBUG", "Benegraphic");
 		Config.loadConfig();
-
+		
 		setSetup(new SplashScreen());
 	}
 
@@ -103,7 +104,7 @@ public class Theater {
 		Camera.get().draw(getSetup());
 		Camera.get().update();
 
-		SoundStore.get().poll(0);
+		AudioLoader.update();
 		
 		if(!isPaused()) {
 			getSetup().update();
@@ -192,7 +193,7 @@ public class Theater {
 	 * @return Current time in nanoseconds divided by 1,000,000
 	 */
 	public static long getTime() {
-		return System.nanoTime() / 1000000;
+		return System.nanoTime() / 1_000_000L;
 	}
 
 	/**

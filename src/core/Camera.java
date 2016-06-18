@@ -49,7 +49,7 @@ public class Camera {
 	private float fade = 0f;
 	
 	/** Determine whether window should upscale or increase view distance on resize */
-	private boolean upscale = true;
+	private boolean upscale = false;
 	
 	/** Screen singleton */
 	private static Camera camera;
@@ -133,7 +133,8 @@ public class Camera {
 		setup.drawUI();
 		
 		if(Theater.get().isPaused()) {
-			//Text.drawCenteredString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t,cwhite");
+			DrawUtils.fillColor(0, 0, 0, 0.65f);
+			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t+,cwhite");
 		}
 		
 		// Process fading

@@ -64,11 +64,11 @@ public class TitleMenu extends GameSetup {
 		try {
 			menuTheme = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(
 					System.getProperty("resources") + "/music/" + "Menu" + ".ogg"));
-		} catch (IOException e2) {
-			e2.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		//menuTheme.playAsMusic(1f, 1f, true);
+		menuTheme.playAsMusic(1f, 1f, true);
 	}
 	
 	@Override

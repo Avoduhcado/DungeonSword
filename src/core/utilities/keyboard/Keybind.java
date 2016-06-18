@@ -130,6 +130,13 @@ public enum Keybind {
 	}
 	
 	/**
+	 * @return integer value of key press
+	 */
+	public int getKeyCode() {
+		return key.getKey();
+	}
+	
+	/**
 	 * Set key press to new key.
 	 * 
 	 * @param k new integer for key mapping

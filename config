@@ -1,6 +1,11 @@
 <AUDIO>
-bgmvolume=1.0
-sfxvolume=1.0
+music=0.43
+sfx=1.0
+<END>
+
+<VIDEO>
+fullscreen=false
+vsync=false
 <END>
 
 <KEYS>
