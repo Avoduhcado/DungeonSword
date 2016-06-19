@@ -124,6 +124,14 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 	}
 	
+	public void setSelection(UIElement element) {
+		if(!this.uiElements.contains(element)) {
+			return;
+		}
+		
+		setSelection(this.uiElements.indexOf(element));
+	}
+	
 	private void changeSelection(int direction) {
 		if(get(selection).getSurroundings()[direction] != null) {
 			get(selection).setSelected(false);
@@ -206,13 +214,18 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(!isEmpty()) {
-				for(UIElement ui : uiElements) {
-					if(ui.getBounds().contains(((MouseEvent) e).getPosition())) {
-						ui.fireEvent(e);
-					}
+			if(isEmpty()) {
+				return;
+			}
+			for(UIElement ui : uiElements) {
+				if(e.isConsumed()) {
+					return;
+				}
+				if(ui.getBounds().contains(((MouseEvent) e).getPosition())) {
+					ui.fireEvent(e);
 				}
 			}
+			e.consume();
 		}
 
 		@Override
@@ -225,34 +238,42 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			if(!isEmpty()) {
-				for(int i = 0; i < uiElements.size(); i++) {
-					if(uiElements.get(i).getBounds().contains(((MouseEvent) e).getPosition())) {
-						setSelection(i);
-					}
+			if(isEmpty()) {
+				return;
+			}
+			for(UIElement ui : uiElements) {
+				if(ui.getBounds().contains(e.getPosition())) {
+					setSelection(ui);
 				}
 			}
+			e.consume();
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+			if(selection != -1) {
+				setSelection(selection);
+			}
+			e.consume();
 		}
-
-		
 	}
 	
 	class DefaultMouseMotionAdapter implements MouseMotionListener {
-
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if(!isEmpty()) {
-				for(int i = 0; i < uiElements.size(); i++) {
-					if(uiElements.get(i).getBounds().contains(((MouseEvent) e).getPosition()) && 
-							!uiElements.get(i).getBounds().contains(((MouseEvent) e).getPrevPosition())) {
-						setSelection(i);
-					}
+			if(isEmpty() || !ElementGroup.this.getBounds().contains(e.getPosition())) {
+				return;
+			}
+			
+			for(UIElement ui : uiElements) {
+				if(ui.getBounds().contains(e.getPosition())) {
+					setSelection(ui);
+					e.consume();
+					return;
 				}
 			}
+			
+			e.consume();
 		}
 
 		@Override

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -19,9 +20,9 @@ import core.utilities.text.Text;
 public class Camera {
 	
 	/** Default Window width */
-	private final int WIDTH = 800;
+	public final int WIDTH = 800;
 	/** Default Window height */
-	private final int HEIGHT = 600;
+	public final int HEIGHT = 600;
 	/** Target FPS for application to run at */
 	public static final int TARGET_FPS = 60;
 	/** Window Icon */
@@ -49,7 +50,7 @@ public class Camera {
 	private float fade = 0f;
 	
 	/** Determine whether window should upscale or increase view distance on resize */
-	private boolean upscale = false;
+	private boolean upscale = true;
 	
 	/** Screen singleton */
 	private static Camera camera;
@@ -141,9 +142,12 @@ public class Camera {
 		fade();
 		
 		// Draw debug info
-		if(Theater.get().debug) {
+		if(Theater.debug) {
 			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, "t+,cwhite,d-");
 			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 45, "t+,cwhite,d-");
+			
+			Text.drawString("Mouse", Mouse.getX() / ((float) Display.getWidth() / (float) WIDTH),
+					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT));
 		}
 	}
 	

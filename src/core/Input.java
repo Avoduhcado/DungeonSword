@@ -43,7 +43,7 @@ public class Input {
 		// TODO Hide behind a keybind listener?
 		// Enter debug mode
 		if(Keybind.DEBUG.clicked()) {
-			Theater.get().debug = !Theater.get().debug;
+			Theater.debug = !Theater.debug;
 		}
 		
 		// Setup specific processing

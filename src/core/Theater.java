@@ -37,7 +37,7 @@ public class Theater {
 	/** Game pause */
 	private boolean paused;
 	/** Game Debug */
-	public boolean debug;
+	public static boolean debug;
 
 	/** Total time a game loop takes */
 	private float delta;
@@ -100,7 +100,7 @@ public class Theater {
 	 */
 	public void update() {
 		getFps();
-
+		
 		Camera.get().draw(getSetup());
 		Camera.get().update();
 

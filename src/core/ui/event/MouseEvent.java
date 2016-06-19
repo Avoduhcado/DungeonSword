@@ -2,6 +2,10 @@ package core.ui.event;
 
 import java.awt.geom.Point2D;
 
+import org.lwjgl.opengl.Display;
+
+import core.Camera;
+
 public class MouseEvent extends UIEvent {
 
 	public static final int CLICKED = 1;
@@ -17,10 +21,16 @@ public class MouseEvent extends UIEvent {
 	private float x, y;
 	private float dx, dy;
 
+	/**
+	 * 
+	 * @param event
+	 * @param x Autoscaled to match camera scaling
+	 * @param y Autoscaled to match camera scaling
+	 */
 	public MouseEvent(int event, float x, float y) {
 		this.event = event;
-		this.x = x;
-		this.y = y;
+		this.x = x / ((float) Display.getWidth() / (float) Camera.get().WIDTH);
+		this.y = y / ((float) Display.getHeight() / (float) Camera.get().HEIGHT);
 	}
 	
 	public int getEvent() {

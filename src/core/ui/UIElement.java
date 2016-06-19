@@ -1,7 +1,10 @@
 package core.ui;
 
 import java.awt.geom.Rectangle2D;
+
 import core.Camera;
+import core.Theater;
+import core.render.DrawUtils;
 import core.render.textured.UIFrame;
 import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
@@ -42,6 +45,10 @@ public abstract class UIElement {
 	public void draw() {
 		if(frame != null) {
 			frame.draw(bounds);
+		}
+		
+		if(Theater.debug) {
+			DrawUtils.drawRect(getX(), getY(), getBounds());
 		}
 	}
 
@@ -233,12 +240,15 @@ public abstract class UIElement {
 			switch(e.getEvent()) {
 			case MouseEvent.CLICKED:
 				mouseListener.mouseClicked(e);
+				e.consume();
 				break;
 			case MouseEvent.PRESSED:
 				mouseListener.mousePressed(e);
+				e.consume();
 				break;
 			case MouseEvent.RELEASED:
 				mouseListener.mouseReleased(e);
+				e.consume();
 				break;
 			}
 		}

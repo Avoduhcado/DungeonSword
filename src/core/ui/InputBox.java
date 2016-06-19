@@ -74,7 +74,7 @@ public class InputBox extends UIElement implements Accessible {
 	 * Fit bounds to included text
 	 */
 	public void resizeBounds() {
-		setBounds(bounds.getX(), bounds.getY(), Text.getDefault().getWidth(text + CARET), Text.getDefault().getHeight(text + CARET));
+		setBounds(bounds.getX(), bounds.getY(), Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
 	}
 	
 	/**

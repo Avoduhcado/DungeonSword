@@ -133,6 +133,12 @@ public class OptionsMenu extends MenuOverlay {
 		close.addActionListener(e -> setState(KILL_FLAG));
 		add(close);
 		
+		addKeybindListener(e -> {
+			if(e.getKeybind().equals(Keybind.CANCEL)) {
+				setState(KILL_FLAG);
+			}
+		});
+		
 		setFrame("Menu2");
 	}
 

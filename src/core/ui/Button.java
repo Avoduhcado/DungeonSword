@@ -132,6 +132,7 @@ public class Button extends UIElement {
 
 		public void mouseClicked(MouseEvent e) {
 			Button.this.fireEvent(new ActionEvent());
+			e.consume();
 		}
 
 		@Override
