@@ -20,9 +20,10 @@ import core.ui.event.UIEvent;
 import core.ui.event.ValueChangeEvent;
 import core.ui.event.ValueChangeListener;
 import core.ui.utils.Accessible;
+import core.ui.utils.HasText;
 import core.utilities.text.Text;
 
-public class InputBox extends UIElement implements Accessible {
+public class InputBox extends UIElement implements Accessible, HasText {
 
 	private static final String CARET = "/";
 	
@@ -67,9 +68,22 @@ public class InputBox extends UIElement implements Accessible {
 	public void draw() {
 		super.draw();
 		
-		Text.drawString(flash > 0.5f ? text + CARET : text, getX(), getY(), "c" + textColor);
+		Text.drawString(flash > 0.5f ? text + CARET : text, getX(), getY(), getTextModifiers());
 	}
 
+	@Override
+	public String getTextModifiers() {
+		String modifier = "";
+		if(still) {
+			modifier += "t+";
+		}
+		if(textColor != null) {
+			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
+		}
+		
+		return modifier;
+	}
+	
 	/**
 	 * Fit bounds to included text
 	 */

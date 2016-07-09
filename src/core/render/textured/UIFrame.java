@@ -13,7 +13,7 @@ public class UIFrame {
 	private String frame;
 	
 	private float opacity = 0.8f;
-	private boolean still;
+	private boolean still = true;
 	
 	private Transform transform;
 	

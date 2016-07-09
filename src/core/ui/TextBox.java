@@ -8,11 +8,12 @@ import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.Align;
+import core.ui.utils.HasText;
 import core.utilities.keyboard.Keybind;
 import core.utilities.text.Text;
 import core.utilities.text.TextModifier;
 
-public class TextBox extends UIElement {
+public class TextBox extends UIElement implements HasText {
 
 	protected ArrayList<TextLine> lines = new ArrayList<TextLine>();
 
@@ -57,6 +58,7 @@ public class TextBox extends UIElement {
 			if(textFill < getLength()) {
 				bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
 			}
+			frame.setStill(still);
 			frame.draw(bounds);
 		}
 
@@ -103,6 +105,16 @@ public class TextBox extends UIElement {
 		if(!lines.isEmpty()) {
 			super.setAlign(border);
 		}
+	}
+
+	@Override
+	public String getTextModifiers() {
+		String modifier = "";
+		if(still) {
+			modifier += "t+";
+		}
+		
+		return modifier;
 	}
 	
 	public float getTextFill() {

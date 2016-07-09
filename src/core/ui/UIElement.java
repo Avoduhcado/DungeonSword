@@ -30,7 +30,7 @@ public abstract class UIElement {
 	protected Align alignment = Align.RIGHT;
 	
 	protected boolean selected;
-	protected boolean still;
+	protected boolean still = true;
 	
 	private UIContainer container;
 	private int state = ENABLED;

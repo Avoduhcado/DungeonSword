@@ -6,9 +6,10 @@ import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.Align;
+import core.ui.utils.HasText;
 import core.utilities.text.Text;
 
-public class Button extends UIElement {
+public class Button extends UIElement implements HasText {
 	
 	private String text;
 	protected String textColor = "gray";
@@ -39,11 +40,7 @@ public class Button extends UIElement {
 		super.draw();
 
 		if(text != null) {
-			if(textColor == null) {
-				Text.drawString(text, getX(), getY());
-			} else {
-				Text.drawString(text, getX(), getY(), "c" + textColor);
-			}
+			Text.drawString(text, getX(), getY(), getTextModifiers());
 		}
 	}
 
@@ -67,11 +64,25 @@ public class Button extends UIElement {
 	
 	@Override
 	public void setSelected(boolean selected) {
+		// TODO Adapt these into some kind of const accessible from an exterior system for color coordination
 		if(selected) {
 			textColor = "white";
 		} else {
 			textColor = "gray";
 		}
+	}
+
+	@Override
+	public String getTextModifiers() {
+		String modifier = "";
+		if(still) {
+			modifier += "t+";
+		}
+		if(textColor != null) {
+			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
+		}
+		
+		return modifier;
 	}
 	
 	public String getText() {
