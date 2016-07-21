@@ -4,16 +4,20 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.PNGDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
 import core.render.DrawUtils;
+import core.render.effects.ScreenEffect;
 import core.setups.GameSetup;
 import core.utilities.text.Text;
 
@@ -42,13 +46,16 @@ public class Camera {
 	public Rectangle2D frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
 	
 	
-	/** Total time to fade over */
-	private float fadeTotal;
-	/** Current fading time */
-	private float fadeTimer;
-	/** Screen fade value */
-	private float fade = 0f;
+	private Vector4f translation = new Vector4f();
+	private Vector4f scale = new Vector4f(1f, 1f, 1f, 1f);
+	private Vector4f rotation = new Vector4f();
 	
+	private Vector4f offset = new Vector4f();
+	private Vector4f tint = new Vector4f(0f, 0f, 0f, 1f);
+	
+	private List<ScreenEffect> screenEffects = new ArrayList<ScreenEffect>();
+	
+
 	/** Determine whether window should upscale or increase view distance on resize */
 	private boolean upscale = true;
 	
@@ -88,7 +95,6 @@ public class Camera {
 		}
 		
 		frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
-		setFadeTimer(-1f);
 	}
 	
 	public static ByteBuffer[] loadIcon(String ref) throws IOException {
@@ -124,6 +130,9 @@ public class Camera {
 		GL11.glLoadIdentity();
 		
 		DrawUtils.fillColor(0f, 0f, 0f, 1f);
+
+		processEffects();
+		positionCamera();
 		
 		// Draw current game setup
 		setup.draw();
@@ -138,19 +147,46 @@ public class Camera {
 			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t+,cwhite");
 		}
 		
-		// Process fading
-		fade();
+		drawScreenTint();
 		
 		// Draw debug info
 		if(Theater.debug) {
-			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, "t+,cwhite,d-");
-			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 45, "t+,cwhite,d-");
+			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, "t+,s0.4,cwhite,d-");
+			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 40, "t+,s0.4,cwhite,d-");
+			Text.drawString("Position: " + translation.toString(), 15, 80, "t+,s0.4,cwhite,d-");
+			Text.drawString("Scale: " + scale.toString(), 15, 110, "t+,s0.4,cwhite,d-");
+			Text.drawString("Rotation: " + rotation.toString(), 15, 140, "t+,s0.4,cwhite,d-");
 			
 			Text.drawString("Mouse", Mouse.getX() / ((float) Display.getWidth() / (float) WIDTH),
-					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT));
+					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT), "t+");
 		}
 	}
 	
+	private void drawScreenTint() {
+		DrawUtils.fillColor(tint.x, tint.y, tint.z, tint.w);
+	}
+
+	private void positionCamera() {
+		// Translation
+		frame.setFrameFromCenter(translation.x, translation.y, translation.x - (fixedFrame.getWidth() / 2f), translation.y - (fixedFrame.getHeight() / 2f));
+
+		// Scale
+		GL11.glTranslated(frame.getWidth() / 2f, frame.getHeight() / 2f, 0);
+		GL11.glScalef(scale.x, scale.y, scale.z);
+		GL11.glTranslated(-frame.getWidth() / 2f, -frame.getHeight() / 2f, 0);
+		
+		// Rotation
+		GL11.glTranslated(frame.getWidth() / 2f, frame.getHeight() / 2f, 0);
+		// I don't recommend rotating on the y or z axis in 2D space
+		GL11.glRotatef(rotation.x, 0, 0, 1f);
+		GL11.glTranslated(-frame.getWidth() / 2f, -frame.getHeight() / 2f, 0);
+	}
+	
+	private void processEffects() {
+		screenEffects.stream().forEach(ScreenEffect::apply);
+		screenEffects.removeIf(ScreenEffect::isComplete);
+	}
+
 	public boolean getUpscale() {
 		return upscale;
 	}
@@ -269,40 +305,50 @@ public class Camera {
 		Display.destroy();
 	}
 	
-	public float getFadeTimer() {
-		return fadeTimer;
+	public Vector4f getTranslation() {
+		return translation;
 	}
 	
-	/**
-	 * Set the screen to fade in or out over a specified time.
-	 * 
-	 * @param fadeTimer Time to fade, positive to fade out, negative to fade in, 0 for no fade
-	 */
-	public void setFadeTimer(float fadeTimer) {
-		this.fadeTimer = fadeTimer;
-		this.fadeTotal = fadeTimer;
-		
-		if(fadeTimer >= 0f)
-			fade = 0f;
-		else
-			fade = 1f;
+	public void setTranslation(Vector4f translation) {
+		this.translation = translation;
+	}
+
+	public Vector4f getScale() {
+		return scale;
 	}
 	
-	public void fade() {
-		if(fadeTotal > 0f) {
-			fade += (1f / fadeTotal) * Theater.getDeltaSpeed(0.025f);
-			fadeTimer -= Theater.getDeltaSpeed(0.025f);
-		} else if(fadeTotal < 0f) {
-			fade -= (1f / Math.abs(fadeTotal)) * Theater.getDeltaSpeed(0.025f);
-			fadeTimer += Theater.getDeltaSpeed(0.025f);
+	public void setScale(Vector4f scale) {
+		this.scale = scale;
+	}
+
+	public Vector4f getRotation() {
+		return rotation;
+	}
+	
+	public void setRotation(Vector4f rotation) {
+		this.rotation = rotation;
+		if(this.rotation.x >= 360) {
+			this.rotation.x = this.rotation.x - 360;
 		}
-		
-		if(fadeTotal > 0f ? fadeTimer < 0f : fadeTimer > 0f) {
-			fadeTimer = 0f;
-			fadeTotal = 0f;
-		}
-		
-		DrawUtils.fillColor(0f, 0f, 0f, fade);
+	}
+
+	public Vector4f getTint() {
+		return tint;
 	}
 	
+	public void setTint(Vector4f tint) {
+		this.tint = tint;
+	}
+	
+	public void addScreenEffect(ScreenEffect effect) {
+		screenEffects.add(effect);
+	}
+
+	public void cancelAllEffects() {
+		screenEffects.clear();
+	}
+	
+	public void cancelEffect(ScreenEffect effect) {
+		screenEffects.remove(effect);
+	}
 }

@@ -2,7 +2,14 @@ package core;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector4f;
 
+import core.render.effects.RotateEffect;
+import core.render.effects.ScaleEffect;
+import core.render.effects.ScreenEffect;
+import core.render.effects.TintEffect;
+import core.render.effects.TranslateEffect;
+import core.render.effects.Tween;
 import core.setups.Stage;
 import core.ui.UIElement;
 import core.ui.event.KeyEvent;
@@ -44,6 +51,43 @@ public class Input {
 		// Enter debug mode
 		if(Keybind.DEBUG.clicked()) {
 			Theater.debug = !Theater.debug;
+		}
+		
+		if(Keybind.SLOT1.clicked()) {
+			Camera.get().setTranslation(Vector4f.add(Camera.get().getTranslation(), new Vector4f(10f, -10f, 0f, 0f), null));
+		}
+		if(Keybind.SLOT2.clicked()) {
+			Camera.get().setScale(Vector4f.add(Camera.get().getScale(), new Vector4f(0.10f, 0.10f, 0f, 0f), null));
+		}
+		if(Keybind.SLOT3.clicked()) {
+			Camera.get().setRotation(Vector4f.add(Camera.get().getRotation(), new Vector4f(10f, 0f, 0f, 0f), null));
+		}
+		if(Keybind.SLOT4.clicked()) {
+			Camera.get().cancelAllEffects();
+			Camera.get().addScreenEffect(new ScaleEffect(new Vector4f(1f, 1f, 1f, 1f), 0f, true, Tween.LINEAR));
+			Camera.get().addScreenEffect(new TranslateEffect(new Vector4f(), 0f, true, Tween.LINEAR));
+			Camera.get().addScreenEffect(new RotateEffect(new Vector4f(), 0f, true, Tween.LINEAR));
+		}
+		if(Keybind.SLOT5.clicked()) {
+			ScreenEffect rotation = new RotateEffect(new Vector4f(-360f, 0f, 0f, 0f), 2f, true, Tween.IN_OUT);
+			rotation.setLoop(true);
+			Camera.get().addScreenEffect(rotation);
+			
+			ScreenEffect scale = new ScaleEffect(new Vector4f(2f, 2f, 1f, 1f), 2f, true, Tween.IN_OUT);
+			scale.setLoop(true);
+			scale.setReverse(true);
+			Camera.get().addScreenEffect(scale);
+			
+			ScreenEffect translate = new TranslateEffect(new Vector4f(10f, 10f, 0f, 0f), 2f, true, Tween.IN_OUT);
+			translate.setLoop(true);
+			translate.setReverse(true);
+			Camera.get().addScreenEffect(translate);
+		}
+		if(Keybind.SLOT6.clicked()) {
+			ScreenEffect colorFade = new TintEffect(new Vector4f(0f, 0f, 0f, 1f), 3f, true, Tween.OUT);
+			colorFade.setLoop(true);
+			colorFade.setReverse(true);
+			Camera.get().addScreenEffect(colorFade);
 		}
 		
 		// Setup specific processing

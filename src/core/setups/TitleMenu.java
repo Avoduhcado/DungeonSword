@@ -2,12 +2,15 @@ package core.setups;
 
 import java.io.IOException;
 
+import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import core.Camera;
 import core.Theater;
+import core.render.effects.TintEffect;
+import core.render.effects.Tween;
 import core.ui.Button;
 import core.ui.ElementGroup;
 import core.ui.Icon;
@@ -24,7 +27,7 @@ public class TitleMenu extends GameSetup {
 	 */
 	public TitleMenu() {
 		// Ensure fading has reset
-		Camera.get().setFadeTimer(-0.1f);
+		Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 0.5f, true, Tween.IN));
 		
 		// Load title logo
 		Icon logo = new Icon(Float.NaN, Camera.get().getDisplayHeight(0.1667f), "Avogine Title");

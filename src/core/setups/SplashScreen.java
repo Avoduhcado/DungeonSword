@@ -8,8 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.lwjgl.util.vector.Vector4f;
+
 import core.Camera;
 import core.Theater;
+import core.render.effects.TintEffect;
+import core.render.effects.Tween;
 import core.ui.Icon;
 import core.utilities.keyboard.Keybind;
 
@@ -29,6 +33,7 @@ public class SplashScreen extends GameSetup {
 	 * Displays once game has been opened.
 	 */
 	public SplashScreen() {
+		Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 1f, true, Tween.IN));
 		if(loadRandom) {
 			loadRandomSplashes();
 		} else {
@@ -112,9 +117,10 @@ public class SplashScreen extends GameSetup {
 			// Restart screen if a new one exists
 			if(!splashImages.isEmpty()) {
 				timer = 5f;
-				Camera.get().setFadeTimer(-1f);
+				Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 1f, true, Tween.IN));
 			// Proceed with setup swap
 			} else {
+				Camera.get().cancelAllEffects();
 				Theater.get().setSetup(new TitleMenu());
 			}
 		}
@@ -130,8 +136,8 @@ public class SplashScreen extends GameSetup {
 			}
 
 			// Start fading out
-			if(timer <= 1f && Camera.get().getFadeTimer() == 0f) {
-				Camera.get().setFadeTimer(1f);
+			if(timer <= 1f && Camera.get().getTint().w == 0f) {
+				Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 1f), timer, true, Tween.OUT));
 			}
 		} else {
 			// Remove current screen
@@ -139,7 +145,7 @@ public class SplashScreen extends GameSetup {
 			// Restart screen if a new one exists
 			if(!splashImages.isEmpty()) {
 				timer = 5f;
-				Camera.get().setFadeTimer(-1f);
+				Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 1f, true, Tween.IN));
 			// Proceed with setup swap
 			} else {
 				Theater.get().setSetup(new TitleMenu());
@@ -158,9 +164,6 @@ public class SplashScreen extends GameSetup {
 	}
 
 	@Override
-	public void drawUI() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void drawUI() {}
 	
 }
