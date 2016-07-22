@@ -328,7 +328,9 @@ public class Camera {
 	public void setRotation(Vector4f rotation) {
 		this.rotation = rotation;
 		if(this.rotation.x >= 360) {
-			this.rotation.x = this.rotation.x - 360;
+			this.rotation.x -= 360;
+		} else if(this.rotation.x < 0) {
+			this.rotation.x += 360;
 		}
 	}
 
