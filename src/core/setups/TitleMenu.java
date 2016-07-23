@@ -27,7 +27,7 @@ public class TitleMenu extends GameSetup {
 	 */
 	public TitleMenu() {
 		// Ensure fading has reset
-		Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 0.5f, true, Tween.IN));
+		Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 0f, true, Tween.IN));
 		
 		// Load title logo
 		Icon logo = new Icon(Float.NaN, Camera.get().getDisplayHeight(0.1667f), "Avogine Title");
