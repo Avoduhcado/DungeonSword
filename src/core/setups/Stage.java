@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.Entity;
-import core.entities.physics.Body;
-import core.entities.render.PlainRender;
+import core.entities.bodies.PlainBody;
+import core.entities.renders.PlainRender;
 
 public class Stage extends GameSetup {
 			
@@ -15,22 +15,18 @@ public class Stage extends GameSetup {
 	public Stage() {
 		Entity ent = new Entity();
 		ent.setRender(new PlainRender("AGDG Logo"));
-		ent.setBody(new Body(new Vector3f(-16f, -16f, 0f)));
+		ent.setBody(new PlainBody(new Vector3f(-16f, -16f, 0f)));
 		entities.add(ent);
 	}
 	
 	@Override
 	public void update() {
-		for(int i = 0; i < entities.size(); i++) {
-			entities.get(i).update();
-		}
+		entities.stream().forEach(Entity::update);
 	}
 
 	@Override
 	public void draw() {
-		for(int i = 0; i < entities.size(); i++) {
-			entities.get(i).draw();
-		}
+		entities.stream().forEach(Entity::draw);
 	}
 
 }

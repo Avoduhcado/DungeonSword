@@ -1,4 +1,4 @@
-package core.entities.physics;
+package core.entities.bodies;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
@@ -12,7 +12,7 @@ import org.newdawn.slick.openal.OggData;
 import org.newdawn.slick.openal.OggDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class AudioBody implements Geometric {
+public class AudioBody implements Body {
 
 	private Vector3f position;
 	private Audio audio;

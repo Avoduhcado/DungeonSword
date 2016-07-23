@@ -1,4 +1,6 @@
-package core.entities.render;
+package core.entities.renders;
+
+import org.lwjgl.util.vector.Vector3f;
 
 import core.render.SpriteList;
 import core.render.transform.Transform;
@@ -14,9 +16,9 @@ public class PlainRender implements Render {
 	}
 	
 	@Override
-	public void draw(float x, float y) {
-		transform.setX(x);
-		transform.setY(y);
+	public void draw(Vector3f position) {
+		transform.setX(position.x);
+		transform.setY(position.y);
 		SpriteList.get(sprite).draw(transform);
 	}
 

@@ -1,12 +1,12 @@
-package core.entities.physics;
+package core.entities.bodies;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public class Body implements Geometric {
+public class PlainBody implements Body {
 
 	private Vector3f position;
 	
-	public Body(Vector3f vec) {
+	public PlainBody(Vector3f vec) {
 		this.position = vec;
 	}
 	

@@ -67,6 +67,7 @@ public class Input {
 			Camera.get().addScreenEffect(new ScaleEffect(new Vector4f(1f, 1f, 1f, 1f), 0f, true, Tween.LINEAR));
 			Camera.get().addScreenEffect(new TranslateEffect(new Vector4f(), 0f, true, Tween.LINEAR));
 			Camera.get().addScreenEffect(new RotateEffect(new Vector4f(), 0f, true, Tween.LINEAR));
+			Camera.get().addScreenEffect(new TintEffect(new Vector4f(), 0f, true, Tween.LINEAR));
 		}
 		if(Keybind.SLOT5.clicked()) {
 			ScreenEffect rotation = new RotateEffect(new Vector4f(-360f, 0f, 0f, 0f), 2f, true, Tween.IN_OUT);

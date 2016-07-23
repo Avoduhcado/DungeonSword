@@ -1,8 +1,8 @@
-package core.entities.physics;
+package core.entities.bodies;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public interface Geometric {
+public interface Body {
 	
 	public void update();
 	
