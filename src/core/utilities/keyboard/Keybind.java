@@ -74,6 +74,11 @@ public enum Keybind {
 	public boolean released() {
 		return key.isReleased();
 	}
+
+	/** @return true if any movement related keys were pressed. */
+	public static boolean movement() {
+		return RIGHT.press() || LEFT.press() || UP.press() || DOWN.press();
+	}
 	
 	/** Disable specific keys for menu navigation */
 	public static void inMenu() {

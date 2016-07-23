@@ -53,15 +53,6 @@ public class Input {
 			Theater.debug = !Theater.debug;
 		}
 		
-		if(Keybind.SLOT1.clicked()) {
-			Camera.get().setTranslation(Vector4f.add(Camera.get().getTranslation(), new Vector4f(10f, -10f, 0f, 0f), null));
-		}
-		if(Keybind.SLOT2.clicked()) {
-			Camera.get().setScale(Vector4f.add(Camera.get().getScale(), new Vector4f(0.10f, 0.10f, 0f, 0f), null));
-		}
-		if(Keybind.SLOT3.clicked()) {
-			Camera.get().setRotation(Vector4f.add(Camera.get().getRotation(), new Vector4f(10f, 0f, 0f, 0f), null));
-		}
 		if(Keybind.SLOT4.clicked()) {
 			Camera.get().cancelAllEffects();
 			Camera.get().addScreenEffect(new ScaleEffect(new Vector4f(1f, 1f, 1f, 1f), 0f, true, Tween.LINEAR));

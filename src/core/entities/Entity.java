@@ -8,6 +8,8 @@ import org.lwjgl.util.vector.Vector3f;
 import core.entities.bodies.Body;
 import core.entities.components.EntityComponent;
 import core.entities.controllers.Controller;
+import core.entities.events.BodyEvent;
+import core.entities.events.EntityEvent;
 import core.entities.renders.Render;
 
 public class Entity implements Serializable {
@@ -24,11 +26,11 @@ public class Entity implements Serializable {
 	 * Process any changes on entity's body.
 	 */
 	public void update() {
-		if(controller != null) {
+		if(controllable()) {
 			controller.control();
 		}
 		
-		if(body != null) {
+		if(hasBody()) {
 			body.update();
 		}
 	}
@@ -37,9 +39,21 @@ public class Entity implements Serializable {
 	 * Draw the entity's render on the screen defined by the body's position.
 	 */
 	public void draw() {
-		if(render != null && body != null) {
+		if(renderable()) {
 			render.draw(getBodyPosition());
 		}
+	}
+	
+	public void fireEvent(EntityEvent event) {
+		if(event instanceof BodyEvent) {
+			if(hasBody()) {
+				body.processEvent((BodyEvent) event);
+			}
+		}
+	}
+	
+	public boolean hasBody() {
+		return body != null;
 	}
 	
 	public Body getBody() {
@@ -51,10 +65,14 @@ public class Entity implements Serializable {
 	}
 	
 	private Vector3f getBodyPosition() {
-		if(body != null) {
+		if(hasBody()) {
 			return body.getPosition();
 		}
 		return new Vector3f();
+	}
+	
+	public boolean renderable() {
+		return render != null;
 	}
 	
 	public Render getRender() {
@@ -63,6 +81,10 @@ public class Entity implements Serializable {
 	
 	public void setRender(Render render) {
 		this.render = render;
+	}
+	
+	public boolean controllable() {
+		return controller != null;
 	}
 	
 	public Controller getController() {

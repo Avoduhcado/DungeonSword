@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.Entity;
 import core.entities.bodies.PlainBody;
+import core.entities.controllers.PlayerController;
 import core.entities.renders.PlainRender;
 
 public class Stage extends GameSetup {
@@ -16,6 +17,7 @@ public class Stage extends GameSetup {
 		Entity ent = new Entity();
 		ent.setRender(new PlainRender("AGDG Logo"));
 		ent.setBody(new PlainBody(new Vector3f(-16f, -16f, 0f)));
+		ent.setController(new PlayerController(ent));
 		entities.add(ent);
 	}
 	
