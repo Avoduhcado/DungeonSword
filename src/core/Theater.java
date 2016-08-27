@@ -4,6 +4,7 @@ import org.lwjgl.openal.AL;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.openal.SoundStore;
 
+import core.scripts.Interpreter;
 import core.setups.GameSetup;
 import core.setups.SplashScreen;
 import core.ui.UIElement;
@@ -180,6 +181,7 @@ public class Theater {
 	 */
 	public void setSetup(GameSetup setup) {
 		this.setup = setup;
+		Interpreter.registerSetup(this.setup);
 	}
 
 	/**

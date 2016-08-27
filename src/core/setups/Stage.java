@@ -6,8 +6,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.Entity;
 import core.entities.bodies.PlainBody;
+import core.entities.components.interactions.AutorunInteraction;
 import core.entities.controllers.PlayerController;
 import core.entities.renders.PlainRender;
+import core.scripts.Script;
 
 public class Stage extends GameSetup {
 			
@@ -18,6 +20,7 @@ public class Stage extends GameSetup {
 		ent.setRender(new PlainRender("AGDG Logo"));
 		ent.setBody(new PlainBody(new Vector3f(-16f, -16f, 0f)));
 		ent.setController(new PlayerController(ent));
+		ent.addComponent(AutorunInteraction.class, new AutorunInteraction(ent, new Script(ent, "Butts")));
 		entities.add(ent);
 	}
 	

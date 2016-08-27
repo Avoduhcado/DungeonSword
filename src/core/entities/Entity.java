@@ -7,13 +7,20 @@ import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.bodies.Body;
 import core.entities.components.EntityComponent;
+import core.entities.components.interactions.ActivateInteraction;
+import core.entities.components.interactions.AutorunInteraction;
+import core.entities.components.interactions.Interaction;
+import core.entities.components.interactions.TouchInteraction;
 import core.entities.controllers.Controller;
 import core.entities.events.BodyEvent;
 import core.entities.events.EntityEvent;
+import core.entities.events.InteractEvent;
 import core.entities.renders.Render;
 
 public class Entity implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private String name;
 	
 	private Body body;
 	private Render render;
@@ -49,6 +56,30 @@ public class Entity implements Serializable {
 			if(hasBody()) {
 				body.processEvent((BodyEvent) event);
 			}
+		} else if(event instanceof InteractEvent) {
+			processInteractEvent((InteractEvent) event);
+		}
+	}
+	
+	protected void processInteractEvent(InteractEvent event) {
+		switch(event.getInteractType()) {
+		case AUTORUN:
+			if(components.containsKey(AutorunInteraction.class)) {
+				((Interaction) components.get(AutorunInteraction.class)).interact(event);
+			}
+			break;
+		case ON_TOUCH:
+			if(components.containsKey(TouchInteraction.class)) {
+				((Interaction) components.get(TouchInteraction.class)).interact(event);
+			}
+			break;
+		case ON_ACTIVATE:
+		case INTERRUPT:
+			if(components.containsKey(ActivateInteraction.class)) {
+				//getRender().lookAt(event.getInteractor());
+				((Interaction) components.get(ActivateInteraction.class)).interact(event);
+			}
+			break;
 		}
 	}
 	
@@ -116,6 +147,11 @@ public class Entity implements Serializable {
 	
 	public EntityComponent removeComponent(Class<? extends EntityComponent> clazz) {
 		return components.remove(clazz);
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }
