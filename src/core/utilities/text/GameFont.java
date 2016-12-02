@@ -115,7 +115,7 @@ public class GameFont {
 		}
 	}*/
 	
-	public void drawString(String text, float x, float y, TextModifier modifier) {
+	public void drawString(String text, double x, double y, TextModifier modifier) {
 		float advance = 0;
 		
 		for(int i = 0; i<text.length(); i++) {			
@@ -128,7 +128,7 @@ public class GameFont {
 		}
 	}
 	
-	public void drawStringSegment(String text, float x, float y, int start, int end, TextModifier modifier) {
+	public void drawStringSegment(String text, double x, double y, int start, int end, TextModifier modifier) {
 		drawString(text.substring(start, end), x, y, modifier);
 	}
 

@@ -36,6 +36,21 @@ public class MathUtils {
 	}
 	
 	/**
+	 * Clamp a value between two doubles
+	 * @param value
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static double clamp(double value, double min, double max) {
+		if(value < min)
+			return min;
+		if(value > max)
+			return max;
+		return value;
+	}
+	
+	/**
 	 * Change over time at linear rate
 	 */
 	public static float linearTween(float time, float begin, float change, float duration) {

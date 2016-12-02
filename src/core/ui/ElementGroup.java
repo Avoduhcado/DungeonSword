@@ -1,6 +1,5 @@
 package core.ui;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,6 +16,7 @@ import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.Accessible;
+import core.ui.utils.UIBounds;
 import core.utilities.MathUtils;
 
 public class ElementGroup<T extends UIElement> extends UIElement {
@@ -87,11 +87,11 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	}
 	
 	public void setSelectionPointer(String pointerName) {
-		this.pointer = new SelectionPointer(0, 0, pointerName);
+		this.pointer = new SelectionPointer(pointerName);
 		pointer.setStill(!isEmpty() ? get(0).still : false);
 		
 		if(selection != -1) {
-			pointer.setPosition(get(selection));
+			pointer.setPositionAt(get(selection));
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			get(selection).setSelected(true);
 			
 			if(pointer != null) {
-				pointer.setPosition(get(selection));
+				pointer.setPositionAt(get(selection));
 			}
 		}
 	}
@@ -139,21 +139,21 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			get(selection).setSelected(true);
 			
 			if(pointer != null) {
-				pointer.setPosition(get(selection));
+				pointer.setPositionAt(get(selection));
 			}
 		}
 	}
 	
 	public void setBounds() {
 		if(isEmpty()) {
-			this.bounds = new Rectangle2D.Double(0, 0, 1, 1);
+			setBounds(0, 0, 1, 1);
+		} else if(size() == 1) {
+			UIBounds initBounds = get(0).getBounds();
+			setBounds(initBounds.getXSupplier(), initBounds.getYSupplier(), initBounds.getWidthSupplier(), initBounds.getHeightSupplier());
 		} else {
-			Rectangle2D tempBounds = (Rectangle2D) get(0).getBounds().clone();
 			for(UIElement e : uiElements) {
-				Rectangle2D.union(tempBounds, e.getBounds(), tempBounds);
+				UIBounds.merge(getBounds(), e.getBounds(), uiBounds);
 			}
-			
-			this.bounds = tempBounds;
 		}
 	}
 	
@@ -221,7 +221,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 				if(e.isConsumed()) {
 					return;
 				}
-				if(ui.getBounds().contains(((MouseEvent) e).getPosition())) {
+				if(ui.getBoundsAsRect().contains(((MouseEvent) e).getPosition())) {
 					ui.fireEvent(e);
 				}
 			}
@@ -242,7 +242,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 				return;
 			}
 			for(UIElement ui : uiElements) {
-				if(ui.getBounds().contains(e.getPosition())) {
+				if(ui.getBoundsAsRect().contains(e.getPosition())) {
 					setSelection(ui);
 				}
 			}
@@ -261,12 +261,12 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	class DefaultMouseMotionAdapter implements MouseMotionListener {
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if(isEmpty() || !ElementGroup.this.getBounds().contains(e.getPosition())) {
+			if(isEmpty() || !ElementGroup.this.getBoundsAsRect().contains(e.getPosition())) {
 				return;
 			}
 			
 			for(UIElement ui : uiElements) {
-				if(ui.getBounds().contains(e.getPosition())) {
+				if(ui.getBoundsAsRect().contains(e.getPosition())) {
 					setSelection(ui);
 					e.consume();
 					return;
@@ -350,8 +350,8 @@ class SelectionPointer extends Icon {
 	private float distance;
 	private boolean tweenOut;
 	
-	public SelectionPointer(float x, float y, String icon) {
-		super(x, y, icon);
+	public SelectionPointer(String icon) {
+		super(icon);
 		
 		this.time = 0f;
 		this.duration = 1.5f;
@@ -361,9 +361,9 @@ class SelectionPointer extends Icon {
 		addTimeListener(new DefaultPointerTimeAdapter());
 	}
 	
-	public void setPosition(UIElement element) {
-		setX((float) (element.getBounds().getX() - (bounds.getWidth() * 0.8f)));
-		setY((float) (element.getBounds().getCenterY() - (bounds.getHeight() * 0.5f)));
+	public void setPositionAt(UIElement element) {
+		setPosition(element.getBounds().getX() - (getBounds().getWidth() * 0.8f), 
+				element.getBoundsAsRect().getCenterY() - (getBounds().getHeight() * 0.5f));
 	}
 	
 	class DefaultPointerTimeAdapter implements TimeListener {

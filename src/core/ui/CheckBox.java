@@ -8,8 +8,8 @@ public class CheckBox extends Button {
 
 	private boolean checked;
 	
-	public CheckBox(float x, float y, String frame, String text) {
-		super(x, y, frame, text);
+	public CheckBox(String text) {
+		super(text);
 		
 		addMouseListener(new DefaultCheckBoxAdapter());
 	}

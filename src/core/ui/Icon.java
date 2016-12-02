@@ -1,8 +1,8 @@
 package core.ui;
 
-import core.Camera;
 import core.render.SpriteList;
 import core.render.transform.Transform;
+import core.ui.utils.ValueSupplier;
 
 public class Icon extends UIElement {
 
@@ -10,15 +10,15 @@ public class Icon extends UIElement {
 	
 	private Transform transform = new Transform();
 	
-	public Icon(float x, float y, String icon) {
-		this.setIcon(icon);
-		setPosition(x, y);
+	public Icon(String icon) {
+		setIcon(icon);
 	}
-
+	
 	@Override
 	public void draw() {
-		transform.x = getX();
-		transform.y = getY();
+		transform.x = getBounds().getX();
+		transform.y = getBounds().getY();
+		// TODO Likely shouldn't always be set to still
 		transform.still = true;
 		
 		SpriteList.get(image).draw(transform);
@@ -31,27 +31,8 @@ public class Icon extends UIElement {
 	public void setIcon(String icon) {
 		this.image = icon;
 	}
-
-	@Override
-	public void setPosition(float x, float y) {
-		setX(x);
-		setY(y);
-	}
 	
-	public void setX(float x) {
-		if(Float.isNaN(x)) {
-			x = Camera.get().getDisplayWidth(0.5f) - (SpriteList.get(image).getWidth() / 2f);
-		}
-		
-		setBounds(x, bounds.getY(), bounds.getWidth(), bounds.getHeight());
+	public void setPosition(ValueSupplier<Double> x, ValueSupplier<Double> y) {
+		setBounds(x, y, () -> (double) SpriteList.get(image).getWidth(), () -> (double) SpriteList.get(image).getHeight());
 	}
-
-	public void setY(float y) {
-		if(Float.isNaN(y)) {
-			y = Camera.get().getDisplayHeight(0.5f) - (SpriteList.get(image).getHeight() / 2f);
-		}
-		
-		setBounds(bounds.getX(), y, bounds.getWidth(), bounds.getHeight());
-	}
-	
 }

@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import core.Camera;
+import core.ui.utils.UIBounds;
 
 public class DrawUtils {
 	
@@ -51,13 +52,13 @@ public class DrawUtils {
 	}
 	
 	/**
-	 * Draw a rectangle to the screen.
+	 * Draw a rectangle to the screen at the specified coordinates.
 	 * 
 	 * @param x of rectangle
 	 * @param y of rectangle
 	 * @param rect to be drawn
 	 */
-	public static void drawRect(float x, float y, Rectangle2D rect) {
+	public static void drawRectHere(double x, double y, Rectangle2D rect) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		
 		GL11.glPushMatrix();
@@ -70,6 +71,59 @@ public class DrawUtils {
 			GL11.glVertex2d(x + rect.getWidth(), y);
 			GL11.glVertex2d(x + rect.getWidth(), y + rect.getHeight());
 			GL11.glVertex2d(x, y + rect.getHeight());
+		}
+		GL11.glEnd();
+		GL11.glPopMatrix();
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		
+		// Reset color
+		color.set(0f, 0f, 0f);
+	}
+	
+	/**
+	 * Draw a rectangle to the screen.
+	 * 
+	 * @param x of rectangle
+	 * @param y of rectangle
+	 * @param rect to be drawn
+	 */
+	public static void drawRect(Rectangle2D rect) {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		
+		GL11.glPushMatrix();
+		GL11.glColor3f(color.x, color.y, color.z);
+		GL11.glLineWidth(2.0f);
+		
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		{
+			GL11.glVertex2d(rect.getX(), rect.getY());
+			GL11.glVertex2d(rect.getX() + rect.getWidth(), rect.getY());
+			GL11.glVertex2d(rect.getX() + rect.getWidth(), rect.getY() + rect.getHeight());
+			GL11.glVertex2d(rect.getX(), rect.getY() + rect.getHeight());
+		}
+		GL11.glEnd();
+		GL11.glPopMatrix();
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		
+		// Reset color
+		color.set(0f, 0f, 0f);
+	}
+
+	public static void drawRect(UIBounds bounds) {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		
+		GL11.glPushMatrix();
+		GL11.glColor3f(color.x, color.y, color.z);
+		GL11.glLineWidth(1.0f);
+		
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		{
+			GL11.glVertex2d(bounds.getX(), bounds.getY());
+			GL11.glVertex2d(bounds.getMaxX(), bounds.getY());
+			GL11.glVertex2d(bounds.getMaxX(), bounds.getMaxY());
+			GL11.glVertex2d(bounds.getX(), bounds.getMaxY());
 		}
 		GL11.glEnd();
 		GL11.glPopMatrix();
@@ -116,7 +170,7 @@ public class DrawUtils {
 	 * @param b Blue value of color
 	 * @param a Transparency
 	 */
-	public static void fillColor(float r, float g, float b, float a) {
+	public static void fillScreen(float r, float g, float b, float a) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		
 		GL11.glPushMatrix();
@@ -134,5 +188,5 @@ public class DrawUtils {
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
-	
+
 }

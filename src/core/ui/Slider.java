@@ -10,9 +10,10 @@ import core.ui.event.ValueChangeEvent;
 import core.ui.event.ValueChangeListener;
 import core.utilities.MathUtils;
 
+// TODO Extend this functionality for snapping? So like only 4 points to slide to and stuff
 public class Slider extends UIElement {
 
-	private float value;
+	private double value;
 	
 	private String slideBar;
 	private Transform slideTransform;
@@ -20,13 +21,14 @@ public class Slider extends UIElement {
 	
 	private ValueChangeListener valueChangeListener;
 	
-	public Slider(float x, float y, float value) {
+	public Slider(float value) {
 		this.value = value;
-		
+
+		// TODO Disgusting trash of using constant slider UI and basing the size off of it
 		this.slideBar = "SliderBG";
 		this.sliderKnob = "SliderValue";
 		this.slideTransform = new Transform();
-		setBounds(x, y, SpriteList.get(slideBar).getWidth(), SpriteList.get(slideBar).getHeight());
+		setBounds(0, 0, SpriteList.get(slideBar).getWidth(), SpriteList.get(slideBar).getHeight());
 		
 		addMouseListener(new DefaultSliderAdapter());
 		addMouseMotionListener(new DefaultSliderMotionAdapter());
@@ -42,11 +44,11 @@ public class Slider extends UIElement {
 		SpriteList.get(sliderKnob).draw(slideTransform);
 	}
 
-	public float getValue() {
+	public double getValue() {
 		return value;
 	}
 	
-	public void setValue(float value) {
+	public void setValue(double value) {
 		if(this.value != value) {
 			fireEvent(new ValueChangeEvent(value, value - this.value));
 			this.value = value;
@@ -55,11 +57,11 @@ public class Slider extends UIElement {
 	
 	private void setTransform(boolean slide) {
 		if(slide) {
-			slideTransform.x = getX();
-			slideTransform.y = getY();
+			slideTransform.x = getBounds().getX();
+			slideTransform.y = getBounds().getY();
 		} else {
-			slideTransform.x = (float) (getX() + (bounds.getWidth() * value) - (SpriteList.get(sliderKnob).getWidth() / 2f));
-			slideTransform.y = getY();
+			slideTransform.x = (getBounds().getX() + (getBounds().getWidth() * value) - (SpriteList.get(sliderKnob).getWidth() / 2f));
+			slideTransform.y = getBounds().getY();
 		}
 		
 		slideTransform.still = still;
@@ -96,12 +98,12 @@ public class Slider extends UIElement {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			setValue(MathUtils.clamp((float) ((e.getX() - bounds.getX()) / (bounds.getMaxX() - bounds.getX())), 0f, 1f));
+			setValue(MathUtils.clamp((e.getX() - getBounds().getX()) / (getBounds().getMaxX() - getBounds().getX()), 0f, 1f));
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			setValue(MathUtils.clamp((float) ((e.getX() - bounds.getX()) / (bounds.getMaxX() - bounds.getX())), 0f, 1f));
+			setValue(MathUtils.clamp((e.getX() - getBounds().getX()) / (getBounds().getMaxX() - getBounds().getX()), 0f, 1f));
 		}
 
 		@Override
@@ -126,7 +128,7 @@ public class Slider extends UIElement {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			setValue(MathUtils.clamp((float) ((e.getX() - getX()) / bounds.getWidth()), 0f, 1f));
+			setValue(MathUtils.clamp((e.getX() - getBounds().getX()) / getBounds().getWidth(), 0f, 1f));
 		}
 	}
 

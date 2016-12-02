@@ -32,7 +32,7 @@ public abstract class MenuOverlay extends ElementGroup<UIElement> implements UIC
 	
 	@Override
 	public void draw() {
-		DrawUtils.fillColor(0f, 0f, 0f, 0.35f);
+		DrawUtils.fillScreen(0f, 0f, 0f, 0.35f);
 		
 		super.draw();
 	}

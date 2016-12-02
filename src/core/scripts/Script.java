@@ -49,9 +49,9 @@ public class Script implements Scriptable {
 		
 		// Conditionals?
 		if(currentEvent.isJsonArray()) {
-			if(Interpreter.interpretConditional(currentEvent.getAsJsonArray().get(0).getAsJsonObject())) {
+			/*if(Interpreter.interpretConditional(currentEvent.getAsJsonArray().get(0).getAsJsonObject())) {
 				currentEvent = 
-			}
+			}*/
 		}
 		if(currentEvent.isJsonObject()) {
 			Interpreter.interpret(currentEvent.getAsJsonObject());

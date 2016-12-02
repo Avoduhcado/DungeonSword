@@ -21,15 +21,18 @@ import core.ui.event.ValueChangeEvent;
 import core.ui.event.ValueChangeListener;
 import core.ui.utils.Accessible;
 import core.ui.utils.HasText;
+import core.ui.utils.InputStyle;
 import core.utilities.text.Text;
+
+// TODO Include option to limit size bounds? Beyond just a character limit
 
 public class InputBox extends UIElement implements Accessible, HasText {
 
 	private static final String CARET = "/";
 	
-	private int style; // 0 = plain text; 1 = Integers; -1 = Keybinds;
+	private InputStyle style; // 0 = plain text; 1 = Integers; -1 = Keybinds;
 	private String text;
-	private int textLimit = 100;
+	private int textLimit;
 	private String textColor = "white";
 	private float flash = 0.0f;
 	//private boolean centered = true;
@@ -40,35 +43,33 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	
 	/**
 	 * @param text Preset text
-	 * @param x coordinate of box
-	 * @param y coordinate of box
 	 * @param style Type of input accepted
-	 * @param image Background frame
-	 * @param textLimit Total number of characters accepted
+	 * @param textLimit Total number of characters accepted, enter 0 for no limit
 	 */
-	public InputBox(float x, float y, String frame, String text, int style, int textLimit) {
+	public InputBox(String text, InputStyle style, int textLimit) {
 		this.style = style;
 		this.text = text != null ? text : "";
-		if(textLimit != 0) {
-			this.textLimit = textLimit;
-			trimText();
-		}
+		this.textLimit = textLimit;
+		trimText();
 		
-		setBounds(x, y, 
+		setBounds(0, 0, 
 				text != null ? Text.getDefault().getWidth(text) : Text.getDefault().getWidth(CARET),
 				text != null ? Text.getDefault().getHeight(text) : Text.getDefault().getHeight(CARET));
-		setFrame(frame);
 		
 		addMouseListener(new DefaultInputMouseAdapter());
 		addTimeListener(new DefaultInputTimeAdapter());
 		addKeyListener(createKeyListener(style));
 	}
 	
+	public InputBox(String text, InputStyle style) {
+		this(text, style, 100);
+	}
+	
 	@Override
 	public void draw() {
 		super.draw();
 		
-		Text.drawString(flash > 0.5f ? text + CARET : text, getX(), getY(), getTextModifiers());
+		Text.drawString(flash > 0.5f ? text + CARET : text, getBounds().getX(), getBounds().getY(), getTextModifiers());
 	}
 
 	@Override
@@ -87,8 +88,8 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	/**
 	 * Fit bounds to included text
 	 */
-	public void resizeBounds() {
-		setBounds(bounds.getX(), bounds.getY(), Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
+	protected void resize() {
+		setSize(Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
 	}
 	
 	/**
@@ -97,7 +98,7 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	private void paste() {
 		try {
 			switch(style) {
-			case 1: 
+			case INTEGERS: 
 				text += Integer.parseInt((String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor));
 				break;
 			default: 
@@ -115,10 +116,10 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	 */
 	private void addCharacter(char c) {
 		switch(style) {
-		case 0: 
+		case PLAIN_TEXT: 
 			text = text + c;
 			break;
-		case 1:
+		case INTEGERS:
 			try {
 				Integer.parseInt(text + c);
 				text = text + c;
@@ -131,9 +132,9 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	 * Trim the text to fit limit constraints.
 	 */
 	private void trimText() {
-		if(text.length() > textLimit) {
+		if(textLimit > 0 && text.length() > textLimit) {
 			text = text.substring(0, textLimit);
-			resizeBounds();
+			resize();
 		}
 	}
 	
@@ -177,6 +178,15 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	}
 	
 	/**
+	 * Limit the text to a specific value, or enter 0 for no limit.
+	 * @param textLimit
+	 */
+	public void setTextLimit(int textLimit) {
+		this.textLimit = textLimit;
+		trimText();
+	}
+	
+	/**
 	 * @return text from this input.
 	 */
 	public String getText() {
@@ -195,10 +205,10 @@ public class InputBox extends UIElement implements Accessible, HasText {
 		this.actionListener = l;
 	}
 	
-	private KeyListener createKeyListener(int style) {
+	private KeyListener createKeyListener(InputStyle style) {
 		switch(style) {
-		case 0:
-		case 1:
+		case PLAIN_TEXT:
+		case INTEGERS:
 			return (e -> {
 				if(!isModifierKey(e.getKey())) {
 					if(e.getKey() == Keyboard.KEY_BACK && text.isEmpty()) {
@@ -218,7 +228,7 @@ public class InputBox extends UIElement implements Accessible, HasText {
 						// Make sure text is still inside limit
 						trimText();
 					}
-					resizeBounds();
+					resize();
 				}
 				
 				if(e.getKey() == Keyboard.KEY_RETURN) {
@@ -226,10 +236,10 @@ public class InputBox extends UIElement implements Accessible, HasText {
 					InputBox.this.setState(DISABLED);
 				}
 			});
-		case -1:
+		case KEYBINDS:
 			return (e -> {
 				text = e.getKeyName();
-				resizeBounds();
+				resize();
 
 				InputBox.this.fireEvent(new ValueChangeEvent(text, null));
 				InputBox.this.setState(DISABLED);

@@ -4,8 +4,8 @@ import org.lwjgl.util.vector.Vector4f;
 
 public class Transform {
 
-	public float x, y;
-	public float width, height;
+	public double x, y;
+	public double width, height;
 	public float rotation;
 	public float scaleX, scaleY;
 	public boolean flipX;
@@ -45,19 +45,19 @@ public class Transform {
 		setTextureOffsets(null);
 	}
 
-	public float getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(float x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(float y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 	

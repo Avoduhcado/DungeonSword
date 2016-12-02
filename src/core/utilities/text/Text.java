@@ -44,11 +44,11 @@ public class Text {
 		return fonts.get("DEFAULT");
 	}
 	
-	public static void drawString(String text, float x, float y) {
+	public static void drawString(String text, double x, double y) {
 		getDefault().drawString(text, x, y, plainText);
 	}
 	
-	public static void drawString(String text, float x, float y, String modifier) {
+	public static void drawString(String text, double x, double y, String modifier) {
 		getDefault().drawString(text, x, y, new TextModifier(modifier));
 	}
 	

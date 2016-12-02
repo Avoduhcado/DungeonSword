@@ -15,7 +15,8 @@ import core.ui.Button;
 import core.ui.ElementGroup;
 import core.ui.Icon;
 import core.ui.overlays.OptionsMenu;
-import core.ui.utils.Align;
+import core.ui.utils.HorizontalAlign;
+import core.ui.utils.VerticalAlign;
 
 public class TitleMenu extends GameSetup {
 	
@@ -30,25 +31,33 @@ public class TitleMenu extends GameSetup {
 		Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 0f, true, Tween.IN));
 		
 		// Load title logo
-		Icon logo = new Icon(Float.NaN, Camera.get().getDisplayHeight(0.1667f), "Avogine Title");
+		Icon logo = new Icon("Avogine Title");
+		logo.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.2667f));
+		logo.setAlignments(VerticalAlign.CENTER, HorizontalAlign.CENTER);
 		addUI(logo);
-		
+				
 		// Initialize game buttons
-		Button newGame = new Button(Float.NaN, Camera.get().getDisplayHeight(0.55f), null, "New Game");
+		Button newGame = new Button("New Game");
+		newGame.setFrame(null);
+		newGame.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.55f));
 		newGame.setStill(true);
-		newGame.setAlign(Align.CENTER);
+		newGame.setHorizontalAlign(HorizontalAlign.CENTER);
 		newGame.addActionListener(e -> Theater.get().setSetup(new Stage()));
 		
-		Button options = new Button(Float.NaN, (float) newGame.getBounds().getMaxY(), null, "Options");
+		Button options = new Button("Options");
+		options.setFrame(null);
+		options.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> newGame.getBounds().getMaxY());
 		options.setStill(true);
-		options.setAlign(Align.CENTER);
+		options.setHorizontalAlign(HorizontalAlign.CENTER);
 		options.addActionListener(e -> addUI(new OptionsMenu()));
 		
-		Button exit = new Button(Float.NaN, (float) options.getBounds().getMaxY(), null, "Exit");
+		Button exit = new Button("Exit");
+		exit.setFrame(null);
+		exit.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> options.getBounds().getMaxY());
 		exit.setStill(true);
-		exit.setAlign(Align.CENTER);
+		exit.setHorizontalAlign(HorizontalAlign.CENTER);
 		exit.addActionListener(e -> Theater.get().close());
-		
+
 		// Initialize game buttons
 		newGame.setSurrounding(3, options);
 		options.setSurrounding(3, exit);
@@ -59,10 +68,11 @@ public class TitleMenu extends GameSetup {
 		buttons.add(options);
 		buttons.add(exit);
 		buttons.setKeyboardNavigable(true, newGame);
+		buttons.setHorizontalAlign(HorizontalAlign.CENTER);
 		//buttons.setSelectionPointer("screen ui/Pointer");
 		buttons.setFrame("Menu2");
 		addUI(buttons);
-				
+						
 		// Play title track
 		try {
 			menuTheme = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(

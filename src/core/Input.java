@@ -21,16 +21,23 @@ import core.utilities.keyboard.Keybind;
 
 public class Input {
 	
-	// TODO Create a proper SINGLETONNNNN out of Input class
-	static {
+	public Input() {
+		// TODO I guess this could be a property read from a file maybe?
+		// I don't remember why I added it but I'm p sure it was necessary for something
 		Keyboard.enableRepeatEvents(true);
+	}
+	
+	private static Input input = new Input();
+	
+	public static Input get() {
+		return input;
 	}
 	
 	/**
 	 * Main processing of any and all input depending on current setup.
 	 * @param setup The current setup of the game
 	 */
-	public static void checkInput(UIContainer setup) {
+	public void checkInput(UIContainer setup) {
 		// TODO Menu Overlays isn't processed as ElementGroup
 		if(!setup.getUI().isEmpty()) {
 			while(setup.getElement(setup.getUI().size() - 1) != null && setup.getElement(setup.getUI().size() - 1) instanceof UIContainer) {
@@ -81,6 +88,9 @@ public class Input {
 			colorFade.setReverse(true);
 			Camera.get().addScreenEffect(colorFade);
 		}
+		if(Keybind.SLOT7.clicked()) {
+			Camera.get().setFullscreen(!Camera.get().isFullscreen());
+		}
 		
 		// Setup specific processing
 		if(setup instanceof Stage) {
@@ -92,7 +102,7 @@ public class Input {
 		}
 	}
 	
-	private static void processKeyboard(UIContainer setup) {
+	private void processKeyboard(UIContainer setup) {
 		while(Keyboard.next()) {
 			if(Keyboard.getEventKeyState()) {
 				for(int i = 0; i<setup.getUI().size(); i++) {
@@ -108,7 +118,7 @@ public class Input {
 		}
 	}
 	
-	private static void processKeybinds(UIContainer setup) {
+	private void processKeybinds(UIContainer setup) {
 		Keybind.update();
 		for(Keybind k : Keybind.values()) {
 			if(k.clicked()) {
@@ -123,33 +133,29 @@ public class Input {
 		}
 	}
 	
-	private static void processMouse(UIContainer setup) {
+	private void processMouse(UIContainer setup) {
 		while(Mouse.next()) {
 			if(Mouse.getEventButton() != -1) {
 				if(Mouse.getEventButtonState()) {
 					processMouseEvent(setup,
-							new MouseEvent(MouseEvent.PRESSED,
-									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
+							new MouseEvent(MouseEvent.PRESSED, getMouseEventX(), getMouseEventY()));
 					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				} else {
 					processMouseEvent(setup,
-							new MouseEvent(MouseEvent.CLICKED,
-									Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY()));
+							new MouseEvent(MouseEvent.CLICKED, getMouseEventX(), getMouseEventY()));
 
 					//System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
 					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
 				}
 			} else if(Mouse.getDX() != 0 || Mouse.getDY() != 0) {
-				MouseEvent me = new MouseEvent(MouseEvent.MOVED,
-						Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY());
+				MouseEvent me = new MouseEvent(MouseEvent.MOVED, getMouseEventX(), getMouseEventY());
 				me.setDx(Mouse.getEventDX());
 				me.setDy(-Mouse.getEventDY());
 				processMouseEvent(setup, me);
 				//System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
 				
 				if(Mouse.isButtonDown(0)) {
-					MouseEvent med = new MouseEvent(MouseEvent.DRAGGED,
-							Mouse.getEventX(), Camera.get().displayHeight - Mouse.getEventY());
+					MouseEvent med = new MouseEvent(MouseEvent.DRAGGED, getMouseEventX(), getMouseEventY());
 					med.setDx(Mouse.getEventDX());
 					med.setDy(-Mouse.getEventDY());
 					processMouseEvent(setup, med);
@@ -163,7 +169,7 @@ public class Input {
 		}
 	}
 	
-	private static void processMouseEvent(UIContainer setup, MouseEvent e) {
+	private void processMouseEvent(UIContainer setup, MouseEvent e) {
 		for(int i = 0; i<setup.getUI().size(); i++) {
 			UIElement ui = setup.getUI().get(i);
 			switch(e.getEvent()) {
@@ -182,6 +188,22 @@ public class Input {
 				break;
 			}
 		}
+	}
+	
+	public static int getMouseX() {
+		return Mouse.getX();
+	}
+	
+	public static int getMouseY() {
+		return Camera.get().displayHeight - Mouse.getY();
+	}
+	
+	public static int getMouseEventX() {
+		return Mouse.getEventX();
+	}
+	
+	public static int getMouseEventY() {
+		return Camera.get().displayHeight - Mouse.getEventY();
 	}
 	
 }

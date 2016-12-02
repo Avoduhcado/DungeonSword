@@ -6,17 +6,16 @@ public class Label extends UIElement {
 
 	private String text;
 	
-	public Label(float x, float y, String frame, String text) {
+	public Label(String text) {
 		this.text = text;
-		setBounds(x, y, Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
-		setFrame(frame);
+		setBounds(0, 0, Text.getDefault().getWidth(text), Text.getDefault().getHeight(text));
 	}
 	
 	@Override
 	public void draw() {
 		super.draw();
 		
-		Text.drawString(text, getX(), getY());
+		Text.drawString(text, getBounds().getX(), getBounds().getY());
 	}
 	
 	public String getText() {

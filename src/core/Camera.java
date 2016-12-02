@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -24,9 +23,9 @@ import core.utilities.text.Text;
 public class Camera {
 	
 	/** Default Window width */
-	public final int WIDTH = 800;
+	public final int WIDTH = 1280;
 	/** Default Window height */
-	public final int HEIGHT = 600;
+	public final int HEIGHT = 720;
 	/** Target FPS for application to run at */
 	public static final int TARGET_FPS = 60;
 	/** Window Icon */
@@ -45,7 +44,6 @@ public class Camera {
 	/** Current view frame */
 	public Rectangle2D frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
 	
-	
 	private Vector4f translation = new Vector4f();
 	private Vector4f scale = new Vector4f(1f, 1f, 1f, 1f);
 	private Vector4f rotation = new Vector4f();
@@ -54,10 +52,9 @@ public class Camera {
 	private Vector4f tint = new Vector4f(0f, 0f, 0f, 1f);
 	
 	private List<ScreenEffect> screenEffects = new ArrayList<ScreenEffect>();
-	
 
 	/** Determine whether window should upscale or increase view distance on resize */
-	private boolean upscale = true;
+	private boolean upscale = false;
 	
 	/** Screen singleton */
 	private static Camera camera;
@@ -129,7 +126,7 @@ public class Camera {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
-		DrawUtils.fillColor(0f, 0f, 0f, 1f);
+		DrawUtils.fillScreen(0f, 0f, 0f, 1f);
 
 		processEffects();
 		positionCamera();
@@ -143,7 +140,7 @@ public class Camera {
 		setup.drawUI();
 		
 		if(Theater.get().isPaused()) {
-			DrawUtils.fillColor(0, 0, 0, 0.65f);
+			DrawUtils.fillScreen(0, 0, 0, 0.65f);
 			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t+,cwhite");
 		}
 		
@@ -151,19 +148,22 @@ public class Camera {
 		
 		// Draw debug info
 		if(Theater.debug) {
-			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, 15, "t+,s0.4,cwhite,d-");
-			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, 40, "t+,s0.4,cwhite,d-");
-			Text.drawString("Position: " + translation.toString(), 15, 80, "t+,s0.4,cwhite,d-");
-			Text.drawString("Scale: " + scale.toString(), 15, 110, "t+,s0.4,cwhite,d-");
-			Text.drawString("Rotation: " + rotation.toString(), 15, 140, "t+,s0.4,cwhite,d-");
+			int y = 15;
+			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, y, "t+,s0.4,cwhite,d-");
+			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, y += 25, "t+,s0.4,cwhite,d-");
+			Text.drawString("Position: " + translation.toString(), 15, y += 40, "t+,s0.4,cwhite,d-");
+			Text.drawString("Scale: " + scale.toString(), 15, y += 30, "t+,s0.4,cwhite,d-");
+			Text.drawString("Rotation: " + rotation.toString(), 15, y += 30, "t+,s0.4,cwhite,d-");
+			Text.drawString("Mouse: " + Input.getMouseEventX() + " " + Input.getMouseEventY(), 15, y += 30, "t+,s0.4,cwhite,d-");
 			
-			Text.drawString("Mouse", Mouse.getX() / ((float) Display.getWidth() / (float) WIDTH),
-					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT), "t+");
+			/*Text.drawString("Mouse", Mouse.getX() / ((float) Display.getWidth() / (float) WIDTH),
+					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT), "t+");*/
+			Text.drawString("Mouse", Input.getMouseEventX(), Input.getMouseEventY());
 		}
 	}
 	
 	private void drawScreenTint() {
-		DrawUtils.fillColor(tint.x, tint.y, tint.z, tint.w);
+		DrawUtils.fillScreen(tint.x, tint.y, tint.z, tint.w);
 	}
 
 	private void positionCamera() {
@@ -196,8 +196,9 @@ public class Camera {
 	}
 	
 	public boolean resized() {
-		if(Display.getWidth() != displayWidth || Display.getHeight() != displayHeight)
+		if(Display.getWidth() != displayWidth || Display.getHeight() != displayHeight) {
 			return true;
+		}
 		
 		return false;
 	}
@@ -259,7 +260,7 @@ public class Camera {
 
 	public float getFrameXScale() {
 		if(upscale) {
-			return (float) (frame.getWidth() / fixedFrame.getWidth());
+			return 1f;//(float) (frame.getWidth() / fixedFrame.getWidth());
 		} else {
 			return 1f;
 		}
@@ -267,26 +268,30 @@ public class Camera {
 	
 	public float getFrameYScale() {
 		if(upscale) {
-			return (float) (frame.getHeight() / fixedFrame.getHeight());
+			return 1f;//(float) (frame.getHeight() / fixedFrame.getHeight());
 		} else {
 			return 1f;
 		}
 	}
 	
-	public float getDisplayWidth() {
-		return displayWidth / getFrameXScale();
+	public double getDisplayWidth() {
+		//return displayWidth / getFrameXScale();
+		return displayWidth;
 	}
 	
-	public float getDisplayHeight() {
-		return displayHeight / getFrameYScale();
+	public double getDisplayHeight() {
+		//return displayHeight / getFrameYScale();
+		return displayHeight;
 	}
 	
-	public float getDisplayWidth(float mod) {
-		return (displayWidth * mod) / getFrameXScale();
+	public double getDisplayWidth(float mod) {
+		//return (displayWidth * mod) / getFrameXScale();
+		return (displayWidth * mod);
 	}
 	
-	public float getDisplayHeight(float mod) {
-		return (displayHeight * mod) / getFrameYScale();
+	public double getDisplayHeight(float mod) {
+		//return (displayHeight * mod) / getFrameYScale();
+		return (displayHeight * mod);
 	}
 	
 	public boolean isFocus() {

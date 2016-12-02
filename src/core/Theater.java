@@ -111,7 +111,7 @@ public class Theater {
 			getSetup().update();
 		}
 
-		Input.checkInput(getSetup());
+		Input.get().checkInput(getSetup());
 
 		if(Camera.get().toBeClosed()) {
 			close();

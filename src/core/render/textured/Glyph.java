@@ -1,9 +1,11 @@
 package core.render.textured;
 
 import java.awt.Color;
+
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.Texture;
+
 import core.render.SpriteList;
 import core.render.transform.Transform;
 import core.utilities.text.GameFont;
@@ -35,7 +37,7 @@ public class Glyph {
 		setupVertices(x, y, width, height);
 	}
 	
-	public void draw(float x, float y, TextModifier modifier) {		
+	public void draw(double x, double y, TextModifier modifier) {		
 		setTransform(x, y, modifier);
 
 		SpriteList.get(page).draw(transform);
@@ -43,12 +45,12 @@ public class Glyph {
 		color.set(0, 0, 0, 0);
 	}
 
-	public void draw(float x, float y, TextModifier modifier, Color color) {
+	public void draw(double x, double y, TextModifier modifier, Color color) {
 		setColor(color);
 		draw(x, y, modifier);
 	}
 
-	private void setTransform(float x, float y, TextModifier modifier) {
+	private void setTransform(double x, double y, TextModifier modifier) {
 		transform.setStill(modifier.still);
 		if(modifier.size != 0) {
 			setScale(modifier.size);

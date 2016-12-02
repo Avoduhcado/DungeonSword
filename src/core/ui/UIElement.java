@@ -2,7 +2,8 @@ package core.ui;
 
 import java.awt.geom.Rectangle2D;
 
-import core.Camera;
+import org.lwjgl.util.vector.Vector3f;
+
 import core.Theater;
 import core.render.DrawUtils;
 import core.render.textured.UIFrame;
@@ -13,8 +14,13 @@ import core.ui.event.StateChangeEvent;
 import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
-import core.ui.utils.Align;
+import core.ui.event.WindowEvent;
+import core.ui.event.WindowListener;
+import core.ui.utils.HorizontalAlign;
+import core.ui.utils.UIBounds;
 import core.ui.utils.UIContainer;
+import core.ui.utils.ValueSupplier;
+import core.ui.utils.VerticalAlign;
 
 public abstract class UIElement {
 
@@ -22,12 +28,9 @@ public abstract class UIElement {
 	public static final int DISABLED = 0;
 	public static final int ENABLED = 1;
 	
-	protected Rectangle2D bounds = new Rectangle2D.Double(0, 0, 1, 1);
+	protected final UIBounds uiBounds = new UIBounds();
 	
 	protected UIFrame frame;
-	protected float xBorder;
-	protected float yBorder;
-	protected Align alignment = Align.RIGHT;
 	
 	protected boolean selected;
 	protected boolean still = true;
@@ -41,98 +44,72 @@ public abstract class UIElement {
 	protected MouseListener mouseListener;
 	protected MouseMotionListener mouseMotionListener;
 	protected TimeListener timeListener;
+	protected WindowListener windowListener;
 	
 	public void draw() {
 		if(frame != null) {
-			frame.draw(bounds);
+			frame.draw(getBoundsAsRect());
 		}
 		
 		if(Theater.debug) {
-			DrawUtils.drawRect(getX(), getY(), getBounds());
+			DrawUtils.setColor(new Vector3f(1, 0, 0));
+			DrawUtils.drawRect(getBounds());
 		}
 	}
 
 	public void setStill(boolean still) {
 		this.still = still;
 	}
-
-	public float getX() {
-		if(bounds == null)
-			return 0;
-		
-		return (float) bounds.getX();
+	
+	public UIBounds getBounds() {
+		return uiBounds;
 	}
 	
-	public float getY() {
-		if(bounds == null)
-			return 0;
-		
-		return (float) bounds.getY();
-	}
-	
-	public Rectangle2D getBounds() {
-		return bounds;
-	}
-
-	// TODO Introduce border offsets when drawing elements
-	public void setBounds(float x, float y, float width, float height) {
-		bounds = new Rectangle2D.Double((Float.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
-				(Float.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, width + (xBorder * 2), height + (yBorder * 2));
+	/**
+	 * @return The exact values stored in <code>UIElement.bounds</code></br>Could be NaN values as well as width/height without borders applied.
+	 * Use with caution.
+	 */
+	public Rectangle2D getBoundsAsRect() {
+		return uiBounds.toRectangle();
 	}
 	
 	public void setBounds(double x, double y, double width, double height) {
-		bounds = new Rectangle2D.Double((Double.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
-				(Double.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, width + (xBorder * 2), height + (yBorder * 2));
+		setBounds(() -> x, () -> y, () -> width, () -> height);
 	}
 	
-	public void setPosition(float x, float y) {
-		bounds = new Rectangle2D.Double((Float.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
-				(Float.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, bounds.getWidth(), bounds.getHeight());
+	public void setBounds(ValueSupplier<Double> x, ValueSupplier<Double> y, ValueSupplier<Double> width, ValueSupplier<Double> height) {
+		uiBounds.setFrame(x, y, width, height);
 	}
 	
 	public void setPosition(double x, double y) {
-		bounds = new Rectangle2D.Double((Double.isNaN(x) ? Camera.get().getDisplayWidth(0.5f) : x) - xBorder,
-				(Double.isNaN(y) ? Camera.get().getDisplayHeight(0.5f) : y) - yBorder, bounds.getWidth(), bounds.getHeight());
+		setPosition(() -> x, () -> y);
 	}
 	
-	public float getXBorder() {
-		return xBorder;
+	public void setPosition(ValueSupplier<Double> x, ValueSupplier<Double> y) {
+		uiBounds.setX(x);
+		uiBounds.setY(y);
+	}
+
+	public void setSize(double width, double height) {
+		setSize(() -> width, () -> height);
 	}
 	
-	public void setXBorder(float xBorder) {
-		this.xBorder = xBorder;
-		setBounds((float) bounds.getX(), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
+	public void setSize(ValueSupplier<Double> width, ValueSupplier<Double> height) {
+		uiBounds.setWidth(width);
+		uiBounds.setHeight(height);
 	}
 	
-	public float getYBorder() {
-		return yBorder;
+	public void setAlignments(VerticalAlign verticalAlign, HorizontalAlign horizontalAlign) {
+		setVerticalAlign(verticalAlign);
+		setHorizontalAlign(horizontalAlign);
+	}
+
+	public void setVerticalAlign(VerticalAlign alignment) {
+		uiBounds.setVerticalAlign(alignment);
 	}
 	
-	public void setYBorder(float yBorder) {
-		this.yBorder = yBorder;
-		setBounds((float) bounds.getX(), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
-	}
-	
-	public void setAlign(Align alignment) {
-		if(this.alignment != alignment) {
-			this.alignment = alignment;
-			
-			switch(alignment) {
-			case RIGHT:
-				setBounds((float) bounds.getMaxX(), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
-				break;
-			case LEFT:
-				setBounds((float) (bounds.getX() - bounds.getWidth()), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
-				break;
-			case CENTER:
-				// TODO Borders
-				bounds.setFrameFromCenter(bounds.getX(), bounds.getY(), 
-						bounds.getX() - (bounds.getWidth() / 2f), bounds.getY() - (bounds.getHeight() / 2f));
-				break;
-			default:
-				break;
-			}
-		}
+	public void setHorizontalAlign(HorizontalAlign alignment) {
+		uiBounds.setHorizontalAlign(alignment);
 	}
 	
 	public void setFrame(String image) {
@@ -222,6 +199,8 @@ public abstract class UIElement {
 			processMouseEvent((MouseEvent) e);
 		} else if(e instanceof TimeEvent) {
 			processTimeEvent((TimeEvent) e);
+		} else if(e instanceof WindowEvent) {
+			processWindowEvent((WindowEvent) e);
 		}
 	}
 	
@@ -268,6 +247,12 @@ public abstract class UIElement {
 	protected void processTimeEvent(TimeEvent e) {
 		if(timeListener != null) {
 			timeListener.timeStep(e);
+		}
+	}
+	
+	protected void processWindowEvent(WindowEvent e) {
+		if(windowListener != null) {
+			windowListener.windowResized(e);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package core.render;
 
 import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.vector.Vector4f;
@@ -49,9 +50,9 @@ public class Sprite {
 		updateTextureOffsets(transform);
 		
 		GL11.glPushMatrix();
-		
+
+		GL11.glTranslated(transform.x, transform.y, 0f);
 		if(transform.still) {
-			GL11.glTranslatef(transform.x, transform.y, 0f);
 		} else {
 			// TODO Get rid of frame in Camera
 			GL11.glTranslated(transform.x - Camera.get().frame.getX(), transform.y - Camera.get().frame.getY(), 0f);
@@ -83,16 +84,14 @@ public class Sprite {
 
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			
-			
 			GL11.glTexCoord2f(texXOffset, texYOffset);
-			GL11.glVertex2f(0, 0);
+			GL11.glVertex2d(0, 0);
 			GL11.glTexCoord2f(texWidth, texYOffset);
-			GL11.glVertex2f(transform.width != 0 ? transform.width : getWidth(), 0);
+			GL11.glVertex2d(transform.width != 0 ? transform.width : getWidth(), 0);
 			GL11.glTexCoord2f(texWidth, texHeight);
-			GL11.glVertex2f(transform.width != 0 ? transform.width : getWidth(), transform.height != 0 ? transform.height : getHeight());
+			GL11.glVertex2d(transform.width != 0 ? transform.width : getWidth(), transform.height != 0 ? transform.height : getHeight());
 			GL11.glTexCoord2f(texXOffset, texHeight);
-			GL11.glVertex2f(0, transform.height != 0 ? transform.height : getHeight());
+			GL11.glVertex2d(0, transform.height != 0 ? transform.height : getHeight());
 		}
 		GL11.glEnd();
 		GL11.glPopMatrix();

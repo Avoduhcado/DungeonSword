@@ -7,7 +7,6 @@ import core.ui.event.KeybindListener;
 import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
-import core.ui.utils.Align;
 import core.ui.utils.HasText;
 import core.utilities.keyboard.Keybind;
 import core.utilities.text.Text;
@@ -29,7 +28,7 @@ public class TextBox extends UIElement implements HasText {
 	 * @param y Y position
 	 * @param image The text box background, or null for no background
 	 */
-	public TextBox(float x, float y, String frame, String text, boolean fill) {
+	public TextBox(String text, boolean fill) {
 		parseText(text);
 		
 		if(fill) {
@@ -46,8 +45,7 @@ public class TextBox extends UIElement implements HasText {
 			textFill = getLength();
 		}
 		
-		setBounds(x, y, getWidth(), getHeight());
-		setFrame(frame);
+		setBounds(0, 0, getWidth(), getHeight());
 		
 		addKeybindListener(new DefaultKeybindAdapter());
 	}
@@ -56,15 +54,15 @@ public class TextBox extends UIElement implements HasText {
 	public void draw() {
 		if(frame != null) {
 			if(textFill < getLength()) {
-				bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
+				setSize(getWidth((int) textFill + 1), getHeight((int) textFill + 1));
 			}
 			frame.setStill(still);
-			frame.draw(bounds);
+			frame.draw(getBoundsAsRect());
 		}
 
 		if(!lines.isEmpty()) {
 			// Draw first line
-			lines.get(0).draw((float) bounds.getX(), (float) bounds.getY(), (int) textFill);
+			lines.get(0).draw(getBounds().getX(), getBounds().getY(), (int) textFill);
 			// Text limit for subsequent lines
 			int limit = (int) textFill - lines.get(0).getLength();
 			if(limit > 0) {
@@ -72,7 +70,7 @@ public class TextBox extends UIElement implements HasText {
 				float yOffset = lines.get(0).getHeight();
 				for(int i = 1; i < lines.size(); i++) {
 					// Draw line
-					lines.get(i).draw((float) bounds.getX(), (float) (bounds.getY() + yOffset), limit);
+					lines.get(i).draw(getBounds().getX(), getBounds().getY() + yOffset, limit);
 					// Increment y offset
 					yOffset += lines.get(i).getHeight();
 					// Decrement limit
@@ -97,13 +95,6 @@ public class TextBox extends UIElement implements HasText {
 			}
 		} else {
 			lines.add(new TextLine(text));
-		}
-	}
-
-	@Override
-	public void setAlign(Align border) {
-		if(!lines.isEmpty()) {
-			super.setAlign(border);
 		}
 	}
 
@@ -179,7 +170,7 @@ public class TextBox extends UIElement implements HasText {
 			if(e.getKeybind().equals(Keybind.CONFIRM) && e.getKeybind().clicked()) {
 				if(textFill < getLength()) {
 					textFill = getLength();
-					bounds.setFrame(bounds.getX(), bounds.getY(), getWidth((int) textFill + 1), getHeight((int) textFill + 1));
+					setSize(getWidth((int) textFill + 1), getHeight((int) textFill + 1));
 					
 					removeTimeListener(timeListener);
 				}
@@ -269,8 +260,8 @@ public class TextBox extends UIElement implements HasText {
 			}
 		}
 		
-		public void draw(float x, float y, int limit) {
-			float xOffset = 0;
+		public void draw(double x, double y, int limit) {
+			double xOffset = 0;
 			for(int i = 0; i<segments.size(); i++) {
 				if(TextBox.this.still) {
 					segments.get(i).addModifier("t+");
@@ -354,7 +345,7 @@ public class TextBox extends UIElement implements HasText {
 				this.text = text;
 			}
 			
-			public void draw(float x, float y, int limit) {
+			public void draw(double x, double y, int limit) {
 				Text.getFont(modifier.fontFace).drawStringSegment(modifier.addIn + text, x, y, 0,
 						limit > getLength() ? getLength() : limit, modifier);
 			}

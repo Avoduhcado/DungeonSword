@@ -5,7 +5,6 @@ import core.ui.event.ActionListener;
 import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
 import core.ui.event.UIEvent;
-import core.ui.utils.Align;
 import core.ui.utils.HasText;
 import core.utilities.text.Text;
 
@@ -25,43 +24,15 @@ public class Button extends UIElement implements HasText {
 		addMouseListener(new DefaultButtonAdapter());
 	}
 	
-	public Button(float x, float y, String frame, String text) {		
-		this.text = text;
-		setBounds(x, y,
-				Text.getDefault().getWidth(text), 
-				Text.getDefault().getHeight(text));
-		setFrame(frame);
-		
-		addMouseListener(new DefaultButtonAdapter());
-	}
-	
 	@Override
 	public void draw() {
 		super.draw();
 
 		if(text != null) {
-			Text.drawString(text, getX(), getY(), getTextModifiers());
+			Text.drawString(text, getBounds().getX(), getBounds().getY(), getTextModifiers());
 		}
 	}
 
-	@Override
-	public void setAlign(Align border) {
-		switch(border) {
-		case RIGHT:
-			setBounds((float) bounds.getMaxX(), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
-			break;
-		case LEFT:
-			setBounds((float) (bounds.getX() - bounds.getWidth()), (float) bounds.getY(), (float) bounds.getWidth(), (float) bounds.getHeight());
-			break;
-		case CENTER:
-			bounds.setFrameFromCenter(bounds.getX(), bounds.getCenterY(), 
-					bounds.getX() - (bounds.getWidth() / 2f), bounds.getY());
-			break;
-		default:
-			break;
-		}
-	}
-	
 	@Override
 	public void setSelected(boolean selected) {
 		// TODO Adapt these into some kind of const accessible from an exterior system for color coordination

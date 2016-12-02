@@ -15,6 +15,8 @@ import core.Theater;
 import core.render.effects.TintEffect;
 import core.render.effects.Tween;
 import core.ui.Icon;
+import core.ui.utils.HorizontalAlign;
+import core.ui.utils.VerticalAlign;
 import core.utilities.keyboard.Keybind;
 
 public class SplashScreen extends GameSetup {
@@ -46,11 +48,15 @@ public class SplashScreen extends GameSetup {
 	 */
 	private void loadSplashes() {
 		try (BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/splash/splash text"))) {
+			Icon splashIcon;
 			
 			String line = null;
 			while((line = reader.readLine()) != null) {
 				// Load each screen
-				splashImages.add(new Icon(Float.NaN, Float.NaN, line));
+				splashIcon = new Icon(line);
+				splashIcon.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.5f));
+				splashIcon.setAlignments(VerticalAlign.CENTER, HorizontalAlign.CENTER);
+				splashImages.add(splashIcon);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,13 +82,17 @@ public class SplashScreen extends GameSetup {
 				int tempNumber = 1;
 				if(!usedInts.contains(tempNumber)) {
 					usedInts.add(tempNumber);
+					Icon splashIcon;
 					
 					while(tempNumber > 0) {
 						line = reader.readLine();
 						tempNumber--;
 					}
-					
-					splashImages.add(new Icon(Float.NaN, Float.NaN, line));
+
+					splashIcon = new Icon(line);
+					splashIcon.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.5f));
+					splashIcon.setAlignments(VerticalAlign.CENTER, HorizontalAlign.CENTER);
+					splashImages.add(splashIcon);
 					
 					reader.close();
 					reader = new BufferedReader(new FileReader(System.getProperty("resources") + "/splash/splash text"));
@@ -100,13 +110,13 @@ public class SplashScreen extends GameSetup {
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
+
 	/**
 	 * Check if splash screen should be skipped.
 	 * Play ding effect.
 	 * Fade image in and out.
 	 */
+	@Override
 	public void update() {
 		// If player wishes to skip screen
 		if(Keybind.CONFIRM.clicked()) {
@@ -152,11 +162,11 @@ public class SplashScreen extends GameSetup {
 			}
 		}
 	}
-	
-	@Override
+
 	/**
 	 * Draw current splash screen in center of screen.
 	 */
+	@Override
 	public void draw() {
 		if(splashImages.peek() != null) {
 			splashImages.peek().draw();
