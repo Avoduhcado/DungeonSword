@@ -2,7 +2,7 @@ package core.ui;
 
 import core.render.SpriteList;
 import core.render.transform.Transform;
-import core.ui.utils.ValueSupplier;
+import core.utilities.ValueSupplier;
 
 public class Icon extends UIElement {
 

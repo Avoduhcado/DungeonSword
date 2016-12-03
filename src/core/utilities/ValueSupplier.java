@@ -1,4 +1,4 @@
-package core.ui.utils;
+package core.utilities;
 
 @FunctionalInterface
 public interface ValueSupplier<T> {

@@ -19,8 +19,8 @@ import core.ui.event.WindowListener;
 import core.ui.utils.HorizontalAlign;
 import core.ui.utils.UIBounds;
 import core.ui.utils.UIContainer;
-import core.ui.utils.ValueSupplier;
 import core.ui.utils.VerticalAlign;
+import core.utilities.ValueSupplier;
 
 public abstract class UIElement {
 
