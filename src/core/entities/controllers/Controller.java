@@ -1,7 +1,14 @@
 package core.entities.controllers;
 
-public interface Controller {
+import core.entities.Entity;
+import core.entities.components.EntityComponent;
+
+public abstract class Controller extends EntityComponent {
 	
-	public void control();
+	public Controller(Entity entity) {
+		super(entity);
+	}
+
+	public abstract void control();
 
 }

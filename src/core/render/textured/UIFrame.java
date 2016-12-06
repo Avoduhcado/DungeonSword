@@ -9,6 +9,12 @@ import core.render.SpriteList;
 import core.render.transform.Transform;
 
 public class UIFrame {
+	
+	/** TODO
+	 * Not very elegant, but potentially better than just basing the size off the actual image?
+	 * Include some option somewhere to set this value?
+	 */
+	private static final double frameSize = 60;
 
 	private String frame;
 	
@@ -32,20 +38,20 @@ public class UIFrame {
 		
 		switch(row) {
 		case 0:
-			transform.y = (float) (box.getY() - (texture.getImageHeight() / 3f));
-			transform.height = (texture.getImageHeight() / 3f);
+			transform.y = box.getY() - (frameSize / 3);
+			transform.height = frameSize / 3;
 			transform.textureOffsets.y = 0;
 			transform.textureOffsets.w = (texture.getHeight() / 3f);
 			break;
 		case 1:
-			transform.y = (float) box.getY();
-			transform.height = (float) box.getHeight();
+			transform.y = box.getY();
+			transform.height = box.getHeight();
 			transform.textureOffsets.y = (texture.getHeight() / 3f);
 			transform.textureOffsets.w = (texture.getHeight() * 0.667f);
 			break;
 		case 2:
-			transform.y = (float) box.getMaxY();
-			transform.height = (texture.getImageHeight() / 3f);
+			transform.y = box.getMaxY();
+			transform.height = frameSize / 3;
 			transform.textureOffsets.y = (texture.getHeight() * 0.667f);
 			transform.textureOffsets.w = (texture.getHeight());
 			break;
@@ -53,20 +59,20 @@ public class UIFrame {
 		
 		switch(col) {
 		case 0:
-			transform.x = (float) (box.getX() - (texture.getImageWidth() / 3f));
-			transform.width = (texture.getImageWidth() / 3f);
+			transform.x = box.getX() - (frameSize / 3);
+			transform.width = frameSize / 3;
 			transform.textureOffsets.x = 0;
 			transform.textureOffsets.z = (texture.getWidth() / 3f);
 			break;
 		case 1:
-			transform.x = (float) box.getX();
-			transform.width = (float) box.getWidth();
+			transform.x = box.getX();
+			transform.width = box.getWidth();
 			transform.textureOffsets.x = (texture.getWidth() / 3f);
 			transform.textureOffsets.z = (texture.getWidth() * 0.667f);
 			break;
 		case 2:
-			transform.x = (float) box.getMaxX();
-			transform.width = (texture.getImageWidth() / 3f);
+			transform.x = box.getMaxX();
+			transform.width = frameSize / 3;
 			transform.textureOffsets.x = (texture.getWidth() * 0.667f);
 			transform.textureOffsets.z = (texture.getWidth());
 			break;

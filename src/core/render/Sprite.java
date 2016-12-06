@@ -9,7 +9,6 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import core.Camera;
 import core.render.transform.Transform;
 
 public class Sprite {
@@ -28,12 +27,10 @@ public class Sprite {
 	protected Texture load(String ref) throws IOException {
 		if(ref.endsWith(".tga")) {
 			return TextureLoader.getTexture("TGA",
-					ResourceLoader.getResourceAsStream(System.getProperty("resources") + "/sprites/" + "Body1" + ".tga"));
+					ResourceLoader.getResourceAsStream(System.getProperty("resources") + "/sprites/" + ref + ".tga"));
 		}
 		return TextureLoader.getTexture("PNG",
 				ResourceLoader.getResourceAsStream(System.getProperty("resources") + "/sprites/" + ref + ".png"));
-		// TODO Resource loading
-				//Resources.get().getResource(ref + ".png"));
 	}
 	
 	private void loadError() {
@@ -52,12 +49,6 @@ public class Sprite {
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(transform.x, transform.y, 0f);
-		if(transform.still) {
-		} else {
-			// TODO Get rid of frame in Camera
-			GL11.glTranslated(transform.x - Camera.get().frame.getX(), transform.y - Camera.get().frame.getY(), 0f);
-		}
-		
 		GL11.glScalef(transform.scaleX, transform.scaleY, 0f);
 		
 		if(transform.flipX) {

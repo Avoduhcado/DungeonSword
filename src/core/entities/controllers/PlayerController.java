@@ -6,15 +6,13 @@ import core.entities.Entity;
 import core.entities.events.MoveEvent;
 import core.utilities.keyboard.Keybind;
 
-public class PlayerController implements Controller {
-
-	protected Entity player;
+public class PlayerController extends Controller {
 	
 	protected float speed;
 	protected float speedModifier = 1f;
 	
 	public PlayerController(Entity player, float speed) {
-		this.player = player;
+		super(player);
 		this.speed = speed;
 	}
 	
@@ -38,7 +36,7 @@ public class PlayerController implements Controller {
 		
 		// Fire a movement event on the player if any movement key presses have occured
 		if(Keybind.movement()) {
-			player.fireEvent(new MoveEvent((Vector3f) new Vector3f(Keybind.RIGHT.press() ? 1f : Keybind.LEFT.press() ? -1f : 0f,
+			entity.fireEvent(new MoveEvent((Vector3f) new Vector3f(Keybind.RIGHT.press() ? 1f : Keybind.LEFT.press() ? -1f : 0f,
 						Keybind.UP.press() ? -1f : Keybind.DOWN.press() ? 1f : 0f, 0f).scale(speed * speedModifier)));
 		}
 	}

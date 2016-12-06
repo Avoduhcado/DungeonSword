@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -15,47 +14,45 @@ import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.PNGDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
+import core.entities.bodies.Body;
 import core.render.DrawUtils;
 import core.render.effects.ScreenEffect;
 import core.setups.GameSetup;
 import core.utilities.text.Text;
 
 public class Camera {
-	
-	/** Default Window width */
-	public final int WIDTH = 1280;
-	/** Default Window height */
-	public final int HEIGHT = 720;
 	/** Target FPS for application to run at */
 	public static final int TARGET_FPS = 60;
 	/** Window Icon */
 	private final String icon = "AGDG Logo";
-	
-	/** Current Window width */
-	public int displayWidth = WIDTH;
-	/** Current Window height */
-	public int displayHeight = HEIGHT;
-
+	/** Determine whether window should upscale or increase view distance on resize */
+	private final boolean upscale = true;
 	/** VSync status */
 	private boolean vsync;
 	
-	/** View frame fixed to default size */
-	public final Rectangle2D fixedFrame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
-	/** Current view frame */
-	public Rectangle2D frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
+	/** Default Window width and current viewport width */
+	private int viewWidth = 1280;
+	/** Default Window height and current viewport height */
+	private int viewHeight = 720;
+	
+	/** Current Window width */
+	private int displayWidth = viewWidth;
+	/** Current Window height */
+	private int displayHeight = viewHeight;
+
+	/** Target for the camera to "look at" and always be centered in the screen */
+	private Body focus;
 	
 	private Vector4f translation = new Vector4f();
 	private Vector4f scale = new Vector4f(1f, 1f, 1f, 1f);
 	private Vector4f rotation = new Vector4f();
 	
+	private Vector4f clearColor = new Vector4f(0f, 0f, 0f, 1f);
 	private Vector4f offset = new Vector4f();
 	private Vector4f tint = new Vector4f(0f, 0f, 0f, 1f);
 	
 	private List<ScreenEffect> screenEffects = new ArrayList<ScreenEffect>();
 
-	/** Determine whether window should upscale or increase view distance on resize */
-	private boolean upscale = false;
-	
 	/** Screen singleton */
 	private static Camera camera;
 	
@@ -71,7 +68,7 @@ public class Camera {
 	
 	public Camera() {
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			Display.setDisplayMode(new DisplayMode(viewWidth, viewHeight));
 			updateHeader();
 			try {
 				Display.setIcon(loadIcon(System.getProperty("resources") + "/sprites/" + icon + ".png"));
@@ -87,11 +84,10 @@ public class Camera {
 			GL11.glLoadIdentity();
 			GL11.glOrtho(0, displayWidth, displayHeight, 0, -1, 1);
 			GL11.glViewport(0, 0, displayWidth, displayHeight);
+			GL11.glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
 		} catch (LWJGLException e) {
 			System.err.println("Could not create display.");
 		}
-		
-		frame = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
 	}
 	
 	public static ByteBuffer[] loadIcon(String ref) throws IOException {
@@ -126,11 +122,9 @@ public class Camera {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		
-		DrawUtils.fillScreen(0f, 0f, 0f, 1f);
-
 		processEffects();
 		positionCamera();
-		
+
 		// Draw current game setup
 		setup.draw();
 		
@@ -156,8 +150,6 @@ public class Camera {
 			Text.drawString("Rotation: " + rotation.toString(), 15, y += 30, "t+,s0.4,cwhite,d-");
 			Text.drawString("Mouse: " + Input.getMouseEventX() + " " + Input.getMouseEventY(), 15, y += 30, "t+,s0.4,cwhite,d-");
 			
-			/*Text.drawString("Mouse", Mouse.getX() / ((float) Display.getWidth() / (float) WIDTH),
-					(float) (frame.getHeight() - Mouse.getY()) / ((float) Display.getHeight() / (float) HEIGHT), "t+");*/
 			Text.drawString("Mouse", Input.getMouseEventX(), Input.getMouseEventY());
 		}
 	}
@@ -168,31 +160,41 @@ public class Camera {
 
 	private void positionCamera() {
 		// Translation
-		frame.setFrameFromCenter(translation.x, translation.y, translation.x - (fixedFrame.getWidth() / 2f), translation.y - (fixedFrame.getHeight() / 2f));
+		GL11.glTranslated(translation.x, translation.y, translation.z);
 
+		// Perform scaling/rotation from the center of the screen to avoid weird offsets
 		// Scale
-		GL11.glTranslated(frame.getWidth() / 2f, frame.getHeight() / 2f, 0);
+		GL11.glTranslated(viewWidth * 0.5, viewHeight * 0.5, 0);
 		GL11.glScalef(scale.x, scale.y, scale.z);
-		GL11.glTranslated(-frame.getWidth() / 2f, -frame.getHeight() / 2f, 0);
+		GL11.glTranslated(-viewWidth * 0.5, -viewHeight * 0.5, 0);
 		
 		// Rotation
-		GL11.glTranslated(frame.getWidth() / 2f, frame.getHeight() / 2f, 0);
+		GL11.glTranslated(viewWidth * 0.5, viewHeight * 0.5, 0);
 		// I don't recommend rotating on the y or z axis in 2D space
 		GL11.glRotatef(rotation.x, 0, 0, 1f);
-		GL11.glTranslated(-frame.getWidth() / 2f, -frame.getHeight() / 2f, 0);
+		GL11.glTranslated(-viewWidth * 0.5, -viewHeight * 0.5, 0);
+
+		// Place the focus target in the center of the screen
+		if(focus != null) {
+			GL11.glTranslated(-focus.getCenter().getX() + (viewWidth / 2), -focus.getCenter().getY() + (viewHeight / 2), 0);
+		}
 	}
-	
+
 	private void processEffects() {
 		screenEffects.stream().forEach(ScreenEffect::apply);
 		screenEffects.removeIf(ScreenEffect::isComplete);
 	}
+	
+	public Body getFocus() {
+		return focus;
+	}
+	
+	public void setFocus(Body focus) {
+		this.focus = focus;
+	}
 
 	public boolean getUpscale() {
 		return upscale;
-	}
-	
-	public void setUpscale(boolean upscale) {
-		this.upscale = upscale;
 	}
 	
 	public boolean resized() {
@@ -210,15 +212,11 @@ public class Camera {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		
-		frame = new Rectangle2D.Double(0, 0, displayWidth, displayHeight);
-		
-		if(upscale) {
-			// Upscale
-			GL11.glOrtho(0, WIDTH, HEIGHT, 0, -1, 1);
-		} else {
-			// Increase view window
-			GL11.glOrtho(0, displayWidth, displayHeight, 0, -1, 1);
+		if(!upscale) {
+			viewWidth = displayWidth;
+			viewHeight = displayHeight;
 		}
+		GL11.glOrtho(0, viewWidth, viewHeight, 0, -1, 1);
 	}
 
 	/**
@@ -239,7 +237,7 @@ public class Camera {
 			if(fullscreen) {
 				Display.setDisplayMode(Display.getDesktopDisplayMode());
 			} else if(!fullscreen && Display.isFullscreen()){
-				Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+				Display.setDisplayMode(new DisplayMode(viewWidth, viewHeight));
 			}
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -257,44 +255,32 @@ public class Camera {
 		this.vsync = vsync;
 		Display.setVSyncEnabled(vsync);
 	}
-
-	public float getFrameXScale() {
-		if(upscale) {
-			return 1f;//(float) (frame.getWidth() / fixedFrame.getWidth());
-		} else {
-			return 1f;
-		}
+	
+	public double getFrameXScale() {
+		return (double) displayWidth / (double) viewWidth;
 	}
 	
-	public float getFrameYScale() {
-		if(upscale) {
-			return 1f;//(float) (frame.getHeight() / fixedFrame.getHeight());
-		} else {
-			return 1f;
-		}
+	public double getFrameYScale() {
+		return (double) displayHeight / (double) viewHeight;
 	}
 	
 	public double getDisplayWidth() {
-		//return displayWidth / getFrameXScale();
-		return displayWidth;
+		return (double) displayWidth / getFrameXScale();
 	}
 	
 	public double getDisplayHeight() {
-		//return displayHeight / getFrameYScale();
-		return displayHeight;
+		return (double) displayHeight / getFrameYScale();
 	}
 	
 	public double getDisplayWidth(float mod) {
-		//return (displayWidth * mod) / getFrameXScale();
-		return (displayWidth * mod);
+		return ((double) displayWidth * mod) / getFrameXScale();
 	}
 	
 	public double getDisplayHeight(float mod) {
-		//return (displayHeight * mod) / getFrameYScale();
-		return (displayHeight * mod);
+		return ((double) displayHeight * mod) / getFrameYScale();
 	}
 	
-	public boolean isFocus() {
+	public boolean isActive() {
 		return Display.isActive();
 	}
 	
@@ -339,6 +325,15 @@ public class Camera {
 		}
 	}
 
+	public Vector4f getClear() {
+		return clearColor;
+	}
+	
+	public void setClear(Vector4f clear) {
+		this.clearColor = clear;
+		GL11.glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+	}
+	
 	public Vector4f getTint() {
 		return tint;
 	}

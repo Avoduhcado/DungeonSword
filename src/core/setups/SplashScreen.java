@@ -172,8 +172,5 @@ public class SplashScreen extends GameSetup {
 			splashImages.peek().draw();
 		}
 	}
-
-	@Override
-	public void drawUI() {}
 	
 }

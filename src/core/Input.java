@@ -88,9 +88,6 @@ public class Input {
 			colorFade.setReverse(true);
 			Camera.get().addScreenEffect(colorFade);
 		}
-		if(Keybind.SLOT7.clicked()) {
-			Camera.get().setFullscreen(!Camera.get().isFullscreen());
-		}
 		
 		// Setup specific processing
 		if(setup instanceof Stage) {
@@ -191,19 +188,19 @@ public class Input {
 	}
 	
 	public static int getMouseX() {
-		return Mouse.getX();
+		return (int) (Mouse.getX() / Camera.get().getFrameXScale());
 	}
 	
 	public static int getMouseY() {
-		return Camera.get().displayHeight - Mouse.getY();
+		return (int) (Camera.get().getDisplayHeight() - (Mouse.getY() / Camera.get().getFrameYScale()));
 	}
 	
 	public static int getMouseEventX() {
-		return Mouse.getEventX();
+		return (int) (Mouse.getEventX() / Camera.get().getFrameXScale());
 	}
 	
 	public static int getMouseEventY() {
-		return Camera.get().displayHeight - Mouse.getEventY();
+		return (int) (Camera.get().getDisplayHeight() - (Mouse.getEventY() / Camera.get().getFrameYScale()));
 	}
 	
 }

@@ -17,7 +17,7 @@ import core.entities.events.EntityEvent;
 import core.entities.events.InteractEvent;
 import core.entities.renders.Render;
 
-public class Entity implements Serializable {
+public class Entity implements Comparable<Entity>, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
@@ -50,7 +50,19 @@ public class Entity implements Serializable {
 			render.draw(getBodyPosition());
 		}
 	}
-	
+
+	@Override
+	public int compareTo(Entity other) {
+		if(hasBody() && other.hasBody()) {
+			if(getBodyPosition().getY() >= other.getBodyPosition().getY()) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+		return 0;
+	}
+
 	public void fireEvent(EntityEvent event) {
 		if(event instanceof BodyEvent) {
 			if(hasBody()) {

@@ -2,8 +2,15 @@ package core.entities.renders;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public interface Render {
+import core.entities.Entity;
+import core.entities.components.EntityComponent;
+
+public abstract class Render extends EntityComponent {
 	
-	public void draw(Vector3f position);
+	public Render(Entity entity) {
+		super(entity);
+	}
+
+	public abstract void draw(Vector3f position);
 
 }
