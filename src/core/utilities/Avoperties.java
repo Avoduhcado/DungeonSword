@@ -1,6 +1,7 @@
 package core.utilities;
 
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -9,13 +10,10 @@ public class Avoperties extends Properties {
 
 	public Avoperties(String fileName) {
 		String propFileName = fileName;
-		try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName)) {
-			if (inputStream != null) {
-				load(inputStream);
-			} else {
-				throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
-			}
-		} catch(Exception e) {
+		try(InputStream inputStream = new FileInputStream(propFileName)) {
+			load(inputStream);
+		} catch(IOException e) {
+			System.err.println("Property file '" + propFileName + "' not found in the classpath");
 			e.printStackTrace();
 		}
 	}

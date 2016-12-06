@@ -12,7 +12,7 @@ import core.utilities.keyboard.Keybind;
 
 public class Config {
 	
-	private static final Avoperties props = new Avoperties("config.properties");
+	private static final Avoperties props = new Avoperties("properties/config.properties");
 	
 	public static String getProperty(String property) {
 		return props.getProperty(property);
