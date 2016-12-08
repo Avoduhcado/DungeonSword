@@ -26,7 +26,7 @@ public class Camera {
 	/** Window Icon */
 	private final String icon = "AGDG Logo";
 	/** Determine whether window should upscale or increase view distance on resize */
-	private final boolean upscale = true;
+	private final boolean upscale = false;
 	/** VSync status */
 	private boolean vsync;
 	
@@ -109,8 +109,9 @@ public class Camera {
 		Display.update();
 		Display.sync(TARGET_FPS);
 		
-		if(resized())
+		if(resized()) {
 			resize();
+		}
 	}
 	
 	public void updateHeader() {

@@ -38,21 +38,18 @@ public class TitleMenu extends GameSetup {
 				
 		// Initialize game buttons
 		Button newGame = new Button("New Game");
-		newGame.setFrame(null);
 		newGame.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.55f));
 		newGame.setStill(true);
 		newGame.setHorizontalAlign(HorizontalAlign.CENTER);
 		newGame.addActionListener(e -> Theater.get().setSetup(new Stage()));
 		
 		Button options = new Button("Options");
-		options.setFrame(null);
 		options.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> newGame.getBounds().getMaxY());
 		options.setStill(true);
 		options.setHorizontalAlign(HorizontalAlign.CENTER);
 		options.addActionListener(e -> addUI(new OptionsMenu()));
 		
 		Button exit = new Button("Exit");
-		exit.setFrame(null);
 		exit.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> options.getBounds().getMaxY());
 		exit.setStill(true);
 		exit.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -68,7 +65,6 @@ public class TitleMenu extends GameSetup {
 		buttons.add(options);
 		buttons.add(exit);
 		buttons.setKeyboardNavigable(true, newGame);
-		buttons.setHorizontalAlign(HorizontalAlign.CENTER);
 		//buttons.setSelectionPointer("screen ui/Pointer");
 		buttons.setFrame("Menu2");
 		addUI(buttons);

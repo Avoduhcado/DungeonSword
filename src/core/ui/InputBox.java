@@ -30,12 +30,11 @@ public class InputBox extends UIElement implements Accessible, HasText {
 
 	private static final String CARET = "/";
 	
-	private InputStyle style; // 0 = plain text; 1 = Integers; -1 = Keybinds;
+	private InputStyle style;
 	private String text;
 	private int textLimit;
 	private String textColor = "white";
 	private float flash = 0.0f;
-	//private boolean centered = true;
 	
 	private ActionListener actionListener;
 	private KeyListener keyListener;
@@ -52,8 +51,7 @@ public class InputBox extends UIElement implements Accessible, HasText {
 		this.textLimit = textLimit;
 		trimText();
 		
-		setBounds(0, 0, 
-				text != null ? Text.getDefault().getWidth(text) : Text.getDefault().getWidth(CARET),
+		setSize(text != null ? Text.getDefault().getWidth(text) : Text.getDefault().getWidth(CARET),
 				text != null ? Text.getDefault().getHeight(text) : Text.getDefault().getHeight(CARET));
 		
 		addMouseListener(new DefaultInputMouseAdapter());
@@ -125,6 +123,8 @@ public class InputBox extends UIElement implements Accessible, HasText {
 				text = text + c;
 			} catch (NumberFormatException e) {}
 			break;
+		default:
+			break;
 		}
 	}
 	
@@ -169,14 +169,6 @@ public class InputBox extends UIElement implements Accessible, HasText {
 		}
 	}
 
-	/**
-	 * Center the text in this input.
-	 * @param centered
-	 */
-	public void setCentered(boolean centered) {
-		//this.centered = centered;
-	}
-	
 	/**
 	 * Limit the text to a specific value, or enter 0 for no limit.
 	 * @param textLimit

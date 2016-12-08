@@ -78,6 +78,13 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 	}
 	
+	@Override
+	public void setState(int state) {
+		for(UIElement e : uiElements) {
+			e.setState(state);
+		}
+	}
+	
 	public boolean isSingleSelection() {
 		return singleSelection;
 	}
@@ -149,7 +156,7 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			setBounds(0, 0, 1, 1);
 		} else if(size() == 1) {
 			UIBounds initBounds = get(0).getBounds();
-			setBounds(initBounds.getXSupplier(), initBounds.getYSupplier(), initBounds.getWidthSupplier(), initBounds.getHeightSupplier());
+			setBounds(initBounds.getXAsSupplier(), initBounds.getYAsSupplier(), initBounds.getWidthSupplier(), initBounds.getHeightSupplier());
 		} else {
 			for(UIElement e : uiElements) {
 				UIBounds.merge(getBounds(), e.getBounds(), uiBounds);

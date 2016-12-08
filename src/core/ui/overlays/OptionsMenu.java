@@ -72,7 +72,7 @@ public class OptionsMenu extends MenuOverlay {
 		add(sfxLabel);
 		
 		CheckBox fullscreenCheck = new CheckBox("Fullscreen");
-		fullscreenCheck.setPosition(() -> Camera.get().getDisplayWidth(0.6f), () -> Camera.get().getDisplayHeight(0.1667f));
+		fullscreenCheck.setPosition(() -> Camera.get().getDisplayWidth(0.6f), () -> Camera.get().getDisplayHeight(0.15f));
 		fullscreenCheck.setStill(true);
 		fullscreenCheck.setChecked(Camera.get().isFullscreen());
 		fullscreenCheck.addActionListener(e -> Camera.get().setFullscreen(fullscreenCheck.isChecked()));
@@ -85,37 +85,44 @@ public class OptionsMenu extends MenuOverlay {
 		vsyncCheck.addActionListener(e -> Camera.get().setVSync(vsyncCheck.isChecked()));
 		add(vsyncCheck);
 		
+		Keybind keyValue;
+		ElementGroup<UIElement> keyGroup;
 		LinkedList<ElementGroup<UIElement>> keybinds = new LinkedList<ElementGroup<UIElement>>();
-		double keyY = 0;
-		for(int i = 0; i<Keybind.values().length; i++) {
-			ElementGroup<UIElement> key = new ElementGroup<UIElement>();
-			
-			Label keyLabel = new Label(Keybind.values()[i].toString() + ": ");
-			keyLabel.setPosition(() -> Camera.get().getDisplayWidth(0.25f), () -> Camera.get().getDisplayHeight(0.285f));
-			keyLabel.setStill(true);
-			keyLabel.setHorizontalAlign(HorizontalAlign.RIGHT);
-			key.add(keyLabel);
-			
-			InputBox keyBox = new InputBox(Keybind.values()[i].getKey(), InputStyle.KEYBINDS, 0);
-			keyBox.setPosition(() -> Camera.get().getDisplayWidth(0.25f), () -> Camera.get().getDisplayHeight(0.285f));
-			keyBox.setState(DISABLED);
-			keyBox.setStill(true);
-			keyBox.setCentered(false);
-			keyBox.addActionListener(e -> OptionsMenu.this.setFocus(keyBox));
-			keyBox.addValueChangeListener(e -> {
-				Keybind.valueOf(keyLabel.getText().split(":")[0]).setKey(Keyboard.getKeyIndex(keyBox.getText()));
-				keyBox.setState(DISABLED);
-			});
-			key.add(keyBox);
-			
-			keybinds.add(key);
-			add(keybinds.getLast());
-			
-			keyY += keyLabel.getBounds().getHeight();
-			if(Camera.get().getDisplayHeight(0.285f) + keyY > Camera.get().getDisplayHeight(0.8f)) {
-				// TODO Implement scrollpanes or fix this offset issue
-				//xOffsett += 0.25f;
-				keyY = 0;
+		for(int keyX = 0; keyX < 2; keyX++) {
+			final int xOffset = keyX;
+			for(int keyY = 0; keyY < 12; keyY++) {
+				final int yOffset = keyY;
+				try {
+					keyValue = Keybind.values()[(keyX * 12) + keyY];
+				} catch(IndexOutOfBoundsException e) {
+					break;
+				}
+				keyGroup = new ElementGroup<UIElement>();
+				
+				Label keyLabel = new Label(keyValue.toString() + ": ");
+				keyLabel.setPosition(() -> Camera.get().getDisplayWidth(0.333f) + (xOffset * Camera.get().getDisplayWidth(0.333f)),
+						() -> Camera.get().getDisplayHeight(0.275f) + (yOffset * keyLabel.getBounds().getHeight()));
+				keyLabel.setStill(true);
+				keyLabel.setHorizontalAlign(HorizontalAlign.RIGHT);
+				keyGroup.add(keyLabel);
+				
+				InputBox keyInput = new InputBox(keyValue.getKey(), InputStyle.KEYBINDS, 0);
+				keyInput.setPosition(() -> Camera.get().getDisplayWidth(0.333f) + (xOffset * Camera.get().getDisplayWidth(0.333f)),
+						() -> Camera.get().getDisplayHeight(0.275f) + (yOffset * keyLabel.getBounds().getHeight()));
+				keyInput.setState(DISABLED);
+				keyInput.setStill(true);
+				keyInput.addActionListener(e -> {
+					OptionsMenu.this.setEnabledAll(false);
+					OptionsMenu.this.setFocus(keyInput);
+				});
+				keyInput.addValueChangeListener(e -> {
+					Keybind.valueOf(keyLabel.getText().split(":")[0]).setKey(Keyboard.getKeyIndex(keyInput.getText()));
+					keyInput.setState(DISABLED);
+				});
+				keyGroup.add(keyInput);
+				
+				keybinds.add(keyGroup);
+				add(keybinds.getLast());
 			}
 		}
 		
@@ -133,6 +140,8 @@ public class OptionsMenu extends MenuOverlay {
 		});
 		
 		setFrame("Menu2");
+		setBounds(() -> Camera.get().getDisplayWidth(0.2f), () -> Camera.get().getDisplayHeight(0.1f), 
+				() -> Camera.get().getDisplayWidth(0.6f), () -> Camera.get().getDisplayHeight(0.8f));
 	}
 
 }

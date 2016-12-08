@@ -78,6 +78,10 @@ public class UIBounds {
 	public ValueSupplier<Double> getXSupplier() {
 		return x;
 	}
+	
+	public ValueSupplier<Double> getXAsSupplier() {
+		return () -> x.getValue() + horizontalAlignment.getX(this) - getXBorder();
+	}
 
 	public void setX(double x) {
 		this.x = () -> x;
@@ -100,6 +104,10 @@ public class UIBounds {
 
 	public ValueSupplier<Double> getYSupplier() {
 		return y;
+	}
+
+	public ValueSupplier<Double> getYAsSupplier() {
+		return () -> y.getValue() + verticalAlignment.getY(this) - getYBorder();
 	}
 
 	public void setY(double y) {
@@ -185,6 +193,8 @@ public class UIBounds {
 		return "UI Bounds [" + getX() + ", " + getY() + ", " + getWidth() + ", " + getHeight() + "]";
 	}
 	
+	/** XXX Not really the best, works in upscale mode, isn't guaranteed to work in resize mode
+	 * due to static definitions for width/height */
 	public static UIBounds merge(UIBounds src1, UIBounds src2, UIBounds dest) {
 		if(dest == null) {
 			dest = new UIBounds();
