@@ -78,13 +78,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		}
 	}
 	
-	@Override
-	public void setState(int state) {
-		for(UIElement e : uiElements) {
-			e.setState(state);
-		}
-	}
-	
 	public boolean isSingleSelection() {
 		return singleSelection;
 	}
@@ -95,7 +88,6 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	
 	public void setSelectionPointer(String pointerName) {
 		this.pointer = new SelectionPointer(pointerName);
-		pointer.setStill(!isEmpty() ? get(0).still : false);
 		
 		if(selection != -1) {
 			pointer.setPositionAt(get(selection));

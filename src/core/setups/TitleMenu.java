@@ -39,19 +39,16 @@ public class TitleMenu extends GameSetup {
 		// Initialize game buttons
 		Button newGame = new Button("New Game");
 		newGame.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.55f));
-		newGame.setStill(true);
 		newGame.setHorizontalAlign(HorizontalAlign.CENTER);
 		newGame.addActionListener(e -> Theater.get().setSetup(new Stage()));
 		
 		Button options = new Button("Options");
 		options.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> newGame.getBounds().getMaxY());
-		options.setStill(true);
 		options.setHorizontalAlign(HorizontalAlign.CENTER);
 		options.addActionListener(e -> addUI(new OptionsMenu()));
 		
 		Button exit = new Button("Exit");
 		exit.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> options.getBounds().getMaxY());
-		exit.setStill(true);
 		exit.setHorizontalAlign(HorizontalAlign.CENTER);
 		exit.addActionListener(e -> Theater.get().close());
 

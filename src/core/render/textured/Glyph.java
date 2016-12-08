@@ -51,7 +51,6 @@ public class Glyph {
 	}
 
 	private void setTransform(double x, double y, TextModifier modifier) {
-		transform.setStill(modifier.still);
 		if(modifier.size != 0) {
 			setScale(modifier.size);
 		} else {

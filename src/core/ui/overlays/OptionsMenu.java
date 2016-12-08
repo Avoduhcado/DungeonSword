@@ -33,13 +33,11 @@ public class OptionsMenu extends MenuOverlay {
 		Label optionsLabel = new Label("Options");
 		optionsLabel.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.1f));
 		optionsLabel.setHorizontalAlign(HorizontalAlign.CENTER);
-		optionsLabel.setStill(true);
 		add(optionsLabel);
 
 		Slider musicSlider = new Slider(SoundStore.get().getMusicVolume());
 		musicSlider.setPosition(() -> Camera.get().getDisplayWidth(0.35f), () -> Camera.get().getDisplayHeight(0.1667f));
 		musicSlider.setVerticalAlign(VerticalAlign.CENTER);
-		musicSlider.setStill(true);
 		musicSlider.addValueChangeListener(e -> {
 			if(SoundStore.get().getMusicVolume() != musicSlider.getValue()) {
 				SoundStore.get().setMusicVolume((float) musicSlider.getValue());
@@ -51,13 +49,11 @@ public class OptionsMenu extends MenuOverlay {
 		Label musicLabel = new Label("Music Volume ");
 		musicLabel.setPosition(() -> Camera.get().getDisplayWidth(0.35f), () -> Camera.get().getDisplayHeight(0.1667f));
 		musicLabel.setAlignments(VerticalAlign.CENTER, HorizontalAlign.RIGHT);
-		musicLabel.setStill(true);
 		add(musicLabel);
 
 		Slider sfxSlider = new Slider(SoundStore.get().getSoundVolume());
 		sfxSlider.setPosition(() -> Camera.get().getDisplayWidth(0.35f), () -> Camera.get().getDisplayHeight(0.215f));
 		sfxSlider.setVerticalAlign(VerticalAlign.CENTER);
-		sfxSlider.setStill(true);
 		sfxSlider.addValueChangeListener(e -> {
 			if(SoundStore.get().getSoundVolume() != sfxSlider.getValue()) {
 				SoundStore.get().setSoundVolume((float) sfxSlider.getValue());
@@ -68,19 +64,16 @@ public class OptionsMenu extends MenuOverlay {
 		Label sfxLabel = new Label("Sound Volume ");
 		sfxLabel.setPosition(() -> Camera.get().getDisplayWidth(0.35f), () -> Camera.get().getDisplayHeight(0.215f));
 		sfxLabel.setAlignments(VerticalAlign.CENTER, HorizontalAlign.RIGHT);
-		sfxLabel.setStill(true);
 		add(sfxLabel);
 		
 		CheckBox fullscreenCheck = new CheckBox("Fullscreen");
 		fullscreenCheck.setPosition(() -> Camera.get().getDisplayWidth(0.6f), () -> Camera.get().getDisplayHeight(0.15f));
-		fullscreenCheck.setStill(true);
 		fullscreenCheck.setChecked(Camera.get().isFullscreen());
 		fullscreenCheck.addActionListener(e -> Camera.get().setFullscreen(fullscreenCheck.isChecked()));
 		add(fullscreenCheck);
 		
 		CheckBox vsyncCheck = new CheckBox("VSync");
 		vsyncCheck.setPosition(() -> Camera.get().getDisplayWidth(0.6f), () -> fullscreenCheck.getBounds().getMaxY());
-		vsyncCheck.setStill(true);
 		vsyncCheck.setChecked(Camera.get().isVSyncEnabled());
 		vsyncCheck.addActionListener(e -> Camera.get().setVSync(vsyncCheck.isChecked()));
 		add(vsyncCheck);
@@ -102,7 +95,6 @@ public class OptionsMenu extends MenuOverlay {
 				Label keyLabel = new Label(keyValue.toString() + ": ");
 				keyLabel.setPosition(() -> Camera.get().getDisplayWidth(0.333f) + (xOffset * Camera.get().getDisplayWidth(0.333f)),
 						() -> Camera.get().getDisplayHeight(0.275f) + (yOffset * keyLabel.getBounds().getHeight()));
-				keyLabel.setStill(true);
 				keyLabel.setHorizontalAlign(HorizontalAlign.RIGHT);
 				keyGroup.add(keyLabel);
 				
@@ -110,11 +102,7 @@ public class OptionsMenu extends MenuOverlay {
 				keyInput.setPosition(() -> Camera.get().getDisplayWidth(0.333f) + (xOffset * Camera.get().getDisplayWidth(0.333f)),
 						() -> Camera.get().getDisplayHeight(0.275f) + (yOffset * keyLabel.getBounds().getHeight()));
 				keyInput.setState(DISABLED);
-				keyInput.setStill(true);
-				keyInput.addActionListener(e -> {
-					OptionsMenu.this.setEnabledAll(false);
-					OptionsMenu.this.setFocus(keyInput);
-				});
+				keyInput.addActionListener(e -> OptionsMenu.this.setFocus(keyInput));
 				keyInput.addValueChangeListener(e -> {
 					Keybind.valueOf(keyLabel.getText().split(":")[0]).setKey(Keyboard.getKeyIndex(keyInput.getText()));
 					keyInput.setState(DISABLED);
@@ -129,7 +117,6 @@ public class OptionsMenu extends MenuOverlay {
 		Button close = new Button("Close");
 		close.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> Camera.get().getDisplayHeight(0.85f));
 		close.setHorizontalAlign(HorizontalAlign.CENTER);
-		close.setStill(true);
 		close.addActionListener(e -> setState(KILL_FLAG));
 		add(close);
 		

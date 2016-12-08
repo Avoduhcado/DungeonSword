@@ -19,7 +19,6 @@ public class UIFrame {
 	private String frame;
 	
 	private float opacity = 0.8f;
-	private boolean still = true;
 	
 	private Transform transform;
 	
@@ -34,7 +33,6 @@ public class UIFrame {
 		transform.clear();
 		transform.textureOffsets = new Vector4f();
 		transform.color = new Vector4f(1f, 1f, 1f, opacity);
-		transform.still = still;
 		
 		switch(row) {
 		case 0:
@@ -100,13 +98,5 @@ public class UIFrame {
 	public void setOpacity(float opacity) {
 		this.opacity = opacity;
 	}
-	
-	public boolean isStill() {
-		return still;
-	}
-	
-	public void setStill(boolean still) {
-		this.still = still;
-	}
-	
+
 }

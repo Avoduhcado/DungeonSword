@@ -63,8 +63,6 @@ public class Slider extends UIElement {
 			slideTransform.x = (getBounds().getX() + (getBounds().getWidth() * value) - (SpriteList.get(sliderKnob).getWidth() / 2f));
 			slideTransform.y = getBounds().getY();
 		}
-		
-		slideTransform.still = still;
 	}
 	
 	public void removeValueChangeListener(ValueChangeListener l) {

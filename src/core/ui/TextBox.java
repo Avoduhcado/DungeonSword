@@ -56,7 +56,6 @@ public class TextBox extends UIElement implements HasText {
 			if(textFill < getLength()) {
 				setSize(getWidth((int) textFill + 1), getHeight((int) textFill + 1));
 			}
-			frame.setStill(still);
 			frame.draw(getBoundsAsRect());
 		}
 
@@ -100,12 +99,7 @@ public class TextBox extends UIElement implements HasText {
 
 	@Override
 	public String getTextModifiers() {
-		String modifier = "";
-		if(still) {
-			modifier += "t+";
-		}
-		
-		return modifier;
+		return "";
 	}
 	
 	public float getTextFill() {
@@ -263,9 +257,6 @@ public class TextBox extends UIElement implements HasText {
 		public void draw(double x, double y, int limit) {
 			double xOffset = 0;
 			for(int i = 0; i<segments.size(); i++) {
-				if(TextBox.this.still) {
-					segments.get(i).addModifier("t+");
-				}
 				segments.get(i).draw(x + xOffset, y, limit);
 				xOffset += segments.get(i).getWidth();
 				limit -= segments.get(i).getLength();

@@ -46,9 +46,6 @@ public class Button extends UIElement implements HasText {
 	@Override
 	public String getTextModifiers() {
 		String modifier = "";
-		if(still) {
-			modifier += "t+";
-		}
 		if(textColor != null) {
 			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
 		}

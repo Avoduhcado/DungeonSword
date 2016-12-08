@@ -73,9 +73,6 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	@Override
 	public String getTextModifiers() {
 		String modifier = "";
-		if(still) {
-			modifier += "t+";
-		}
 		if(textColor != null) {
 			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
 		}

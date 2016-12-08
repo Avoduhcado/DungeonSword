@@ -33,7 +33,6 @@ public abstract class UIElement {
 	protected UIFrame frame;
 	
 	protected boolean selected;
-	protected boolean still = true;
 	
 	private UIContainer container;
 	private int state = ENABLED;
@@ -57,10 +56,6 @@ public abstract class UIElement {
 		}
 	}
 
-	public void setStill(boolean still) {
-		this.still = still;
-	}
-	
 	public UIBounds getBounds() {
 		return uiBounds;
 	}

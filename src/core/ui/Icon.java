@@ -18,8 +18,6 @@ public class Icon extends UIElement {
 	public void draw() {
 		transform.x = getBounds().getX();
 		transform.y = getBounds().getY();
-		// TODO Likely shouldn't always be set to still
-		transform.still = true;
 		
 		SpriteList.get(image).draw(transform);
 	}
