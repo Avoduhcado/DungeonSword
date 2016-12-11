@@ -8,6 +8,8 @@ import core.entities.Entity;
 import core.render.SpriteList;
 import core.render.transform.Transform;
 import core.utilities.text.Text;
+import core.utilities.text.TextModifier;
+import core.utilities.text.TextModifier.TextModValue;
 
 public class PlainRender extends Render {
 
@@ -27,11 +29,11 @@ public class PlainRender extends Render {
 		SpriteList.get(sprite).draw(transform);
 		
 		if(Theater.debug) {
-			String mods = "cwhite";
+			TextModifier modifier = TextModifier.compile(TextModValue.COLOR + "=white");
 			if(this.entity.hasBody() && this.entity.getBody() == Camera.get().getFocus()) {
-				mods = "cgreen";
+				modifier.addModifier(TextModValue.COLOR, "green");
 			}
-			Text.drawString(sprite, transform.x, transform.y, mods);
+			Text.drawString(sprite, transform.x, transform.y, modifier);
 		}
 	}
 

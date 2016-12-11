@@ -98,8 +98,8 @@ public class TextBox extends UIElement implements HasText {
 	}
 
 	@Override
-	public String getTextModifiers() {
-		return "";
+	public TextModifier getTextModifier() {
+		return new TextModifier();
 	}
 	
 	public float getTextFill() {
@@ -266,9 +266,9 @@ public class TextBox extends UIElement implements HasText {
 		}
 		
 		// TODO Per segment adjustment?
-		public void append(String modifier) {
+		public void appendModifier(String type, String value) {
 			for(TextSegment s : segments) {
-				s.modifier.concat(modifier);
+				s.modifier.addModifier(type, value);
 			}
 		}
 		
@@ -332,39 +332,39 @@ public class TextBox extends UIElement implements HasText {
 			private String text;
 			
 			public TextSegment(String modifier, String text) {
-				this.modifier = new TextModifier(modifier);
+				this.modifier = TextModifier.compile(modifier.split(","));
 				this.text = text;
 			}
 			
 			public void draw(double x, double y, int limit) {
-				Text.getFont(modifier.fontFace).drawStringSegment(modifier.addIn + text, x, y, 0,
+				Text.getFont(modifier.getFontFace()).drawStringSegment(modifier.getReplacement() + text, x, y, 0,
 						limit > getLength() ? getLength() : limit, modifier);
 			}
 			
-			public void addModifier(String modifier) {
-				this.modifier.concat(modifier);
+			public void addModifier(String type, String value) {
+				this.modifier.addModifier(type, value);
 			}
 			
 			public float getWidth() {
-				return Text.getFont(modifier.fontFace).getWidth(modifier.addIn + text);
+				return Text.getFont(modifier.getFontFace()).getWidth(modifier.getReplacement() + text);
 			}
 			
 			public float getHeight() {
-				return Text.getFont(modifier.fontFace).getHeight(modifier.addIn + text);
+				return Text.getFont(modifier.getFontFace()).getHeight(modifier.getReplacement() + text);
 			}
 			
 			public float getWidth(int limit) {
-				return Text.getFont(modifier.fontFace).getWidth((modifier.addIn + text)
+				return Text.getFont(modifier.getFontFace()).getWidth((modifier.getReplacement() + text)
 						.substring(0, limit > getLength() ? getLength() : limit));
 			}
 			
 			public float getHeight(int limit) {
-				return Text.getFont(modifier.fontFace).getHeight((modifier.addIn + text)
+				return Text.getFont(modifier.getFontFace()).getHeight((modifier.getReplacement() + text)
 						.substring(0, limit > getLength() ? getLength() : limit));
 			}
 			
 			public int getLength() {
-				return text.length() + modifier.addIn.length();
+				return text.length() + modifier.getReplacement().length();
 			}
 			
 		}

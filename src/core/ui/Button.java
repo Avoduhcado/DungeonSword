@@ -7,6 +7,8 @@ import core.ui.event.MouseListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.HasText;
 import core.utilities.text.Text;
+import core.utilities.text.TextModifier;
+import core.utilities.text.TextModifier.TextModValue;
 
 public class Button extends UIElement implements HasText {
 	
@@ -29,7 +31,7 @@ public class Button extends UIElement implements HasText {
 		super.draw();
 
 		if(text != null) {
-			Text.drawString(text, getBounds().getX(), getBounds().getY(), getTextModifiers());
+			Text.drawString(text, getBounds().getX(), getBounds().getY(), getTextModifier());
 		}
 	}
 
@@ -44,10 +46,10 @@ public class Button extends UIElement implements HasText {
 	}
 
 	@Override
-	public String getTextModifiers() {
-		String modifier = "";
+	public TextModifier getTextModifier() {
+		TextModifier modifier = new TextModifier();
 		if(textColor != null) {
-			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
+			modifier.addModifier(TextModValue.COLOR, textColor);
 		}
 		
 		return modifier;

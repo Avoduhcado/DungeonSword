@@ -15,6 +15,7 @@ public class GameFont {
 	
 	public static final float defaultSize = 0.5f;
 	public static final Color defaultColor = Color.white;
+	public static final Color defaultShadow = Color.black;
 	
 	public GameFont(String fontName) {
 		this.fontName = fontName;
@@ -93,37 +94,22 @@ public class GameFont {
 			e.printStackTrace();
 		}
 	}
-	
-	/*private void drawText(String text, float x, float y) {
-		float advance = 0;
-		if(centered) {
-			x -= (getWidth(text) / 2f);
-		}
-		
-		for(int i = 0; i<text.length(); i++) {
-			// Apply text adjustments
-			getChar(text.charAt(i)).setSize(size);
-			getChar(text.charAt(i)).setStill(still);
-			if(dropShadow) {
-				getChar(text.charAt(i)).setColor(dropColor);
-				getChar(text.charAt(i)).draw(x + advance + 2, y + 2);
-			}
-			getChar(text.charAt(i)).setColor(color);
-			
-			getChar(text.charAt(i)).draw(x + advance, y);
-			advance += getChar(text.charAt(i)).getXAdvance();
-		}
-	}*/
-	
+
 	public void drawString(String text, double x, double y, TextModifier modifier) {
 		float advance = 0;
 		
-		for(int i = 0; i<text.length(); i++) {			
-			if(modifier.dropShadow) {
-				getChar(text.charAt(i)).draw(x + advance + 2, y + 2, modifier, modifier.dropColor);
+		if(modifier.hasShadow()) {
+			Color shadowColor = modifier.getShadowColor();
+			for(int i = 0; i<text.length(); i++) {
+				getChar(text.charAt(i)).draw(x + advance + 2, y + 2, shadowColor, modifier);
+				advance += getChar(text.charAt(i)).getXAdvance();
 			}
-						
-			getChar(text.charAt(i)).draw(x + advance, y, modifier);
+		}
+		
+		Color color = modifier.getColor();
+		advance = 0;
+		for(int i = 0; i<text.length(); i++) {			
+			getChar(text.charAt(i)).draw(x + advance, y, color, modifier);
 			advance += getChar(text.charAt(i)).getXAdvance();
 		}
 	}

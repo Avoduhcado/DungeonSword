@@ -136,7 +136,7 @@ public class Camera {
 		
 		if(Theater.get().isPaused()) {
 			DrawUtils.fillScreen(0, 0, 0, 0.65f);
-			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f), "t+,cwhite");
+			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f));
 		}
 		
 		drawScreenTint();
@@ -144,12 +144,12 @@ public class Camera {
 		// Draw debug info
 		if(Theater.debug) {
 			int y = 15;
-			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, y, "t+,s0.4,cwhite,d-");
-			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, y += 25, "t+,s0.4,cwhite,d-");
-			Text.drawString("Position: " + translation.toString(), 15, y += 40, "t+,s0.4,cwhite,d-");
-			Text.drawString("Scale: " + scale.toString(), 15, y += 30, "t+,s0.4,cwhite,d-");
-			Text.drawString("Rotation: " + rotation.toString(), 15, y += 30, "t+,s0.4,cwhite,d-");
-			Text.drawString("Mouse: " + Input.getMouseEventX() + " " + Input.getMouseEventY(), 15, y += 30, "t+,s0.4,cwhite,d-");
+			Text.drawString("Current Setup: " + Theater.get().getSetup().getClass().getName(), 15, y, Text.DEBUG_TEXT);
+			Text.drawString("Avogine v" + Theater.AVOGINE_VERSION, 15, y += 25, Text.DEBUG_TEXT);
+			Text.drawString("Position: " + translation.toString(), 15, y += 40, Text.DEBUG_TEXT);
+			Text.drawString("Scale: " + scale.toString(), 15, y += 30, Text.DEBUG_TEXT);
+			Text.drawString("Rotation: " + rotation.toString(), 15, y += 30, Text.DEBUG_TEXT);
+			Text.drawString("Mouse: " + Input.getMouseEventX() + " " + Input.getMouseEventY(), 15, y += 30, Text.DEBUG_TEXT);
 			
 			Text.drawString("Mouse", Input.getMouseEventX(), Input.getMouseEventY());
 		}

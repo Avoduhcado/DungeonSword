@@ -2,11 +2,15 @@ package core.utilities.text;
 
 import java.util.HashMap;
 
+import core.utilities.text.TextModifier.TextModValue;
+
 public class Text {
 
 	private static HashMap<String, GameFont> fonts = new HashMap<String, GameFont>();
 	
-	private static final TextModifier plainText = new TextModifier("t+");
+	private static final TextModifier plainText = new TextModifier();
+	public static final TextModifier DEBUG_TEXT = TextModifier.compile(
+			TextModValue.SIZE + "=0.4", TextModValue.COLOR + "=white", TextModValue.SHADOW + "=false");
 	
 	/**
 	 * Loads a font to be used. If no other fonts exist, will load given font under "DEFAULT" tag.
@@ -48,8 +52,8 @@ public class Text {
 		getDefault().drawString(text, x, y, plainText);
 	}
 	
-	public static void drawString(String text, double x, double y, String modifier) {
-		getDefault().drawString(text, x, y, new TextModifier(modifier));
+	public static void drawString(String text, double x, double y, TextModifier modifier) {
+		getDefault().drawString(text, x, y, modifier);
 	}
 	
 }

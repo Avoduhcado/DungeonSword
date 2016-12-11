@@ -37,28 +37,15 @@ public class Glyph {
 		setupVertices(x, y, width, height);
 	}
 	
-	public void draw(double x, double y, TextModifier modifier) {		
+	public void draw(double x, double y, Color color, TextModifier modifier) {
+		setColor(color);
 		setTransform(x, y, modifier);
 
 		SpriteList.get(page).draw(transform);
-		
-		color.set(0, 0, 0, 0);
-	}
-
-	public void draw(double x, double y, TextModifier modifier, Color color) {
-		setColor(color);
-		draw(x, y, modifier);
 	}
 
 	private void setTransform(double x, double y, TextModifier modifier) {
-		if(modifier.size != 0) {
-			setScale(modifier.size);
-		} else {
-			setScale(GameFont.defaultSize);
-		}
-		if(color.length() == 0f) {
-			setColor(modifier.color);
-		}
+		setScale(modifier.getSize());
 		transform.setX(x + getXOffset());
 		transform.setY(y + getYOffset());
 		transform.width = getWidth();

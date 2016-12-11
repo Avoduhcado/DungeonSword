@@ -23,6 +23,8 @@ import core.ui.utils.Accessible;
 import core.ui.utils.HasText;
 import core.ui.utils.InputStyle;
 import core.utilities.text.Text;
+import core.utilities.text.TextModifier;
+import core.utilities.text.TextModifier.TextModValue;
 
 // TODO Include option to limit size bounds? Beyond just a character limit
 
@@ -67,14 +69,14 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	public void draw() {
 		super.draw();
 		
-		Text.drawString(flash > 0.5f ? text + CARET : text, getBounds().getX(), getBounds().getY(), getTextModifiers());
+		Text.drawString(flash > 0.5f ? text + CARET : text, getBounds().getX(), getBounds().getY(), getTextModifier());
 	}
 
 	@Override
-	public String getTextModifiers() {
-		String modifier = "";
+	public TextModifier getTextModifier() {
+		TextModifier modifier = new TextModifier();
 		if(textColor != null) {
-			modifier += (modifier.isEmpty() ? "" : ",") + "c" + textColor;
+			modifier.addModifier(TextModValue.COLOR, textColor);
 		}
 		
 		return modifier;
