@@ -8,10 +8,11 @@ import core.ui.event.MouseMotionListener;
 import core.ui.event.UIEvent;
 import core.ui.event.ValueChangeEvent;
 import core.ui.event.ValueChangeListener;
+import core.ui.utils.Accessible;
 import core.utilities.MathUtils;
 
 // TODO Extend this functionality for snapping? So like only 4 points to slide to and stuff
-public class Slider extends UIElement {
+public class Slider extends UIElement implements Accessible {
 
 	private double value;
 	
@@ -42,6 +43,18 @@ public class Slider extends UIElement {
 		SpriteList.get(slideBar).draw(slideTransform);
 		setTransform(false);
 		SpriteList.get(sliderKnob).draw(slideTransform);
+	}
+
+	@Override
+	public void access(boolean accessed) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public boolean hasFocus() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public double getValue() {

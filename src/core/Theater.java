@@ -7,7 +7,6 @@ import org.newdawn.slick.openal.SoundStore;
 import core.scripts.Interpreter;
 import core.setups.GameSetup;
 import core.setups.SplashScreen;
-import core.ui.UIElement;
 import core.ui.event.TimeEvent;
 import core.utilities.Config;
 import core.utilities.text.Text;
@@ -35,8 +34,6 @@ public class Theater {
 
 	/** Main game loop */
 	private boolean playing;
-	/** Game pause */
-	private boolean paused;
 	/** Game Debug */
 	public static boolean debug;
 
@@ -107,10 +104,8 @@ public class Theater {
 
 		AudioLoader.update();
 		
-		if(!isPaused()) {
-			getSetup().update();
-		}
-
+		getSetup().update();
+		
 		Input.get().checkInput(getSetup());
 
 		if(Camera.get().toBeClosed()) {
@@ -129,13 +124,6 @@ public class Theater {
 		while(playing) {
 			update();
 		}
-	}
-
-	/**
-	 * Pause or unpause the game.
-	 */
-	public void pause() {
-		paused = !isPaused();
 	}
 
 	/**
@@ -162,10 +150,7 @@ public class Theater {
 			lastLoopTime = 0;
 		}
 		
-		for(int i = 0; i<setup.getUI().size(); i++) {
-			UIElement e = setup.getUI().get(i);
-			e.fireEvent(new TimeEvent(delta / 1000));
-		}
+		setup.fireEvent(new TimeEvent(delta / 1000));
 	}
 
 	/**
@@ -182,13 +167,6 @@ public class Theater {
 	public void setSetup(GameSetup setup) {
 		this.setup = setup;
 		Interpreter.registerSetup(this.setup);
-	}
-
-	/**
-	 * @return Whether or not the game should be paused
-	 */
-	public boolean isPaused() {
-		return paused;
 	}
 
 	/**

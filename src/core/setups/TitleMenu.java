@@ -45,7 +45,11 @@ public class TitleMenu extends GameSetup {
 		Button options = new Button("Options");
 		options.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> newGame.getBounds().getMaxY());
 		options.setHorizontalAlign(HorizontalAlign.CENTER);
-		options.addActionListener(e -> addUI(new OptionsMenu()));
+		options.addActionListener(e -> {
+			OptionsMenu optionsMenu = new OptionsMenu();
+			addUI(optionsMenu);
+			setFocus(optionsMenu);
+		});
 		
 		Button exit = new Button("Exit");
 		exit.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> options.getBounds().getMaxY());
@@ -57,14 +61,15 @@ public class TitleMenu extends GameSetup {
 		options.setSurrounding(3, exit);
 		exit.setSurrounding(3, newGame);
 		
-		ElementGroup<Button> buttons = new ElementGroup<Button>();
-		buttons.add(newGame);
-		buttons.add(options);
-		buttons.add(exit);
+		ElementGroup buttons = new ElementGroup();
+		buttons.addUI(newGame);
+		buttons.addUI(options);
+		buttons.addUI(exit);
 		buttons.setKeyboardNavigable(true, newGame);
 		//buttons.setSelectionPointer("screen ui/Pointer");
 		buttons.setFrame("Menu2");
 		addUI(buttons);
+		setFocus(buttons);
 						
 		// Play title track
 		try {

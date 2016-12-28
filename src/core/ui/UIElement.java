@@ -24,18 +24,17 @@ import core.utilities.ValueSupplier;
 
 public abstract class UIElement {
 
-	public static final int KILL_FLAG = -1;
-	public static final int DISABLED = 0;
-	public static final int ENABLED = 1;
+	public static final int NORMAL = 0;
+	public static final int KILL_FLAG = 1;
 	
 	protected final UIBounds uiBounds = new UIBounds();
 	
 	protected UIFrame frame;
 	
-	protected boolean selected;
+	protected boolean enabled = true;
 	
 	private UIContainer container;
-	private int state = ENABLED;
+	private int state = NORMAL;
 	
 	/** For managing keyboard mapped menus. 0 = up, 1 = down, 2 = right, 3 = left */
 	protected UIElement[] surroundings = new UIElement[4];
@@ -54,6 +53,11 @@ public abstract class UIElement {
 			DrawUtils.setColor(new Vector3f(1, 0, 0));
 			DrawUtils.drawRect(getBounds());
 		}
+	}
+	
+	public void drawBounds() {
+		DrawUtils.setColor(new Vector3f(1, 0, 0));
+		DrawUtils.drawRect(getBounds());
 	}
 
 	public UIBounds getBounds() {
@@ -113,8 +117,12 @@ public abstract class UIElement {
 		}
 	}
 	
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	/**

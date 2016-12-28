@@ -134,11 +134,6 @@ public class Camera {
 
 		setup.drawUI();
 		
-		if(Theater.get().isPaused()) {
-			DrawUtils.fillScreen(0, 0, 0, 0.65f);
-			Text.drawString("Paused", getDisplayWidth(0.5f), getDisplayHeight(0.5f));
-		}
-		
 		drawScreenTint();
 		
 		// Draw debug info
@@ -150,7 +145,8 @@ public class Camera {
 			Text.drawString("Scale: " + scale.toString(), 15, y += 30, Text.DEBUG_TEXT);
 			Text.drawString("Rotation: " + rotation.toString(), 15, y += 30, Text.DEBUG_TEXT);
 			Text.drawString("Mouse: " + Input.getMouseEventX() + " " + Input.getMouseEventY(), 15, y += 30, Text.DEBUG_TEXT);
-			
+			Text.drawString("Focus: " + setup.printFocusHierarchy(), 15, y += 30, Text.DEBUG_TEXT);
+						
 			Text.drawString("Mouse", Input.getMouseEventX(), Input.getMouseEventY());
 		}
 	}

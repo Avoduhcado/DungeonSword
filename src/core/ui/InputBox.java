@@ -34,8 +34,9 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	
 	private InputStyle style;
 	private String text;
+	protected boolean focus;
 	private int textLimit;
-	private String textColor = "white";
+	private String textColor = "gray";
 	private float flash = 0.0f;
 	
 	private ActionListener actionListener;
@@ -157,15 +158,19 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	}
 	
 	@Override
-	public void setState(int state) {
-		super.setState(state);
-		
-		if(state == ENABLED) {
+	public void access(boolean accessed) {
+		this.focus = accessed;
+		if(accessed) {
 			textColor = "white";
 		} else {
 			flash = 0;
 			textColor = "gray";
 		}
+	}
+	
+	@Override
+	public boolean hasFocus() {
+		return focus;
 	}
 
 	/**
@@ -224,7 +229,7 @@ public class InputBox extends UIElement implements Accessible, HasText {
 				
 				if(e.getKey() == Keyboard.KEY_RETURN) {
 					InputBox.this.fireEvent(new ValueChangeEvent(text, null));
-					InputBox.this.setState(DISABLED);
+					//InputBox.this.setState(DISABLED);
 				}
 			});
 		case KEYBINDS:
@@ -232,8 +237,8 @@ public class InputBox extends UIElement implements Accessible, HasText {
 				text = e.getKeyName();
 				resize();
 
+				//InputBox.this.setState(DISABLED);
 				InputBox.this.fireEvent(new ValueChangeEvent(text, null));
-				InputBox.this.setState(DISABLED);
 			});
 		}
 		
@@ -296,7 +301,8 @@ public class InputBox extends UIElement implements Accessible, HasText {
 	class DefaultInputMouseAdapter implements MouseListener {
 
 		public void mouseClicked(MouseEvent e) {
-			setState(getState() == ENABLED ? DISABLED : ENABLED);
+			//setState(getState() == ENABLED ? DISABLED : ENABLED);
+			access(!hasFocus());
 			InputBox.this.fireEvent(new ActionEvent());
 		}
 
@@ -309,26 +315,24 @@ public class InputBox extends UIElement implements Accessible, HasText {
 		}
 		
 		public void mouseEntered(MouseEvent e) {
-			if(getState() == ENABLED) {
-				textColor = "white";
-			} else {
+			if(!hasFocus()) {
 				textColor = "lightGray";
 			}
+			//textColor = "white";
 		}
 		
 		public void mouseExited(MouseEvent e) {
-			if(getState() == ENABLED) {
-				textColor = "white";
-			} else {
+			if(!hasFocus()) {
 				textColor = "gray";
 			}
+			//textColor = "gray";
 		}
 	}
 
 	class DefaultInputTimeAdapter implements TimeListener {
 		@Override
 		public void timeStep(TimeEvent e) {
-			if(getState() == ENABLED) {
+			if(hasFocus()) {
 				flash += e.getDelta();
 				if(flash > 1f) {
 					flash = 0;

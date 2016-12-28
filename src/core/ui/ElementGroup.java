@@ -12,28 +12,41 @@ import core.ui.event.KeybindListener;
 import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
 import core.ui.event.MouseMotionListener;
+import core.ui.event.StateChangeEvent;
+import core.ui.event.StateChangeListener;
 import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
 import core.ui.utils.Accessible;
 import core.ui.utils.UIBounds;
+import core.ui.utils.UIContainer;
 import core.utilities.MathUtils;
+import core.utilities.keyboard.Keybind;
 
-public class ElementGroup<T extends UIElement> extends UIElement {
+public class ElementGroup extends UIElement implements UIContainer, Accessible {
 	
-	protected ArrayList<T> uiElements = new ArrayList<T>();
+	protected ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
+	protected UIElement focus;
 	
-	private boolean singleSelection = true;
-	protected int selection = -1;
+	protected SelectionPointer pointer;
+	protected KeybindListener keybindListener;
 	
-	private SelectionPointer pointer;
-	
-	private KeybindListener keybindListener;
+	private final StateChangeListener stateChangeListener = new StateChangeListener() {
+		public void changeState(StateChangeEvent e) {
+			switch(e.getState()) {
+			case UIElement.KILL_FLAG:
+				removeElement(e.getElement());
+				e.consume();
+				break;
+			default:
+				break;
+			}
+		}
+	};
 	
 	public ElementGroup() {
 		addMouseListener(new DefaultMouseAdapter());
 		addMouseMotionListener(new DefaultMouseMotionAdapter());
-		addKeybindListener(new DefaultKeybindAdapter());
 	}
 
 	public void draw() {
@@ -43,117 +56,148 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 			e.draw();
 		}
 		
-		if(pointer != null) {
-			pointer.draw();
+		if(hasFocus()) {
+			if(pointer != null) {
+				pointer.draw();
+			} else {
+				//getFocus().drawBounds();
+			}	
 		}
-	}
-	
-	public void setEnabledAll(boolean enabled) {
-		for(UIElement e : uiElements) {
-			e.setState(enabled ? ENABLED : DISABLED);
-		}
-	}
-	
-	public void setEnabledAllExcept(boolean enabled, UIElement except) {
-		for(UIElement e : uiElements) {
-			if(e != except) {
-				e.setState(enabled ? ENABLED : DISABLED);
-			}
-		}
-	}
-	
-	public void setEnabledAllExcept(boolean enabled, int index) {
-		for(int i = 0; i<size(); i++) {
-			if(i != index) {
-				get(i).setState(enabled ? ENABLED : DISABLED);
-			}
-		}
-	}
-	
-	public void setFocus(Accessible focus) {
-		for(UIElement e : uiElements) {
-			if(e instanceof Accessible && e != focus) {
-				e.setState(DISABLED);
-			}
-		}
-	}
-	
-	public boolean isSingleSelection() {
-		return singleSelection;
-	}
-
-	public void setSingleSelection(boolean singleSelection) {
-		this.singleSelection = singleSelection;
 	}
 	
 	public void setSelectionPointer(String pointerName) {
 		this.pointer = new SelectionPointer(pointerName);
 		
-		if(selection != -1) {
-			pointer.setPositionAt(get(selection));
+		if(getFocus() != null) {
+			pointer.setPositionAt(getFocus());
 		}
 	}
 	
 	public void setKeyboardNavigable(boolean enabled, UIElement startIndex) {
-		if(selection != -1) {
-			get(selection).setSelected(false);
-		}
-		
-		selection = (enabled ? indexOf(startIndex) : -1);
-		if(selection != -1 && get(selection) != null) {
-			get(selection).setSelected(true);
+		if(enabled) {
+			setFocus(startIndex);
+			addKeybindListener(new DefaultKeybindAdapter());
 		} else {
-			if(pointer != null) {
-				pointer = null;
-			}
+			setFocus(null);
+			removeKeybindListener(keybindListener);
 		}
 	}
 	
-	public void setSelection(int index) {
-		if(get(index) != null) {
-			if(selection != -1) {
-				get(selection).setSelected(false);
-			}
-			selection = index;
-			get(selection).setSelected(true);
-			
-			if(pointer != null) {
-				pointer.setPositionAt(get(selection));
-			}
+	protected void changeSelection(int direction) {
+		if(getFocus().getSurroundings()[direction] != null && getFocus().getSurroundings()[direction] instanceof Accessible) {
+			setFocus(getFocus().getSurroundings()[direction]);
 		}
 	}
 	
-	public void setSelection(UIElement element) {
-		if(!this.uiElements.contains(element)) {
-			return;
-		}
-		
-		setSelection(this.uiElements.indexOf(element));
-	}
-	
-	private void changeSelection(int direction) {
-		if(get(selection).getSurroundings()[direction] != null) {
-			get(selection).setSelected(false);
-			selection = indexOf(get(selection).getSurroundings()[direction]);
-			get(selection).setSelected(true);
-			
-			if(pointer != null) {
-				pointer.setPositionAt(get(selection));
-			}
-		}
-	}
-	
+	// TODO just baed
 	public void setBounds() {
 		if(isEmpty()) {
 			setBounds(0, 0, 1, 1);
 		} else if(size() == 1) {
-			UIBounds initBounds = get(0).getBounds();
+			UIBounds initBounds = getElement(0).getBounds();
 			setBounds(initBounds.getXAsSupplier(), initBounds.getYAsSupplier(), initBounds.getWidthSupplier(), initBounds.getHeightSupplier());
 		} else {
 			for(UIElement e : uiElements) {
 				UIBounds.merge(getBounds(), e.getBounds(), uiBounds);
 			}
 		}
+	}
+
+	@Override
+	public void access(boolean accessed) {
+		/*if(accessed) {
+			if(getFocus() != null) {
+				return;
+			}
+			for(UIElement e : uiElements) {
+				if(e instanceof Accessible && !e.isEnabled()) {
+					setFocus(e);
+					break;
+				}
+			}
+		} else {
+			setFocus(null);
+		}*/
+	}
+	
+	@Override
+	public boolean hasFocus() {
+		return focus != null;
+	}
+
+	@Override
+	public ArrayList<UIElement> getUI() {
+		return uiElements;
+	}
+
+	@Override
+	public UIElement getElement(int index) {
+		return uiElements.get(index);
+	}
+
+	@Override
+	public boolean removeElement(UIElement element) {
+		boolean removed = uiElements.remove(element);
+		if(removed) {
+			setBounds();
+		}
+		
+		return removed;
+	}
+
+	@Override
+	public void addUI(UIElement element) {
+		uiElements.add(element);
+		setBounds();
+	}
+	
+	@Override
+	public void addUI(UIElement element, int index) {
+		uiElements.set(index, element);
+		setBounds();
+	}
+
+	public void addAll(Collection<UIElement> elements) {
+		this.uiElements.addAll(elements);
+		setBounds();
+	}
+
+	@Override
+	public UIElement getFocus() {
+		return focus;
+	}
+
+	@Override
+	public void setFocus(UIElement focus) {
+		if(!(focus instanceof Accessible)) {
+			return;
+		}
+		// Unselect previous focus
+		if(hasFocus()) {
+			((Accessible) getFocus()).access(false);
+		}
+		this.focus = focus;
+		((Accessible) getFocus()).access(true);
+		
+		if(pointer != null) {
+			pointer.setPositionAt(getFocus());
+		}
+	}
+	
+	public int indexOf(UIElement element) {
+		return uiElements.indexOf(element);
+	}
+
+	public int size() {
+		return uiElements.size();
+	}
+	
+	public boolean isEmpty() {
+		return uiElements.isEmpty();
+	}
+	
+	@Override
+	public void drawUI() {	
 	}
 	
 	public void removeKeybindListener(KeybindListener l) {
@@ -166,65 +210,85 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	public void addKeybindListener(KeybindListener l) {
 		keybindListener = l;
 	}
-	
-	// TODO Likely can use stream operations to clean this up later
+
 	@Override
 	public void fireEvent(UIEvent e) {
-		if(e instanceof MouseEvent) {
+		if(e instanceof StateChangeEvent) {
+			processStateChangeEvent((StateChangeEvent) e);
+		} else if(e instanceof MouseEvent) {
 			processMouseEvent((MouseEvent) e);
 		} else if(e instanceof TimeEvent) {
 			processTimeEvent((TimeEvent) e);
-			
-			if(!isEmpty()) {
-				for(UIElement ui : uiElements) {
-					if(ui.getState() == ENABLED) {
-						ui.fireEvent(e);
-					}
-				}
-			}
 		} else if(e instanceof KeyEvent) {
-			if(!isEmpty()) {
-				for(UIElement ui : uiElements) {
-					if(ui.getState() == ENABLED) {
-						ui.fireEvent(e);
-					}
-				}
-			}
+			processKeyEvent((KeyEvent) e);
 		} else if(e instanceof KeybindEvent) {
 			processKeybindEvent((KeybindEvent) e);
-			
-			if(!isEmpty()) {
-				for(UIElement ui : uiElements) {
-					if(ui.getState() == ENABLED) {
-						ui.fireEvent(e);
-					}
-				}
+		}
+	}
+	
+	protected void processStateChangeEvent(StateChangeEvent e) {
+		if(stateChangeListener != null) {
+			stateChangeListener.changeState(e);
+		}
+	}
+	
+	@Override
+	protected void processMouseEvent(MouseEvent e) {
+		super.processMouseEvent(e);
+		
+		UIElement ui;
+		for(int i = 0; i < size(); i++) {
+			ui = getElement(i);
+			if(!ui.isEnabled()) {
+				continue;
+			}
+			if(ui.getBounds().contains(e.getPosition()) || ui.getBounds().contains(e.getPrevPosition())) {
+				ui.fireEvent(e);
 			}
 		}
+	}
+	
+	@Override
+	protected void processTimeEvent(TimeEvent e) {
+		super.processTimeEvent(e);
+		
+		UIElement ui;
+		for(int i = 0; i < size(); i++) {
+			ui = getElement(i);
+			if(!ui.isEnabled()) {
+				continue;
+			}
+			ui.fireEvent(e);
+		}
+	}
+	
+	protected void processKeyEvent(KeyEvent e) {
+		if(e.isConsumed() || getFocus() == null) {
+			return;
+		}
+		getFocus().fireEvent(e);
 	}
 	
 	protected void processKeybindEvent(KeybindEvent e) {
 		if(keybindListener != null) {
-			keybindListener.KeybindTouched(e);
+			keybindListener.keybindClicked(e);
 		}
+		
+		if(e.isConsumed() || getFocus() == null) {
+			return;
+		}
+		getFocus().fireEvent(e);
 	}
-	
-	class DefaultMouseAdapter implements MouseListener {
 
+	class DefaultMouseAdapter implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(isEmpty()) {
-				return;
-			}
 			for(UIElement ui : uiElements) {
-				if(e.isConsumed()) {
-					return;
-				}
-				if(ui.getBoundsAsRect().contains(((MouseEvent) e).getPosition())) {
-					ui.fireEvent(e);
+				if(ui instanceof Accessible && ui.getBoundsAsRect().contains(e.getPosition())) {
+					setFocus(ui);
+					break;
 				}
 			}
-			e.consume();
 		}
 
 		@Override
@@ -235,43 +299,27 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 		public void mouseReleased(MouseEvent e) {
 		}
 
-		@Override
 		public void mouseEntered(MouseEvent e) {
-			if(isEmpty()) {
+			if(getFocus() != null) {
 				return;
 			}
 			for(UIElement ui : uiElements) {
-				if(ui.getBoundsAsRect().contains(e.getPosition())) {
-					setSelection(ui);
+				if(ui instanceof Accessible && ui.isEnabled()) {
+					setFocus(ui);
+					return;
 				}
 			}
-			e.consume();
-		}
+		};
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			if(selection != -1) {
-				setSelection(selection);
-			}
-			e.consume();
+			
 		}
 	}
 	
 	class DefaultMouseMotionAdapter implements MouseMotionListener {
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if(isEmpty() || !ElementGroup.this.getBoundsAsRect().contains(e.getPosition())) {
-				return;
-			}
-			
-			for(UIElement ui : uiElements) {
-				if(ui.getBoundsAsRect().contains(e.getPosition())) {
-					setSelection(ui);
-					e.consume();
-					return;
-				}
-			}
-			
 			e.consume();
 		}
 
@@ -281,60 +329,37 @@ public class ElementGroup<T extends UIElement> extends UIElement {
 	}
 	
 	class DefaultKeybindAdapter implements KeybindListener {
-
 		@Override
-		public void KeybindTouched(KeybindEvent e) {
-			if(selection != -1) {
-				get(selection).setSelected(true);
-				if(e.getKeybind().clicked()) {
-					switch(e.getKeybind()) {
-					case UP:
-						changeSelection(0);
-						break;
-					case RIGHT:
-						changeSelection(1);
-						break;
-					case LEFT:
-						changeSelection(2);
-						break;
-					case DOWN:
-						changeSelection(3);
-						break;
-					case CONFIRM:
-						get(selection).fireEvent(new ActionEvent());
-						break;
-					default:
-					}
-				}
+		public void keybindClicked(KeybindEvent e) {
+			if(getFocus() == null || !e.getKeybind().matches(Keybind.UP, Keybind.RIGHT, Keybind.LEFT, Keybind.DOWN, Keybind.CONFIRM)) {
+				return;
+			}
+			
+			e.consume();
+			if(!e.getKeybind().clicked()) {
+				return;
+			}
+			
+			switch(e.getKeybind()) {
+			case UP:
+				changeSelection(0);
+				break;
+			case RIGHT:
+				changeSelection(1);
+				break;
+			case LEFT:
+				changeSelection(2);
+				break;
+			case DOWN:
+				changeSelection(3);
+				break;
+			case CONFIRM:
+				((UIElement) getFocus()).fireEvent(new ActionEvent());
+				break;
+			default:
+				break;
 			}
 		}
-		
-	}
-	
-	public T get(int index) {
-		return uiElements.get(index);
-	}
-	
-	public int size() {
-		return uiElements.size();
-	}
-	
-	public boolean isEmpty() {
-		return uiElements.isEmpty();
-	}
-	
-	public int indexOf(UIElement element) {
-		return uiElements.indexOf(element);
-	}
-
-	public void add(T element) {
-		uiElements.add(element);
-		setBounds();
-	}
-	
-	public void addAll(Collection<T> elements) {
-		this.uiElements.addAll(elements);
-		setBounds();
 	}
 
 }

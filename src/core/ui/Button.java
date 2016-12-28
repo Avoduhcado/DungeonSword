@@ -5,15 +5,17 @@ import core.ui.event.ActionListener;
 import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
 import core.ui.event.UIEvent;
+import core.ui.utils.Accessible;
 import core.ui.utils.HasText;
 import core.utilities.text.Text;
 import core.utilities.text.TextModifier;
 import core.utilities.text.TextModifier.TextModValue;
 
-public class Button extends UIElement implements HasText {
+public class Button extends UIElement implements HasText, Accessible {
 	
-	private String text;
+	protected String text;
 	protected String textColor = "gray";
+	protected boolean focus;
 	
 	private ActionListener actionListener;
 			
@@ -36,13 +38,19 @@ public class Button extends UIElement implements HasText {
 	}
 
 	@Override
-	public void setSelected(boolean selected) {
+	public void access(boolean accessed) {
+		this.focus = accessed;
 		// TODO Adapt these into some kind of const accessible from an exterior system for color coordination
-		if(selected) {
+		if(accessed) {
 			textColor = "white";
 		} else {
 			textColor = "gray";
 		}
+	}
+	
+	@Override
+	public boolean hasFocus() {
+		return focus;
 	}
 
 	@Override
@@ -125,11 +133,15 @@ public class Button extends UIElement implements HasText {
 		}
 		
 		public void mouseEntered(MouseEvent e) {
-			textColor = "white";
+			if(!hasFocus()) {
+				textColor = "lightGray";
+			}
 		}
 		
 		public void mouseExited(MouseEvent e) {
-			textColor = "gray";
+			if(!hasFocus()) {
+				textColor = "gray";
+			}
 		}
 	}
 }

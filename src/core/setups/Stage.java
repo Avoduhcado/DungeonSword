@@ -10,10 +10,20 @@ import core.entities.Entity;
 import core.entities.bodies.PlainBody;
 import core.entities.controllers.PlayerController;
 import core.entities.renders.PlainRender;
+import core.render.DrawUtils;
+import core.ui.event.KeybindEvent;
+import core.ui.event.KeybindListener;
+import core.ui.overlays.GameMenu;
+import core.utilities.keyboard.Keybind;
+import core.utilities.text.Text;
 
 public class Stage extends GameSetup {
 			
+	private boolean pause;
+	
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
+	
+	private KeybindListener keybindListener = new StageKeybindListener();
 	
 	public Stage() {
 		Entity ent = new Entity();
@@ -36,6 +46,9 @@ public class Stage extends GameSetup {
 	
 	@Override
 	public void update() {
+		if(pause) {
+			return;
+		}
 		entities.stream().forEach(Entity::update);
 	}
 
@@ -43,5 +56,55 @@ public class Stage extends GameSetup {
 	public void draw() {
 		entities.stream().sorted().forEach(Entity::draw);
 	}
+	
+	@Override
+	public void drawUI() {
+		super.drawUI();
+		
+		if(pause) {
+			DrawUtils.fillScreen(0, 0, 0, 0.65f);
+			Text.drawString("Paused", Camera.get().getDisplayWidth(0.5f), Camera.get().getDisplayHeight(0.5f));
+		}
+	}
 
+	@Override
+	protected void processKeybindEvent(KeybindEvent e) {
+		super.processKeybindEvent(e);
+		
+		if(keybindListener != null) {
+			keybindListener.keybindClicked(e);
+		}
+	}
+	
+	private class StageKeybindListener implements KeybindListener {
+		@Override
+		public void keybindClicked(KeybindEvent e) {
+			if(e.isConsumed() || (pause && e.getKeybind() != Keybind.PAUSE)) {
+				return;
+			}
+			
+			switch(e.getKeybind()) {
+			case PAUSE:
+				e.consume();
+				if(e.getKeybind().clicked()) {
+					pause = !pause;
+				}
+				break;
+			case EXIT:
+				e.consume();
+				if(e.getKeybind().clicked()) {
+					GameMenu gameMenu = new GameMenu();
+					addUI(gameMenu);
+					setFocus(gameMenu);
+				}
+				break;
+			default:
+				entities.stream()
+				.filter(ent -> ent.controllable() && ent.getController() instanceof PlayerController)
+				.forEach(ent -> ent.getController().control(e));
+				break;
+			}
+		}
+	}
+	
 }

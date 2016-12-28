@@ -15,6 +15,7 @@ import core.Theater;
 import core.render.effects.TintEffect;
 import core.render.effects.Tween;
 import core.ui.Icon;
+import core.ui.event.KeybindEvent;
 import core.ui.utils.HorizontalAlign;
 import core.ui.utils.VerticalAlign;
 import core.utilities.keyboard.Keybind;
@@ -118,23 +119,6 @@ public class SplashScreen extends GameSetup {
 	 */
 	@Override
 	public void update() {
-		// If player wishes to skip screen
-		if(Keybind.CONFIRM.clicked()) {
-			// Remove current screen
-			splashImages.poll();
-			// Stop any sound effects playing
-			
-			// Restart screen if a new one exists
-			if(!splashImages.isEmpty()) {
-				timer = 5f;
-				Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 1f, true, Tween.IN));
-			// Proceed with setup swap
-			} else {
-				Camera.get().cancelAllEffects();
-				Theater.get().setSetup(new TitleMenu());
-			}
-		}
-		
 		// Adjust fading and reduce timer
 		if(timer > 0f) {
 			timer -= Theater.getDeltaSpeed(0.025f);
@@ -170,6 +154,29 @@ public class SplashScreen extends GameSetup {
 	public void draw() {
 		if(splashImages.peek() != null) {
 			splashImages.peek().draw();
+		}
+	}
+	
+	@Override
+	protected void processKeybindEvent(KeybindEvent e) {
+		super.processKeybindEvent(e);
+		
+		// If player wishes to skip screen
+		if(e.getKeybind() == Keybind.CONFIRM && e.getKeybind().clicked()) {
+			e.consume();
+			// Remove current screen
+			splashImages.poll();
+			// Stop any sound effects playing
+
+			// Restart screen if a new one exists
+			if(!splashImages.isEmpty()) {
+				timer = 5f;
+				Camera.get().addScreenEffect(new TintEffect(new Vector4f(0f, 0f, 0f, 0f), 1f, true, Tween.IN));
+				// Proceed with setup swap
+			} else {
+				Camera.get().cancelAllEffects();
+				Theater.get().setSetup(new TitleMenu());
+			}
 		}
 	}
 	

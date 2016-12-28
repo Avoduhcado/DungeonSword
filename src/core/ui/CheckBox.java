@@ -3,8 +3,9 @@ package core.ui;
 import core.ui.event.ActionEvent;
 import core.ui.event.MouseEvent;
 import core.ui.event.MouseListener;
+import core.ui.utils.Accessible;
 
-public class CheckBox extends Button {
+public class CheckBox extends Button implements Accessible {
 
 	private boolean checked;
 	

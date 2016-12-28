@@ -1,5 +1,8 @@
 package core.utilities.keyboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 
@@ -80,34 +83,10 @@ public enum Keybind {
 		return RIGHT.press() || LEFT.press() || UP.press() || DOWN.press();
 	}
 	
-	/** Disable specific keys for menu navigation */
-	public static void inMenu() {
-		Keybind.MENU.key.setDisabled(true);
-		Keybind.PAUSE.key.setDisabled(true);
-		Keybind.SLOT1.key.setDisabled(true);
-		Keybind.SLOT2.key.setDisabled(true);
-		Keybind.SLOT3.key.setDisabled(true);
-		Keybind.SLOT4.key.setDisabled(true);
-		Keybind.SLOT5.key.setDisabled(true);
-		Keybind.SLOT6.key.setDisabled(true);
-		Keybind.SLOT7.key.setDisabled(true);
-		Keybind.SLOT8.key.setDisabled(true);
+	public boolean matches(Keybind...keybinds) {
+		return new ArrayList<Keybind>(Arrays.asList(keybinds)).contains(this);
 	}
 	
-	/** Enable specific keys after closing menu */
-	public static void closeMenu() {
-		Keybind.MENU.key.setDisabled(false);
-		Keybind.PAUSE.key.setDisabled(false);
-		Keybind.SLOT1.key.setDisabled(false);
-		Keybind.SLOT2.key.setDisabled(false);
-		Keybind.SLOT3.key.setDisabled(false);
-		Keybind.SLOT4.key.setDisabled(false);
-		Keybind.SLOT5.key.setDisabled(false);
-		Keybind.SLOT6.key.setDisabled(false);
-		Keybind.SLOT7.key.setDisabled(false);
-		Keybind.SLOT8.key.setDisabled(false);
-	}
-
 	/**
 	 * Change a key binding.
 	 * 

@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import core.Camera;
 import core.ui.utils.UIBounds;
@@ -187,6 +188,10 @@ public class DrawUtils {
 		GL11.glPopMatrix();
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+
+	public static void fillScreen(Vector4f glassColor) {
+		fillScreen(glassColor.x, glassColor.y, glassColor.z, glassColor.w);
 	}
 
 }

@@ -4,7 +4,6 @@ import core.Camera;
 import core.Theater;
 import core.setups.TitleMenu;
 import core.ui.Button;
-import core.ui.ElementGroup;
 import core.ui.utils.HorizontalAlign;
 
 public class GameMenu extends MenuOverlay {
@@ -20,7 +19,11 @@ public class GameMenu extends MenuOverlay {
 		Button openOptions = new Button("Options");
 		openOptions.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> toGame.getBounds().getMaxY());
 		openOptions.setHorizontalAlign(HorizontalAlign.CENTER);
-		openOptions.addActionListener(e -> addUI(new OptionsMenu()));
+		openOptions.addActionListener(e -> {
+			OptionsMenu optionsMenu = new OptionsMenu();
+			getContainer().addUI(optionsMenu);
+			getContainer().setFocus(openOptions);
+		});
 		
 		Button toTitle = new Button("Quit to Title");
 		toTitle.setPosition(() -> Camera.get().getDisplayWidth(0.5f), () -> openOptions.getBounds().getMaxY());
@@ -37,15 +40,13 @@ public class GameMenu extends MenuOverlay {
 		toTitle.setSurrounding(0, openOptions);
 		toDesktop.setSurrounding(0, toTitle);
 		
-		ElementGroup<Button> buttons = new ElementGroup<Button>();
-		buttons.add(toGame);
-		buttons.add(openOptions);
-		buttons.add(toTitle);
-		buttons.add(toDesktop);
-		buttons.setHorizontalAlign(HorizontalAlign.CENTER);
-		buttons.setFrame("Menu2");
-		buttons.setKeyboardNavigable(true, toGame);
-		addUI(buttons);
+		addUI(toGame);
+		addUI(openOptions);
+		addUI(toTitle);
+		addUI(toDesktop);
+		setHorizontalAlign(HorizontalAlign.CENTER);
+		setFrame("Menu2");
+		setKeyboardNavigable(true, toGame);
 	}
 
 }

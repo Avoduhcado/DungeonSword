@@ -7,12 +7,13 @@ import core.ui.event.KeybindListener;
 import core.ui.event.TimeEvent;
 import core.ui.event.TimeListener;
 import core.ui.event.UIEvent;
+import core.ui.utils.Accessible;
 import core.ui.utils.HasText;
 import core.utilities.keyboard.Keybind;
 import core.utilities.text.Text;
 import core.utilities.text.TextModifier;
 
-public class TextBox extends UIElement implements HasText {
+public class TextBox extends UIElement implements HasText, Accessible {
 
 	protected ArrayList<TextLine> lines = new ArrayList<TextLine>();
 
@@ -98,6 +99,18 @@ public class TextBox extends UIElement implements HasText {
 	}
 
 	@Override
+	public void access(boolean accessed) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public boolean hasFocus() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public TextModifier getTextModifier() {
 		return new TextModifier();
 	}
@@ -154,13 +167,13 @@ public class TextBox extends UIElement implements HasText {
 
 	protected void processKeybindEvent(KeybindEvent e) {
 		if(keybindListener != null) {
-			keybindListener.KeybindTouched(e);
+			keybindListener.keybindClicked(e);
 		}
 	}
 	
 	class DefaultKeybindAdapter implements KeybindListener {
 		@Override
-		public void KeybindTouched(KeybindEvent e) {
+		public void keybindClicked(KeybindEvent e) {
 			if(e.getKeybind().equals(Keybind.CONFIRM) && e.getKeybind().clicked()) {
 				if(textFill < getLength()) {
 					textFill = getLength();

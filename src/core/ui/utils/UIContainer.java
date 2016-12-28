@@ -14,6 +14,8 @@ public interface UIContainer {
 	public boolean removeElement(UIElement element);
 	public void addUI(UIElement element);
 	public void addUI(UIElement element, int index);
+	public UIElement getFocus();
+	public void setFocus(UIElement element);
 	
 	public void fireEvent(UIEvent e);
 	

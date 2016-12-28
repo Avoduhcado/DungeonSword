@@ -10,12 +10,9 @@ import core.render.effects.ScreenEffect;
 import core.render.effects.TintEffect;
 import core.render.effects.TranslateEffect;
 import core.render.effects.Tween;
-import core.setups.Stage;
-import core.ui.UIElement;
 import core.ui.event.KeyEvent;
 import core.ui.event.KeybindEvent;
 import core.ui.event.MouseEvent;
-import core.ui.overlays.GameMenu;
 import core.ui.utils.UIContainer;
 import core.utilities.keyboard.Keybind;
 
@@ -38,13 +35,6 @@ public class Input {
 	 * @param setup The current setup of the game
 	 */
 	public void checkInput(UIContainer setup) {
-		// TODO Menu Overlays isn't processed as ElementGroup
-		if(!setup.getUI().isEmpty()) {
-			while(setup.getElement(setup.getUI().size() - 1) != null && setup.getElement(setup.getUI().size() - 1) instanceof UIContainer) {
-				setup = (UIContainer) setup.getElement(setup.getUI().size() - 1);
-			}
-		}
-		
 		// Detect any keyboard events
 		processKeyboard(setup);
 		
@@ -88,29 +78,14 @@ public class Input {
 			colorFade.setReverse(true);
 			Camera.get().addScreenEffect(colorFade);
 		}
-		
-		// Setup specific processing
-		if(setup instanceof Stage) {
-			if(Keybind.PAUSE.clicked()) {
-				Theater.get().pause();
-			} else if(Keybind.EXIT.clicked()) {
-				setup.addUI(new GameMenu());
-			}
-		}
 	}
 	
 	private void processKeyboard(UIContainer setup) {
 		while(Keyboard.next()) {
 			if(Keyboard.getEventKeyState()) {
-				for(int i = 0; i<setup.getUI().size(); i++) {
-					UIElement ui = setup.getUI().get(i);
-					
-					if(ui.getState() == UIElement.ENABLED) {
-						ui.fireEvent(new KeyEvent(Keyboard.getEventKey(), 
+				setup.fireEvent(new KeyEvent(Keyboard.getEventKey(), 
 								Keyboard.getEventCharacter(), 
 								Keyboard.getKeyName(Keyboard.getEventKey())));
-					}
-				}
 			}
 		}
 	}
@@ -118,14 +93,8 @@ public class Input {
 	private void processKeybinds(UIContainer setup) {
 		Keybind.update();
 		for(Keybind k : Keybind.values()) {
-			if(k.clicked()) {
-				for(int i = 0; i<setup.getUI().size(); i++) {
-					UIElement ui = setup.getUI().get(i);
-					
-					if(ui.getState() == UIElement.ENABLED) {
-						ui.fireEvent(new KeybindEvent(k));
-					}
-				}
+			if(k.press()) {
+				setup.fireEvent(new KeybindEvent(k));
 			}
 		}
 	}
@@ -134,28 +103,21 @@ public class Input {
 		while(Mouse.next()) {
 			if(Mouse.getEventButton() != -1) {
 				if(Mouse.getEventButtonState()) {
-					processMouseEvent(setup,
-							new MouseEvent(MouseEvent.PRESSED, getMouseEventX(), getMouseEventY()));
-					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+					setup.fireEvent(new MouseEvent(MouseEvent.PRESSED, getMouseEventX(), getMouseEventY()));
 				} else {
-					processMouseEvent(setup,
-							new MouseEvent(MouseEvent.CLICKED, getMouseEventX(), getMouseEventY()));
-
-					//System.out.println(Mouse.getEventX() + " " + (Camera.get().displayHeight - Mouse.getEventY()));
-					//System.out.println(Mouse.getEventButton() + " " + Mouse.getEventButtonState());
+					setup.fireEvent(new MouseEvent(MouseEvent.CLICKED, getMouseEventX(), getMouseEventY()));
 				}
 			} else if(Mouse.getDX() != 0 || Mouse.getDY() != 0) {
 				MouseEvent me = new MouseEvent(MouseEvent.MOVED, getMouseEventX(), getMouseEventY());
 				me.setDx(Mouse.getEventDX());
 				me.setDy(-Mouse.getEventDY());
-				processMouseEvent(setup, me);
-				//System.out.println(Mouse.getEventDX() + " " + Mouse.getEventDY());
+				setup.fireEvent(me);
 				
 				if(Mouse.isButtonDown(0)) {
 					MouseEvent med = new MouseEvent(MouseEvent.DRAGGED, getMouseEventX(), getMouseEventY());
 					med.setDx(Mouse.getEventDX());
 					med.setDy(-Mouse.getEventDY());
-					processMouseEvent(setup, med);
+					setup.fireEvent(med);
 				}
 			}
 		}
@@ -163,27 +125,6 @@ public class Input {
 		if(Mouse.hasWheel() && Mouse.getDWheel() != 0) {
 			// TODO Implement mouseWheelListener
 			System.out.println(Mouse.getEventDWheel());
-		}
-	}
-	
-	private void processMouseEvent(UIContainer setup, MouseEvent e) {
-		for(int i = 0; i<setup.getUI().size(); i++) {
-			UIElement ui = setup.getUI().get(i);
-			switch(e.getEvent()) {
-			case MouseEvent.CLICKED:
-			case MouseEvent.RELEASED:
-			case MouseEvent.PRESSED:
-				if(ui.getBounds().contains(e.getPosition())) {
-					ui.fireEvent(e);
-				}
-				break;
-			case MouseEvent.MOVED:
-			case MouseEvent.DRAGGED:
-				if(ui.getBounds().contains(e.getPosition()) || ui.getBounds().contains(e.getPrevPosition())) {
-					ui.fireEvent(e);
-				}
-				break;
-			}
 		}
 	}
 	
