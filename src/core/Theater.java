@@ -52,7 +52,7 @@ public class Theater {
 	/** Game version, appears in Window Title */
 	public static String version = "v0.0";
 	/** Game name, appears in Window Title */
-	public static String title = "Avogine";
+	public static String title = "Dungeon Sword";
 	/** Current engine framework version */
 	public static final String AVOGINE_VERSION = "0.8.12";
 	
