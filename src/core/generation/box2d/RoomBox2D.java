@@ -80,7 +80,7 @@ public class RoomBox2D extends Rectangle {
 		DrawUtils.drawRect(new Rectangle2D.Double(x, y, width, height));
 		
 		if(WorldGenerator.showRoomNumber) {
-			Text.drawString("" + ID, getX(), getY(), TextModifier.compile(TextModValue.SIZE + "=0.25"));
+			Text.getFont("DEBUG").drawString("" + ID, getX(), getY(), TextModifier.compile(TextModValue.SIZE + "=1"));
 		}
 		
 		if(WorldGenerator.hideConnections) {

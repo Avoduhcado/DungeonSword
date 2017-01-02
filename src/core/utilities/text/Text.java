@@ -10,7 +10,7 @@ public class Text {
 	
 	private static final TextModifier plainText = new TextModifier();
 	public static final TextModifier DEBUG_TEXT = TextModifier.compile(
-			TextModValue.SIZE + "=0.4", TextModValue.COLOR + "=white", TextModValue.SHADOW + "=false");
+			TextModValue.SIZE + "=0.5", TextModValue.COLOR + "=white", TextModValue.SHADOW + "=false");
 	
 	/**
 	 * Loads a font to be used. If no other fonts exist, will load given font under "DEFAULT" tag.
