@@ -13,6 +13,7 @@ public class DrawUtils {
 	
 	/** Color of object to be drawn */
 	private static Vector3f color = new Vector3f(0f, 0f, 0f);
+	private static float lineWidth = 1f;
 
 	/**
 	 * Set new drawing color.
@@ -36,7 +37,7 @@ public class DrawUtils {
 		
 		GL11.glPushMatrix();
 		GL11.glColor3f(color.x, color.y, color.z);
-		GL11.glLineWidth(2.0f);
+		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		{
@@ -64,7 +65,7 @@ public class DrawUtils {
 		
 		GL11.glPushMatrix();
 		GL11.glColor3f(color.x, color.y, color.z);
-		GL11.glLineWidth(2.0f);
+		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		{
@@ -94,7 +95,7 @@ public class DrawUtils {
 		
 		GL11.glPushMatrix();
 		GL11.glColor3f(color.x, color.y, color.z);
-		GL11.glLineWidth(2.0f);
+		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		{
@@ -117,7 +118,7 @@ public class DrawUtils {
 		
 		GL11.glPushMatrix();
 		GL11.glColor3f(color.x, color.y, color.z);
-		GL11.glLineWidth(1.0f);
+		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		{
