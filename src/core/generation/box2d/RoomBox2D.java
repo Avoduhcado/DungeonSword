@@ -13,9 +13,6 @@ import java.util.Set;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -37,30 +34,18 @@ public class RoomBox2D extends Rectangle {
 	private Map<RoomBox2D, Boolean> edges = new HashMap<>();
 	
 	public RoomBox2D(Vec2 position, Vec2 size) {
-		ID = roomCount++;
+		if(size.x == WorldGenerator.TILE_SIZE && size.y == WorldGenerator.TILE_SIZE) {
+			ID = -1;
+		} else {
+			ID = roomCount++;
+		}
 		setFrameFromCenter(position.x, position.y, position.x - (size.x / 2), position.y - (size.y / 2));
 	}
 	
 	public RoomBox2D(World world, Vec2 position, Vec2 size) {
 		this(position, size);
 		
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.position.set(position.x / WorldGeneratorBox2D.SCALE_FACTOR, position.y / WorldGeneratorBox2D.SCALE_FACTOR);
-		bodyDef.type = BodyType.DYNAMIC;
-
-		PolygonShape bodyShape = new PolygonShape();
-		bodyShape.setAsBox(size.x / WorldGeneratorBox2D.SCALE_FACTOR / 2f, size.y / WorldGeneratorBox2D.SCALE_FACTOR / 2f);
-
-		FixtureDef boxFixture = new FixtureDef();
-		boxFixture.density = 1f;
-		boxFixture.shape = bodyShape;
-
-		Body body = world.createBody(bodyDef);
-		body.createFixture(boxFixture);
-		body.setFixedRotation(true);
-		body.setGravityScale(0f);
-
-		this.body = body;
+		this.body = BodyBuilder.createPolygon(world, position, size);
 	}
 	
 	public void draw() {
@@ -79,7 +64,7 @@ public class RoomBox2D extends Rectangle {
 		DrawUtils.setColor(active ? new Vector3f(1f, 0, 0) : new Vector3f(0, 0, 1f));
 		DrawUtils.drawRect(new Rectangle2D.Double(x, y, width, height));
 		
-		if(WorldGenerator.showRoomNumber) {
+		if(WorldGenerator.showRoomNumber && ID != -1) {
 			Text.getFont("DEBUG").drawString("" + ID, getX(), getY(), TextModifier.compile(TextModValue.SIZE + "=1"));
 		}
 		
@@ -177,6 +162,10 @@ public class RoomBox2D extends Rectangle {
 	
 	public void makeEdge(RoomBox2D room) {
 		edges.put(room, true);
+	}
+	
+	public static void resetRoomCount() {
+		roomCount = 0;
 	}
 	
 }

@@ -6,9 +6,9 @@ import core.entities.Entity;
 import core.entities.components.EntityComponent;
 import core.entities.events.BodyEvent;
 
-public abstract class Body extends EntityComponent {
+public abstract class AvoBody extends EntityComponent {
 	
-	public Body(Entity entity) {
+	public AvoBody(Entity entity) {
 		super(entity);
 	}
 

@@ -28,12 +28,19 @@ public class WorldGeneratorBox2D extends WorldGenerator {
 	protected List<Line2D> hallways = new ArrayList<>();
 	
 	private World world;
-	private boolean separateInOneFrame = false;
 	
 	public WorldGeneratorBox2D(Long seed) {
 		super(seed);
 		
 		world = new World(new Vec2(0, 0));
+		RoomBox2D.resetRoomCount();
+	}
+	
+	public WorldGeneratorBox2D(Long seed, World world) {
+		super(seed);
+		
+		this.world = world;
+		RoomBox2D.resetRoomCount();
 	}
 
 	@Override
@@ -71,10 +78,16 @@ public class WorldGeneratorBox2D extends WorldGenerator {
 
 	@Override
 	public void draw() {
-		rooms.stream().forEach(RoomBox2D::draw);
-		for(Line2D hall : hallways) {
-			DrawUtils.setColor(new Vector3f(1f, 1f, 0f));
-			DrawUtils.drawLine(hall.getX1(), hall.getY1(), hall.getX2(), hall.getY2());
+		if(behindTheScenes || state == GeneratorState.FINISHED) {
+			rooms.stream().forEach(RoomBox2D::draw);
+			
+			if(hideHallwayLines) {
+				return;
+			}
+			for(Line2D hall : hallways) {
+				DrawUtils.setColor(new Vector3f(1f, 1f, 0f));
+				DrawUtils.drawLine(hall.getX1(), hall.getY1(), hall.getX2(), hall.getY2());
+			}
 		}
 	}
 
@@ -90,15 +103,17 @@ public class WorldGeneratorBox2D extends WorldGenerator {
 	
 	@Override
 	protected void generateRooms() {
-		rooms.add(generateRoom());
-		
-		totalRoomsLeftToGenerate--;
-		
-		if(totalRoomsLeftToGenerate <= 0) {
-			System.out.println("Finished spawning rooms.");
+		do {
+			rooms.add(generateRoom());
 			
-			state = GeneratorState.SEPARATING;
-		}
+			totalRoomsLeftToGenerate--;
+			
+			if(totalRoomsLeftToGenerate <= 0) {
+				System.out.println("Finished spawning rooms.");
+				
+				state = GeneratorState.SEPARATING;
+			}
+		} while(!behindTheScenes && totalRoomsLeftToGenerate > 0);
 	}
 	
 	private RoomBox2D generateRoom() {
@@ -122,7 +137,7 @@ public class WorldGeneratorBox2D extends WorldGenerator {
 					room.updateRoomToGrid();
 				}
 			}
-		} while(!separated && separateInOneFrame);
+		} while(!behindTheScenes && !separated);
 		
 		if(separated) {
 			rooms.stream().forEach(RoomBox2D::destroyBody);
@@ -266,6 +281,10 @@ public class WorldGeneratorBox2D extends WorldGenerator {
 		} else {
 			rooms.stream().filter(e -> e.contains(hallRoom)).findFirst().ifPresent(e -> e.setActive(true));
 		}
+	}
+	
+	public List<RoomBox2D> getRooms() {
+		return rooms;
 	}
 
 	private Vec2 getRandomPointInCircle(double radius) {

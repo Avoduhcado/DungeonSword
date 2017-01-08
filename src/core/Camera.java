@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.PNGDecoder;
 import org.newdawn.slick.util.ResourceLoader;
 
-import core.entities.bodies.Body;
+import core.entities.bodies.AvoBody;
 import core.render.DrawUtils;
 import core.render.effects.ScreenEffect;
 import core.setups.GameSetup;
@@ -41,7 +41,7 @@ public class Camera {
 	private int displayHeight = viewHeight;
 
 	/** Target for the camera to "look at" and always be centered in the screen */
-	private Body focus;
+	private AvoBody focus;
 	
 	private Vector4f translation = new Vector4f();
 	private Vector4f scale = new Vector4f(1f, 1f, 1f, 1f);
@@ -182,11 +182,11 @@ public class Camera {
 		screenEffects.removeIf(ScreenEffect::isComplete);
 	}
 	
-	public Body getFocus() {
+	public AvoBody getFocus() {
 		return focus;
 	}
 	
-	public void setFocus(Body focus) {
+	public void setFocus(AvoBody focus) {
 		this.focus = focus;
 	}
 

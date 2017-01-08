@@ -5,7 +5,9 @@ import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import core.entities.bodies.Body;
+import core.Theater;
+import core.entities.bodies.AvoBody;
+import core.entities.bodies.Box2DBody;
 import core.entities.components.EntityComponent;
 import core.entities.components.interactions.ActivateInteraction;
 import core.entities.components.interactions.AutorunInteraction;
@@ -16,13 +18,14 @@ import core.entities.events.BodyEvent;
 import core.entities.events.EntityEvent;
 import core.entities.events.InteractEvent;
 import core.entities.renders.Render;
+import core.render.DrawUtils;
 
 public class Entity implements Comparable<Entity>, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
 	
-	private Body body;
+	private AvoBody body;
 	private Render render;
 	private Controller controller;
 	
@@ -48,6 +51,14 @@ public class Entity implements Comparable<Entity>, Serializable {
 	public void draw() {
 		if(renderable()) {
 			render.draw(getBodyPosition());
+		}
+		
+		if(Theater.debug) {
+			if(hasBody() && getBody() instanceof Box2DBody) {
+				DrawUtils.setColor(new Vector3f((float) Math.random(),(float)  Math.random(), (float) Math.random()));
+				Box2DBody b2dbody = (Box2DBody) getBody();
+				DrawUtils.drawBox2DShape(b2dbody.getBody(), b2dbody.getBody().getFixtureList().getShape());
+			}
 		}
 	}
 
@@ -99,11 +110,11 @@ public class Entity implements Comparable<Entity>, Serializable {
 		return body != null;
 	}
 	
-	public Body getBody() {
+	public AvoBody getBody() {
 		return body;
 	}
 	
-	public void setBody(Body body) {
+	public void setBody(AvoBody body) {
 		this.body = body;
 	}
 	

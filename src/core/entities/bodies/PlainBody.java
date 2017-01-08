@@ -6,7 +6,7 @@ import core.entities.Entity;
 import core.entities.events.BodyEvent;
 import core.entities.events.MoveEvent;
 
-public class PlainBody extends Body {
+public class PlainBody extends AvoBody {
 
 	private Vector3f position;
 	private float width, height;

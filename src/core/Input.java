@@ -124,7 +124,8 @@ public class Input {
 		
 		if(Mouse.hasWheel() && Mouse.getDWheel() != 0) {
 			// TODO Implement mouseWheelListener
-			System.out.println(Mouse.getEventDWheel());
+			int dWheel = Mouse.getEventDWheel();
+			Camera.get().setScale(Camera.get().getScale().translate(dWheel / 1000f, dWheel / 1000f, 0, 0));
 		}
 	}
 	

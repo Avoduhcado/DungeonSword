@@ -29,11 +29,11 @@ public class PlainRender extends Render {
 		SpriteList.get(sprite).draw(transform);
 		
 		if(Theater.debug) {
-			TextModifier modifier = TextModifier.compile(TextModValue.COLOR + "=white");
+			TextModifier modifier = TextModifier.compile(TextModValue.COLOR + "=white", TextModValue.SIZE + "=1");
 			if(this.entity.hasBody() && this.entity.getBody() == Camera.get().getFocus()) {
 				modifier.addModifier(TextModValue.COLOR, "green");
 			}
-			Text.drawString(sprite, transform.x, transform.y, modifier);
+			Text.getFont("DEBUG").drawString(sprite, transform.x, transform.y, modifier);
 		}
 	}
 
