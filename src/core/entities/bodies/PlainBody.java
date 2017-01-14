@@ -4,7 +4,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import core.entities.Entity;
 import core.entities.events.BodyEvent;
-import core.entities.events.MoveEvent;
 
 public class PlainBody extends AvoBody {
 
@@ -19,12 +18,6 @@ public class PlainBody extends AvoBody {
 	}
 	
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -32,6 +25,11 @@ public class PlainBody extends AvoBody {
 	@Override
 	public Vector3f getCenter() {
 		return Vector3f.add(position, new Vector3f(width * 0.5f, height * 0.5f, 0), null);
+	}
+
+	@Override
+	public void move(BodyEvent e) {
+		Vector3f.add(position, e.getVector(), position);
 	}
 
 	public float getWidth() {
@@ -48,17 +46,6 @@ public class PlainBody extends AvoBody {
 
 	public void setHeight(float height) {
 		this.height = height;
-	}
-
-	@Override
-	public void processEvent(BodyEvent event) {
-		if(event instanceof MoveEvent) {
-			processMoveEvent((MoveEvent) event);
-		}
-	}
-	
-	protected void processMoveEvent(MoveEvent event) {
-		Vector3f.add(position, event.getMovement(), position);
 	}
 
 }
